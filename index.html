@@ -913,6 +913,19 @@ body.stage-locked .conn-status .conn-badge {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+.save-error {
+  display: none;
+  background: #fee2e2;
+  color: #7f1d1d;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 20px;
+  border: 1px solid #fca5a5;
+  white-space: nowrap;
+  margin-left: 4px;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -2533,13 +2546,33 @@ async function toggleCheck(cell) {
     // Optimistic UI
     ticksState[id] = { ...prev, is_done: next, last_toggled_by: userEmail, last_toggled_role: roleFromUrl, last_toggled_at: new Date().toISOString() };
     applyCheckState(cell, next, ticksState[id]);
-    // Persist to Supabase (realtime sub will broadcast to other clients)
-    const { error } = await sb.from('ticks').upsert({
+
+    // Self-healing save: make sure the project row exists first,
+    // then upsert the tick. If anything fails, retry once after
+    // re-creating the project, then show a visible error.
+    const upsertTick = () => sb.from('ticks').upsert({
       project_id: projectId, stage_key: stage, action_id: id, is_done: next,
       last_toggled_by: userEmail, last_toggled_role: roleFromUrl,
       last_toggled_at: new Date().toISOString()
     }, { onConflict: 'project_id,action_id' });
-    if (error) console.error('Tick upsert failed:', error);
+
+    let { error } = await upsertTick();
+    if (error) {
+      console.warn('First tick upsert failed, ensuring project + retrying. Error:', error);
+      await ensureProject();
+      const retry = await upsertTick();
+      error = retry.error;
+    }
+
+    if (error) {
+      console.error('Tick upsert failed after retry:', error);
+      showSaveError(error.message || JSON.stringify(error));
+      // Roll back optimistic UI so the user knows it didn't save.
+      ticksState[id] = prev;
+      applyCheckState(cell, prev.is_done, prev);
+    } else {
+      clearSaveError();
+    }
   } else {
     const state = loadChecksLS();
     state[id] = !state[id];
@@ -2547,6 +2580,24 @@ async function toggleCheck(cell) {
     saveChecksLS(state);
     applyCheckState(cell, !!state[id], null);
   }
+}
+
+// Red error pill in the banner — appears only when a save fails.
+function showSaveError(msg) {
+  let pill = document.getElementById('save-error');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.id = 'save-error';
+    pill.className = 'save-error';
+    const meta = document.querySelector('.conn-meta');
+    if (meta) meta.appendChild(pill);
+  }
+  pill.textContent = '⚠ Save failed: ' + msg;
+  pill.style.display = 'inline-block';
+}
+function clearSaveError() {
+  const pill = document.getElementById('save-error');
+  if (pill) pill.style.display = 'none';
 }
 
 function findCellByActionId(actionId) {
