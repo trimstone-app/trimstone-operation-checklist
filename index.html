@@ -598,6 +598,18 @@ body {
 .action-table tr.done-row td.tool {
   color: var(--gray-400);
 }
+/* Strikethrough the action text + metadata when ticked.
+   The action description sits in the 3rd column (after checkbox + #).
+   We strike only that cell — the metadata "Ticked by … · 2s ago" is
+   marked .tick-meta and explicitly excluded so it stays readable. */
+.action-table tr.done-row td:nth-child(3) {
+  text-decoration: line-through;
+  text-decoration-color: var(--gray-400);
+  text-decoration-thickness: 1px;
+}
+.action-table tr.done-row td:nth-child(3) .tick-meta {
+  text-decoration: none;
+}
 .action-table .num { color: var(--gray-400); font-weight: 600; text-align: center; width: 32px; }
 .action-table .role { font-weight: 500; color: var(--navy); white-space: nowrap; }
 .action-table .tool { color: var(--gray-600); white-space: nowrap; font-size: 11px; }
