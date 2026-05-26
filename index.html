@@ -888,6 +888,31 @@ body.stage-locked .conn-status {
 body.stage-locked .conn-status .conn-badge {
   background: #b45309;
 }
+
+/* Locked-stage toast — appears briefly when the user tries to navigate
+   away from a locked stage. */
+.lock-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(12px);
+  background: #78350f;
+  color: #fff8e1;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 999;
+  max-width: 92vw;
+}
+.lock-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -2326,9 +2351,37 @@ function showSection(id, linkEl) {
 }
 
 function setStage(stage) {
+  // Hard lock: refuse to switch stages while the current one is locked.
+  // The user has to finish every action before any stage navigation works.
+  if (document.body.classList.contains('stage-locked')) {
+    const current = document.querySelector('.stage-tab.active');
+    if (current && current.dataset.stage !== stage) {
+      console.warn('Stage switch blocked — current stage is locked until all actions are complete.');
+      // Show a non-blocking toast so the user understands why nothing happened.
+      showLockToast();
+      return;
+    }
+  }
   document.querySelectorAll('.stage-tab').forEach(t => t.classList.toggle('active', t.dataset.stage === stage));
   document.querySelectorAll('.stage-pane').forEach(p => p.classList.toggle('active', p.dataset.stage === stage));
   document.getElementById('crumb').textContent = 'Pipeline · ' + (STAGE_LABELS[stage] || '');
+  if (typeof updateProgress === 'function') updateProgress();
+}
+
+// Briefly shows a "stage locked" message at the bottom of the screen.
+let _lockToastTimer = null;
+function showLockToast() {
+  let t = document.getElementById('lock-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'lock-toast';
+    t.className = 'lock-toast';
+    t.innerHTML = '🔒 Stage locked — finish all actions in this stage before moving to another.';
+    document.body.appendChild(t);
+  }
+  t.classList.add('show');
+  clearTimeout(_lockToastTimer);
+  _lockToastTimer = setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 function openStage(stage) {
