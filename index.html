@@ -752,7 +752,6 @@ body {
    SUPABASE CONNECTION — UI for live shared mode
    ════════════════════════════════════════════════════════════════════ */
 .conn-status {
-  margin-left: var(--sidebar-w);
   background: linear-gradient(90deg, #f0fdf4 0%, #ecfdf5 100%);
   border-bottom: 1px solid #d1fae5;
   padding: 10px 36px;
@@ -818,7 +817,7 @@ body {
 .action-table tr.remote-update td { animation: flash-row 1.2s ease-out; }
 
 @media (max-width: 820px) {
-  .conn-status { margin-left: 0; padding: 10px 18px; }
+  .conn-status { padding: 10px 18px; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -931,21 +930,21 @@ body {
      MAIN
      ════════════════════════════════════════════════════════════ -->
 
-<!-- ── SUPABASE CONNECTION BANNER (shown only when ?project= is in URL) ── -->
-<div id="conn-status" class="conn-status" style="display:none">
-  <div class="conn-meta">
-    <span class="conn-badge"><span class="online-dot"></span>Live · shared with team</span>
-    <span class="conn-pill">Project <strong id="conn-project-name">—</strong></span>
-    <span class="conn-pill">Stage <strong id="conn-stage-name">—</strong></span>
-    <span class="conn-pill">Your role <strong id="conn-role-name">—</strong></span>
-  </div>
-  <div class="presence-row">
-    <span class="presence-count" id="presence-count">Connecting…</span>
-    <div class="presence-avatars" id="presence-avatars"></div>
-  </div>
-</div>
-<!-- ── /SUPABASE CONNECTION BANNER ── -->
 <div class="main">
+  <!-- ── SUPABASE CONNECTION BANNER (shown only when ?project= is in URL) ── -->
+  <div id="conn-status" class="conn-status" style="display:none">
+    <div class="conn-meta">
+      <span class="conn-badge"><span class="online-dot"></span>Live · shared with team</span>
+      <span class="conn-pill">Project <strong id="conn-project-name">—</strong></span>
+      <span class="conn-pill">Stage <strong id="conn-stage-name">—</strong></span>
+      <span class="conn-pill">Your role <strong id="conn-role-name">—</strong></span>
+    </div>
+    <div class="presence-row">
+      <span class="presence-count" id="presence-count">Connecting…</span>
+      <div class="presence-avatars" id="presence-avatars"></div>
+    </div>
+  </div>
+  <!-- ── /SUPABASE CONNECTION BANNER ── -->
   <div class="topbar">
     <div class="topbar-breadcrumb">
       Trimstone Partners <span style="color:var(--gray-300)">/</span> <strong id="crumb">Home</strong>
