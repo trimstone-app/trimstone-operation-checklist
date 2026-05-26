@@ -872,7 +872,7 @@ body {
       <div class="stage-link" onclick="openStage('scoping')">
         <div class="stage-dot" style="background:var(--st-scoping)"></div> Prospecting & scoping
       </div>
-      <div class="stage-link" onclick="openStage('pricing-stage')">
+      <div class="stage-link" onclick="openStage('pricing')">
         <div class="stage-dot" style="background:var(--st-pricing)"></div> Pricing & proposing
       </div>
       <div class="stage-link" onclick="openStage('contracting')">
@@ -1296,7 +1296,7 @@ body {
       <div class="stage-tabs" id="stage-tabs">
         <div class="stage-tab active" data-stage="discussions" onclick="setStage('discussions')"><div class="stage-dot" style="background:var(--st-discussions)"></div>In Discussions</div>
         <div class="stage-tab" data-stage="scoping" onclick="setStage('scoping')"><div class="stage-dot" style="background:var(--st-scoping)"></div>Prospecting & Scoping</div>
-        <div class="stage-tab" data-stage="pricing-stage" onclick="setStage('pricing-stage')"><div class="stage-dot" style="background:var(--st-pricing)"></div>Pricing & Proposing</div>
+        <div class="stage-tab" data-stage="pricing" onclick="setStage('pricing')"><div class="stage-dot" style="background:var(--st-pricing)"></div>Pricing & Proposing</div>
         <div class="stage-tab" data-stage="contracting" onclick="setStage('contracting')"><div class="stage-dot" style="background:var(--st-contracting)"></div>Contracting</div>
         <div class="stage-tab" data-stage="executing" onclick="setStage('executing')"><div class="stage-dot" style="background:var(--st-executing)"></div>Executing</div>
         <div class="stage-tab" data-stage="closing" onclick="setStage('closing')"><div class="stage-dot" style="background:var(--st-closing)"></div>Closing (Won)</div>
@@ -1407,7 +1407,7 @@ body {
       </div>
 
       <!-- ── STAGE 3: PRICING & PROPOSING ────────────────── -->
-      <div class="stage-pane" data-stage="pricing-stage">
+      <div class="stage-pane" data-stage="pricing">
         <div class="stage-banner" style="background:linear-gradient(135deg, var(--st-pricing), #157451)">
           <div class="stage-banner-eyebrow">Stage 3 of 8</div>
           <div class="stage-banner-title">Pricing & Proposing</div>
@@ -2237,7 +2237,7 @@ const SECTION_TITLES = {
 const STAGE_LABELS = {
   'discussions': 'In Discussions',
   'scoping': 'Prospecting & Scoping',
-  'pricing-stage': 'Pricing & Proposing',
+  'pricing': 'Pricing & Proposing',
   'contracting': 'Contracting',
   'executing': 'Executing',
   'closing': 'Closing Down (Won)',
@@ -2279,7 +2279,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   const pipelineActive = document.getElementById('sec-pipeline').classList.contains('active');
   if (!pipelineActive) return;
-  const stages = ['discussions','scoping','pricing-stage','contracting','executing','closing','hold','lost'];
+  const stages = ['discussions','scoping','pricing','contracting','executing','closing','hold','lost'];
   const current = document.querySelector('.stage-tab.active');
   if (!current) return;
   const idx = stages.indexOf(current.dataset.stage);
@@ -2574,4 +2574,22 @@ document.addEventListener('keydown', async (e) => {
   if (!confirm('Reset all ticked actions on this stage?')) return;
   const pane = document.querySelector('.stage-pane.active');
   if (!pane) return;
-  const cells = Array.f
+  const cells = Array.from(pane.querySelectorAll('.action-table .check'));
+  if (isConnected) {
+    const ids = cells.map(c => checkId(c));
+    await sb.from('ticks').update({
+      is_done: false, last_toggled_by: userEmail, last_toggled_role: roleFromUrl,
+      last_toggled_at: new Date().toISOString()
+    }).eq('project_id', projectId).in('action_id', ids);
+    cells.forEach(c => applyCheckState(c, false, { is_done:false }));
+  } else {
+    const state = loadChecksLS();
+    cells.forEach(c => { delete state[checkId(c)]; applyCheckState(c, false, null); });
+    saveChecksLS(state);
+  }
+});
+
+</script>
+
+</body>
+</html>
