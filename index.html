@@ -735,7 +735,81 @@ body {
   .hero { padding: 26px 22px; }
   .hero-title { font-size: 26px; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   SUPABASE CONNECTION — UI for live shared mode
+   ════════════════════════════════════════════════════════════════════ */
+.conn-status {
+  margin-left: var(--sidebar-w);
+  background: linear-gradient(90deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-bottom: 1px solid #d1fae5;
+  padding: 10px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.conn-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.conn-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600; padding: 4px 12px;
+  background: #2d6a4f; color: white; border-radius: 20px;
+}
+.online-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #4ade80; animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.4); opacity: .55; }
+}
+.conn-pill {
+  font-size: 11px; padding: 3px 10px; border-radius: 4px;
+  background: white; border: 1px solid var(--gray-100);
+  color: var(--gray-700);
+}
+.conn-pill strong { color: var(--navy); font-weight: 600; }
+.presence-row { display: flex; align-items: center; gap: 8px; }
+.presence-count { font-size: 11px; color: var(--gray-600); }
+.presence-avatars { display: flex; }
+.presence-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--navy); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px; font-weight: 600;
+  border: 2px solid #fff;
+  margin-left: -7px;
+}
+.presence-avatar:first-child { margin-left: 0; }
+.presence-avatar.role-lp  { background: #1e40af; }
+.presence-avatar.role-cp  { background: #7F77DD; }
+.presence-avatar.role-md  { background: #991b1b; }
+.presence-avatar.role-fin { background: #BA7517; }
+.presence-avatar.role-ops { background: #888780; }
+
+/* Tick metadata — "Ticked by X · 2m ago" beneath an action */
+.tick-meta {
+  font-size: 10.5px;
+  color: var(--gray-400);
+  margin-top: 3px;
+  font-style: italic;
+}
+.tick-meta strong { color: var(--gray-700); font-weight: 600; font-style: normal; }
+
+/* Subtle tick animation when a remote user toggles */
+@keyframes flash-row {
+  0%   { background: rgba(74,222,128,0.18); }
+  100% { background: transparent; }
+}
+.action-table tr.remote-update td { animation: flash-row 1.2s ease-out; }
+
+@media (max-width: 820px) {
+  .conn-status { margin-left: 0; padding: 10px 18px; }
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -844,6 +918,21 @@ body {
 <!-- ════════════════════════════════════════════════════════════
      MAIN
      ════════════════════════════════════════════════════════════ -->
+
+<!-- ── SUPABASE CONNECTION BANNER (shown only when ?project= is in URL) ── -->
+<div id="conn-status" class="conn-status" style="display:none">
+  <div class="conn-meta">
+    <span class="conn-badge"><span class="online-dot"></span>Live · shared with team</span>
+    <span class="conn-pill">Project <strong id="conn-project-name">—</strong></span>
+    <span class="conn-pill">Stage <strong id="conn-stage-name">—</strong></span>
+    <span class="conn-pill">Your role <strong id="conn-role-name">—</strong></span>
+  </div>
+  <div class="presence-row">
+    <span class="presence-count" id="presence-count">Connecting…</span>
+    <div class="presence-avatars" id="presence-avatars"></div>
+  </div>
+</div>
+<!-- ── /SUPABASE CONNECTION BANNER ── -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-breadcrumb">
@@ -2186,69 +2275,308 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft' && idx > 0) setStage(stages[idx - 1]);
 });
 
-// ══════════════════════════════════════════════════════════════
-// Interactive checkboxes — click to tick, persists via localStorage
-// ══════════════════════════════════════════════════════════════
-const CHECK_STORAGE_KEY = 'trimstone-handbook-v1.3-checks';
+// ══════════════════════════════════════════════════════════════════════
+//  SUPABASE INTEGRATION  —  shared live checklist mode
+//  When the URL has ?project=XYZ, ticks save to Supabase and sync live
+//  across every team member who opens the same link. When not, falls
+//  back to local browser storage (original behaviour).
+// ══════════════════════════════════════════════════════════════════════
 
+const SUPABASE_URL              = 'https://zdlqjyszqlyxmppodgyi.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY  = 'sb_publishable_0CFAFn23odKnXi3SAFZ3mA_hKlhb5JO';
+
+const STAGE_NAMES = {
+  discussions: 'In Discussions',
+  scoping:     'Prospecting & Scoping',
+  pricing:     'Pricing & Proposing',
+  contracting: 'Contracting',
+  executing:   'Executing',
+  closing:     'Closing Down (Won)',
+  hold:        'On Hold',
+  lost:        'Closed Lost'
+};
+const ROLE_NAMES = { lp:'Lead Partner', cp:'Co-owner', md:'Consulting MD', fin:'Finance', ops:'Operations' };
+
+// ─── URL params ───────────────────────────────────────────────────────
+const params      = new URLSearchParams(location.search);
+const projectId   = params.get('project') || null;
+const projectName = params.get('name')    || null;     // optional human-readable deal name
+const stageFromUrl= params.get('stage')   || null;
+const roleFromUrl = params.get('role')    || null;
+const sourceParam = params.get('source')  || 'direct';
+const userEmail   = params.get('email')   || (localStorage.getItem('ts_user_email') || promptForEmail());
+
+function promptForEmail() {
+  if (!projectId) return null;
+  let e = window.prompt('Your work email (used to attribute ticks to you):', '');
+  if (e) { localStorage.setItem('ts_user_email', e); }
+  return e || 'anon@trimstone.com';
+}
+
+const isConnected = !!projectId
+  && SUPABASE_URL.startsWith('https://')
+  && SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_');
+
+let sb = null;
+const ticksState = {};   // action_id → {is_done, last_toggled_by, last_toggled_role, last_toggled_at}
+
+// ─── Identification helpers ───────────────────────────────────────────
+function initials(s) {
+  if (!s) return '?';
+  const cleaned = s.replace(/@.*/,'').split(/[\s._-]+/).filter(Boolean);
+  return ((cleaned[0]?.[0]||'?') + (cleaned[1]?.[0]||'')).toUpperCase();
+}
+function shortAgo(iso) {
+  if (!iso) return '';
+  const s = Math.max(1, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+  if (s < 60)    return s + 's ago';
+  if (s < 3600)  return Math.floor(s/60)  + 'm ago';
+  if (s < 86400) return Math.floor(s/3600)+ 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+// ─── Stable checkbox id  (matches the dashboard's action_id format) ──
 function checkId(cell) {
-  // Use the stage pane + group row index + row index within stage as a stable key
   const pane = cell.closest('.stage-pane');
   const stage = pane ? pane.dataset.stage : 'misc';
   const row = cell.closest('tr');
   const rows = pane ? Array.from(pane.querySelectorAll('tr')) : [];
   const idx = rows.indexOf(row);
-  return `${stage}::${idx}`;
+  return stage + '::' + idx;
 }
+function stageKeyFromId(id) { return id.split('::')[0]; }
 
-function loadChecks() {
-  try { return JSON.parse(localStorage.getItem(CHECK_STORAGE_KEY) || '{}'); }
-  catch { return {}; }
+// ─── localStorage fallback (used when no ?project= param) ─────────────
+const CHECK_STORAGE_KEY = 'trimstone-handbook-v1.3-checks';
+function loadChecksLS() {
+  try { return JSON.parse(localStorage.getItem(CHECK_STORAGE_KEY) || '{}'); } catch { return {}; }
 }
-
-function saveChecks(state) {
+function saveChecksLS(state) {
   try { localStorage.setItem(CHECK_STORAGE_KEY, JSON.stringify(state)); } catch {}
 }
 
-function toggleCheck(cell) {
-  const id = checkId(cell);
-  const state = loadChecks();
-  state[id] = !state[id];
-  if (!state[id]) delete state[id];
-  saveChecks(state);
-  applyCheckState(cell, !!state[id]);
-}
-
-function applyCheckState(cell, done) {
+// ─── Apply state to the DOM ──────────────────────────────────────────
+function applyCheckState(cell, done, tickRow) {
   cell.classList.toggle('done', done);
   const row = cell.closest('tr');
   if (row) row.classList.toggle('done-row', done);
+  renderTickMeta(cell, tickRow);
+}
+function renderTickMeta(cell, tickRow) {
+  if (!isConnected) return;
+  const row = cell.closest('tr');
+  if (!row) return;
+  // Find or create a meta div in the Action cell (3rd cell)
+  const actionCell = row.children[2];
+  if (!actionCell) return;
+  let meta = actionCell.querySelector('.tick-meta');
+  if (tickRow && tickRow.is_done && tickRow.last_toggled_by) {
+    if (!meta) {
+      meta = document.createElement('div');
+      meta.className = 'tick-meta';
+      actionCell.appendChild(meta);
+    }
+    const who = tickRow.last_toggled_by.replace('@trimstone.com','');
+    const roleLabel = ROLE_NAMES[tickRow.last_toggled_role] || tickRow.last_toggled_role || '';
+    meta.innerHTML = 'Ticked by <strong>' + who + '</strong>' + (roleLabel ? ' (' + roleLabel + ')' : '') + ' · ' + shortAgo(tickRow.last_toggled_at);
+  } else if (meta) {
+    meta.remove();
+  }
 }
 
-function restoreChecks() {
-  const state = loadChecks();
-  document.querySelectorAll('.action-table .check').forEach(cell => {
-    const id = checkId(cell);
-    if (state[id]) applyCheckState(cell, true);
+// ─── Toggle handler (called from every checkbox cell's onclick) ──────
+async function toggleCheck(cell) {
+  const id = checkId(cell);
+  const stage = stageKeyFromId(id);
+
+  if (isConnected) {
+    const prev = ticksState[id] || { is_done: false };
+    const next = !prev.is_done;
+    // Optimistic UI
+    ticksState[id] = { ...prev, is_done: next, last_toggled_by: userEmail, last_toggled_role: roleFromUrl, last_toggled_at: new Date().toISOString() };
+    applyCheckState(cell, next, ticksState[id]);
+    // Persist to Supabase (realtime sub will broadcast to other clients)
+    const { error } = await sb.from('ticks').upsert({
+      project_id: projectId, stage_key: stage, action_id: id, is_done: next,
+      last_toggled_by: userEmail, last_toggled_role: roleFromUrl,
+      last_toggled_at: new Date().toISOString()
+    }, { onConflict: 'project_id,action_id' });
+    if (error) console.error('Tick upsert failed:', error);
+  } else {
+    const state = loadChecksLS();
+    state[id] = !state[id];
+    if (!state[id]) delete state[id];
+    saveChecksLS(state);
+    applyCheckState(cell, !!state[id], null);
+  }
+}
+
+function findCellByActionId(actionId) {
+  const stage = stageKeyFromId(actionId);
+  const pane = document.querySelector('.stage-pane[data-stage="' + stage + '"]');
+  if (!pane) return null;
+  const rows = Array.from(pane.querySelectorAll('tr'));
+  const parts = actionId.split('::');
+  const idx = parseInt(parts[1], 10);
+  const row = rows[idx];
+  return row ? row.querySelector('.check') : null;
+}
+
+// ─── Restore + subscribe (Supabase) ──────────────────────────────────
+async function ensureProject() {
+  const { error } = await sb.from('projects').upsert({
+    id: projectId,
+    deal_name: projectName || projectId,
+    current_stage: stageFromUrl
+  }, { onConflict: 'id' });
+  if (error) console.warn('Project upsert:', error);
+}
+
+async function logOpen() {
+  const { error } = await sb.from('checklist_opens').insert({
+    project_id: projectId, stage_key: stageFromUrl || 'home',
+    role: roleFromUrl, actor_email: userEmail, source: sourceParam,
+    user_agent: navigator.userAgent
+  });
+  if (error) console.warn('Open log:', error);
+}
+
+async function loadTicksFromSupabase() {
+  const { data, error } = await sb.from('ticks').select('*').eq('project_id', projectId);
+  if (error) { console.error('Load ticks:', error); return; }
+  (data || []).forEach(t => {
+    ticksState[t.action_id] = t;
+    const cell = findCellByActionId(t.action_id);
+    if (cell) applyCheckState(cell, t.is_done, t);
   });
 }
 
-document.addEventListener('DOMContentLoaded', restoreChecks);
+function subscribeToTicks() {
+  sb.channel('ticks-' + projectId)
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'ticks', filter: 'project_id=eq.' + projectId },
+      (payload) => {
+        const t = payload.new || payload.old;
+        if (!t) return;
+        ticksState[t.action_id] = payload.new || { is_done: false };
+        const cell = findCellByActionId(t.action_id);
+        if (!cell) return;
+        applyCheckState(cell, !!(payload.new && payload.new.is_done), payload.new);
+        // Visual ping when someone *else* toggled
+        if (payload.new && payload.new.last_toggled_by && payload.new.last_toggled_by !== userEmail) {
+          const row = cell.closest('tr');
+          if (row) {
+            row.classList.add('remote-update');
+            setTimeout(() => row.classList.remove('remote-update'), 1300);
+          }
+        }
+      })
+    .subscribe();
+}
 
-// Optional helper: reset all checks on the current stage (Shift+R)
-document.addEventListener('keydown', e => {
-  if (e.shiftKey && e.key === 'R') {
-    if (!confirm('Reset all ticked actions on this stage?')) return;
-    const pane = document.querySelector('.stage-pane.active');
-    if (!pane) return;
-    const state = loadChecks();
-    pane.querySelectorAll('.action-table .check').forEach(cell => {
-      delete state[checkId(cell)];
-      applyCheckState(cell, false);
+// ─── Presence — "who's looking at this page right now" ────────────────
+function joinPresence() {
+  const channel = sb.channel('checklist-presence', {
+    config: { presence: { key: userEmail || ('anon-' + Math.random().toString(36).slice(2,8)) } }
+  });
+  channel
+    .on('presence', { event: 'sync' }, () => renderPresence(channel.presenceState()))
+    .on('presence', { event: 'join' }, () => renderPresence(channel.presenceState()))
+    .on('presence', { event: 'leave' }, () => renderPresence(channel.presenceState()))
+    .subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await channel.track({
+          email: userEmail, role: roleFromUrl,
+          project_id: projectId, stage_key: stageFromUrl,
+          joined_at: new Date().toISOString()
+        });
+      }
     });
-    saveChecks(state);
+  window.addEventListener('beforeunload', () => channel.untrack());
+}
+
+function renderPresence(state) {
+  const everyone = Object.values(state || {}).flat()
+    .filter(p => p && p.project_id === projectId && p.role !== 'observer');
+  // Dedupe by email
+  const byEmail = {};
+  everyone.forEach(p => { byEmail[p.email || Math.random()] = p; });
+  const list = Object.values(byEmail);
+
+  const others = list.filter(p => p.email !== userEmail);
+  const countEl = document.getElementById('presence-count');
+  const avatarsEl = document.getElementById('presence-avatars');
+  if (!countEl || !avatarsEl) return;
+  if (others.length === 0) {
+    countEl.textContent = 'You are the only one here';
+  } else {
+    countEl.textContent = others.length + ' other' + (others.length === 1 ? '' : 's') + ' on this page';
+  }
+  avatarsEl.innerHTML = list.slice(0,6).map(p => {
+    const initialsTxt = initials(p.email || 'user');
+    const roleCls = 'role-' + (p.role || 'lp');
+    const title = (p.email || 'user') + (p.role ? ' · ' + (ROLE_NAMES[p.role] || p.role) : '');
+    return '<div class="presence-avatar ' + roleCls + '" title="' + title.replace(/"/g,'&quot;') + '">' + initialsTxt + '</div>';
+  }).join('');
+}
+
+// ─── Boot ────────────────────────────────────────────────────────────
+async function boot() {
+  if (isConnected) {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    // Show banner
+    const banner = document.getElementById('conn-status');
+    if (banner) {
+      banner.style.display = 'flex';
+      document.getElementById('conn-project-name').textContent = projectName || projectId;
+      document.getElementById('conn-stage-name').textContent   = STAGE_NAMES[stageFromUrl] || stageFromUrl || '—';
+      document.getElementById('conn-role-name').textContent    = ROLE_NAMES[roleFromUrl]   || roleFromUrl   || '—';
+    }
+
+    // Auto-open the relevant stage if URL says so
+    if (stageFromUrl && STAGE_NAMES[stageFromUrl]) {
+      openStage(stageFromUrl);
+    }
+
+    await ensureProject();
+    await logOpen();
+    await loadTicksFromSupabase();
+    subscribeToTicks();
+    joinPresence();
+  } else {
+    // Standalone mode — restore from localStorage exactly like before
+    const state = loadChecksLS();
+    document.querySelectorAll('.action-table .check').forEach(cell => {
+      const id = checkId(cell);
+      if (state[id]) applyCheckState(cell, true, null);
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+
+// ─── Shift+R: reset ticks on current stage ────────────────────────────
+document.addEventListener('keydown', async (e) => {
+  if (!(e.shiftKey && e.key === 'R')) return;
+  if (!confirm('Reset all ticked actions on this stage?')) return;
+  const pane = document.querySelector('.stage-pane.active');
+  if (!pane) return;
+  const cells = Array.from(pane.querySelectorAll('.action-table .check'));
+  if (isConnected) {
+    const ids = cells.map(c => checkId(c));
+    await sb.from('ticks').update({
+      is_done: false, last_toggled_by: userEmail, last_toggled_role: roleFromUrl,
+      last_toggled_at: new Date().toISOString()
+    }).eq('project_id', projectId).in('action_id', ids);
+    cells.forEach(c => applyCheckState(c, false, { is_done:false }));
+  } else {
+    const state = loadChecksLS();
+    cells.forEach(c => { delete state[checkId(c)]; applyCheckState(c, false, null); });
+    saveChecksLS(state);
   }
 });
+
 </script>
 
 </body>
