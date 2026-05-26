@@ -2574,22 +2574,4 @@ document.addEventListener('keydown', async (e) => {
   if (!confirm('Reset all ticked actions on this stage?')) return;
   const pane = document.querySelector('.stage-pane.active');
   if (!pane) return;
-  const cells = Array.from(pane.querySelectorAll('.action-table .check'));
-  if (isConnected) {
-    const ids = cells.map(c => checkId(c));
-    await sb.from('ticks').update({
-      is_done: false, last_toggled_by: userEmail, last_toggled_role: roleFromUrl,
-      last_toggled_at: new Date().toISOString()
-    }).eq('project_id', projectId).in('action_id', ids);
-    cells.forEach(c => applyCheckState(c, false, { is_done:false }));
-  } else {
-    const state = loadChecksLS();
-    cells.forEach(c => { delete state[checkId(c)]; applyCheckState(c, false, null); });
-    saveChecksLS(state);
-  }
-});
-
-</script>
-
-</body>
-</html>
+  const cells = Array.f
