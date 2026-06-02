@@ -242,6 +242,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .gtable tr.g-action-row td.g-row-label{font-size:10px;color:var(--gray-800);padding:5px 6px 5px 2px;line-height:1.3;vertical-align:middle;font-style:normal}
 .gtable tr.g-action-row td.g-row-label.cond-lbl{font-style:italic;color:var(--gray-400)}
 .gcell{width:52px;text-align:center;vertical-align:middle;cursor:pointer;transition:background .1s;position:relative}
+.gcell-readonly{width:52px;text-align:center;vertical-align:middle;cursor:default}
+.gcell.next-stage{background:#E6F1FB08}
 .gcell:hover{background:var(--gray-50)}
 .gcell.highlighted{background:#E6F1FB20}
 .gcell.cur-stage{background:#FAEEDA15}
@@ -250,7 +252,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .tick.nope{background:var(--red-lt);color:var(--red-txt)}
 .tick.na{background:var(--gray-50);color:var(--gray-300);border:1px solid var(--gray-200)}
 .tick.cond{background:var(--amber-lt);color:var(--amber-txt)}
-.tick.unanswered{background:transparent;border:1.5px dashed var(--gray-200);color:var(--gray-300)}
+.tick.unanswered{background:transparent;border:1.5px dashed var(--gray-200);color:transparent}
+.tick.unanswered::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--gray-200);display:block;margin:auto}
 .tick.blocker{box-shadow:0 0 0 2px var(--red)}
 .g-count{font-size:9px;color:var(--gray-400);font-weight:500}
 .g-count.has-done{color:var(--green-txt)}
@@ -287,10 +290,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
       <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       My project
     </button>
-    <button class="sidebar-btn" id="sb-partners" onclick="setMainView('partners')">
-      <svg viewBox="0 0 16 16" fill="none"><circle cx="5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="11" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 14c0-2.761 1.791-5 4-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 14c0-2.761-1.791-5-4-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 9c2.209 0 4 2.239 4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 9c-2.209 0-4 2.239-4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Partners meeting
-    </button>
+
     <button class="sidebar-btn" id="sb-grid" onclick="setMainView('grid')">
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
       Pipeline grid
@@ -314,14 +314,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="topbar-title" id="topbar-title">Pipeline dashboard</div>
+      <div class="topbar-title" id="topbar-title">Pipeline grid</div>
       <div class="topbar-badge" id="topbar-badge" style="background:var(--navy-mid);color:var(--white)"></div>
     </div>
     <div class="topbar-right">
       <div class="view-toggle">
-        <button class="vt-btn active" id="vbtn-owner" onclick="setMainView('owner')">My project</button>
-        <button class="vt-btn" id="vbtn-partners" onclick="setMainView('partners')">Partners meeting</button>
-        <button class="vt-btn" id="vbtn-grid" onclick="setMainView('grid')">Grid view</button>
+        <button class="vt-btn" id="vbtn-owner" onclick="setMainView('owner')">My project</button>
+        <button class="vt-btn active" id="vbtn-grid" onclick="setMainView('grid')">Grid view</button>
       </div>
       <button class="btn" onclick="openAdd()">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -635,7 +634,7 @@ const currentRole = P.get('role') || 'lead-partner'
 
 let projects = []
 let allTicksCache = {} // pid__stage__action → {done, na}
-let mainView = 'owner'
+let mainView = 'grid'
 let ownerSelId = null
 let ownerStage = null
 let ownerOpenQ = null
@@ -877,18 +876,17 @@ function condQ(qid) {
 function setMainView(v) {
   mainView = v
   document.getElementById('owner-view').style.display = v==='owner' ? 'block' : 'none'
-  document.getElementById('partners-view').style.display = v==='partners' ? 'block' : 'none'
+  document.getElementById('partners-view').style.display = 'none'
   document.getElementById('grid-view').style.display = v==='grid' ? 'block' : 'none'
-  document.getElementById('topbar-title').textContent = v==='owner' ? 'My project' : v==='grid' ? 'Pipeline grid' : 'Partners meeting'
+  document.getElementById('topbar-title').textContent = v==='owner' ? 'My project' : 'Pipeline grid'
   document.getElementById('sb-owner').className = 'sidebar-btn' + (v==='owner' ? ' active' : '')
-  document.getElementById('sb-partners').className = 'sidebar-btn' + (v==='partners' ? ' active' : '')
-  ;['owner','partners','grid'].forEach(x => {
+  document.getElementById('sb-grid').className = 'sidebar-btn' + (v==='grid' ? ' active' : '')
+  ;['owner','grid'].forEach(x => {
     const b = document.getElementById('vbtn-'+x)
     if (b) b.className = 'vt-btn' + (v===x ? ' active' : '')
   })
   if (v==='owner') renderOwner()
-  else if (v==='grid') renderGrid()
-  else renderPartners()
+  else renderGrid()
 }
 
 // ══════════════════════════════════════════════
@@ -1305,8 +1303,7 @@ function loadDemoData() {
 
   renderSidebar()
   if (mainView === 'owner') renderOwner()
-  else if (mainView === 'grid') renderGrid()
-  else renderPartners()
+  else renderGrid()
 }
 
 function calcDemoProgress(pid, stageKey, tickMap) {
@@ -1471,21 +1468,37 @@ function renderGrid() {
             if (stageAns==='yes') { tickCls='done'; tickIcon='✓' }
             else if (stageAns==='no') { tickCls='nope'; tickIcon='✗' }
             else { tickCls='unanswered'; tickIcon='?' }
-          } else { tickCls='cond'; tickIcon='?' }
+          } else { tickCls='cond'; tickIcon='◎' }
         } else {
           if (stageAns==='yes')     { tickCls='done'; tickIcon='✓' }
           else if (stageAns==='no') { tickCls='nope'; tickIcon='✗' }
           else if (stageAns==='na') { tickCls='na'; tickIcon='—' }
-          else                      { tickCls='unanswered'; tickIcon='?' }
+          else                      { tickCls='unanswered'; tickIcon='' }
         }
 
         const isBlocker = item.blocker && isCur && tickCls!=='done' && tickCls!=='na'
         const popupHtml = isOpen ? buildCellPopup(item, st, p, stageAns, stageCond, condKey) : ''
 
-        html += `<td class="gcell ${isCur?'cur-stage':''}" onclick="toggleCellPopup('${item.id}','${st.id}','${p.id}',event)" style="position:relative">
-          <div class="tick ${tickCls} ${isBlocker?'blocker':''}">${tickIcon}</div>
-          ${popupHtml}
-        </td>`
+        const stageIds = STAGES.map(s => s.id)
+        const curIdx  = stageIds.indexOf(p.stage)
+        const thisIdx = stageIds.indexOf(st.id)
+        const isPast  = thisIdx < curIdx
+        const isFuture = thisIdx > curIdx
+
+        if (isCur) {
+          // Only current stage is clickable
+          html += `<td class="gcell cur-stage" onclick="toggleCellPopup('${item.id}','${st.id}','${p.id}',event)" style="position:relative">
+            <div class="tick ${tickCls} ${isBlocker?'blocker':''}">${tickIcon}</div>
+            ${popupHtml}
+          </td>`
+        } else {
+          // All other stages — read only
+          const opacity = isPast ? '0.5' : '0.3'
+          const title   = isPast ? 'Completed stage — read only' : 'Future stage — not yet reached'
+          html += `<td class="gcell-readonly" style="text-align:center;vertical-align:middle;padding:3px 2px;cursor:default" title="${title}">
+            <div class="tick ${tickCls}" style="opacity:${opacity}">${tickIcon}</div>
+          </td>`
+        }
       })
       html += '</tr>'
     })
