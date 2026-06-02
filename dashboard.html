@@ -273,6 +273,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .cdb.req{border-color:var(--amber);color:var(--amber-txt)}.cdb.req:hover{background:var(--amber-lt)}
 .cdb.skip{border-color:var(--gray-200);color:var(--gray-400)}.cdb.skip:hover{background:var(--gray-50)}
 
+
+.sidebar-stage-group{margin-bottom:4px}
+.sidebar-stage-label{display:flex;align-items:center;gap:6px;padding:8px 20px 3px;font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.sidebar-stage-count{margin-left:auto;font-size:9px;background:rgba(255,255,255,.08);border-radius:8px;padding:1px 6px;color:rgba(255,255,255,.4)}
+.proj-item{padding:5px 20px 5px 28px}
+
+.sidebar-stage-label{user-select:none}
+.sidebar-stage-label:hover{background:rgba(255,255,255,.04)}
+.proj-item{padding:4px 16px 4px 24px;font-size:11px;border-radius:0;transition:background .1s}
+.proj-item.active{color:var(--gold-light);font-weight:500;background:rgba(201,168,76,.1)}
+.proj-item:hover{background:rgba(255,255,255,.06)}
+
 </style>
 </head>
 <body>
@@ -443,6 +455,30 @@ const STAGES = [
   {id:'closing',     short:'Closing',     color:'#2d6a4f',bg:'#d1fae5',tc:'#04342C'},
   {id:'hold',        short:'On Hold',     color:'#BA7517',bg:'#FAEEDA',tc:'#412402'},
 ]
+// Map Zoho stage names → dashboard stage IDs
+const ZOHO_STAGE_MAP = {
+  'in discussions':           'discussions',
+  'prospecting and scoping':  'scoping',
+  'prospecting & scoping':    'scoping',
+  'pricing and proposing':    'pricing',
+  'pricing & proposing':      'pricing',
+  'contracting':              'contracting',
+  'executing':                'executing',
+  'executing_project live':   'executing',
+  'executing - project live': 'executing',
+  'closing down_won':         'closing',
+  'closing down (won)':       'closing',
+  'closing down won':         'closing',
+  'on hold':                  'hold',
+  'closed lost':              'lost',
+}
+
+function normaliseStage(raw) {
+  if (!raw) return 'discussions'
+  const lower = raw.toLowerCase().trim()
+  return ZOHO_STAGE_MAP[lower] || lower
+}
+
 const stFor = id => STAGES.find(s=>s.id===id) || STAGES[0]
 
 const LP_C = {
@@ -688,7 +724,7 @@ async function loadDashboard() {
         name:       r.deal_name || 'Unnamed project',
         client:     r.account_name || '—',
         lp:         r.deal_owner || '—',
-        stage:      r.current_stage || 'discussions',
+        stage:      normaliseStage(r.current_stage || 'discussions'),
         movedAt:    r.updated_at,
         answers,
         condAnswers:{},
@@ -892,14 +928,78 @@ function setMainView(v) {
 // ══════════════════════════════════════════════
 // SIDEBAR
 // ══════════════════════════════════════════════
+// Track which stage groups are expanded in sidebar
+const sidebarExpanded = new Set(['contracting','executing','pricing']) // key stages open by default
+
 function renderSidebar() {
-  document.getElementById('sidebar-projects').innerHTML = projects.map(p => {
-    const st = stFor(p.stage)
-    return `<div class="proj-item ${ownerSelId===p.id?'active':''}" onclick="selProj('${p.id}')">
-      <div class="proj-dot" style="background:${st.color}"></div>
-      <span style="overflow:hidden;text-overflow:ellipsis">${p.name}</span>
-    </div>`
-  }).join('')
+  const STAGE_ORDER = ['discussions','scoping','pricing','contracting','executing','closing','hold']
+  const STAGE_LABELS = {
+    discussions:'In Discussions', scoping:'Scoping', pricing:'Pricing',
+    contracting:'Contracting',    executing:'Executing', closing:'Closing', hold:'On Hold'
+  }
+
+  // Group by stage
+  const grouped = {}
+  STAGE_ORDER.forEach(s => grouped[s] = [])
+  projects.forEach(p => {
+    const s = p.stage || 'discussions'
+    if (grouped[s]) grouped[s].push(p)
+    else grouped['discussions'].push(p)
+  })
+
+  // Auto-expand stage of currently selected project
+  const selProj = projects.find(p => p.id === (gridSelProj || ownerSelId))
+  if (selProj) sidebarExpanded.add(selProj.stage)
+
+  let html = ''
+  STAGE_ORDER.forEach(stageId => {
+    const list = grouped[stageId]
+    if (!list.length) return
+    const st    = stFor(stageId)
+    const open  = sidebarExpanded.has(stageId)
+    const label = STAGE_LABELS[stageId]
+
+    html += `<div class="sidebar-stage-group">
+      <div class="sidebar-stage-label" onclick="toggleSidebarStage('${stageId}')" style="cursor:pointer">
+        <div style="width:7px;height:7px;border-radius:50%;background:${st.color};flex-shrink:0"></div>
+        <span>${label}</span>
+        <span class="sidebar-stage-count">${list.length}</span>
+        <span style="margin-left:4px;font-size:9px;opacity:.5;transition:transform .2s;display:inline-block;transform:rotate(${open?'0':'180'}deg)">▲</span>
+      </div>`
+
+    if (open) {
+      html += list.map(p => {
+        const isActive = p.id === gridSelProj || p.id === ownerSelId
+        return `<div class="proj-item ${isActive?'active':''}" onclick="selProjBoth('${p.id}')" title="${p.name}">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${p.name}</span>
+        </div>`
+      }).join('')
+    }
+
+    html += `</div>`
+  })
+
+  document.getElementById('sidebar-projects').innerHTML = html
+}
+
+function toggleSidebarStage(stageId) {
+  if (sidebarExpanded.has(stageId)) sidebarExpanded.delete(stageId)
+  else sidebarExpanded.add(stageId)
+  renderSidebar()
+}
+
+function selProjBoth(id) {
+  ownerSelId  = id
+  gridSelProj = id
+  gridOpenCell = null
+  ownerStage  = null
+  ownerOpenQ  = null
+  ownerCollapsed.clear()
+  const p = projects.find(x => x.id === id)
+  if (p) sidebarExpanded.add(p.stage)
+  renderSidebar()
+  if (mainView === 'grid') renderGrid()
+  else renderOwner()
 }
 
 // ══════════════════════════════════════════════
@@ -1391,10 +1491,8 @@ function renderGrid() {
   if (!gridSelProj) gridSelProj = projects[0].id
   const p = projects.find(x => x.id === gridSelProj) || projects[0]
 
-  // Project pills
-  const pills = projects.map(px =>
-    `<button class="grid-pill ${px.id===gridSelProj?'active':''}" onclick="gridSelProject('${px.id}')">${px.name}</button>`
-  ).join('')
+  // Project pills — removed from top, now in sidebar grouped by stage
+  const pills = ''
 
   // Legend
   const legend = `<div class="grid-legend">
