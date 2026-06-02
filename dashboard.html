@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trimstone — Pipeline Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<!-- Supabase JS replaced with direct REST fetch calls -->
+<style>
+/* ── TOKENS ─────────────────────────────────── */
+:root{
+  --navy:#0f1f3d;--navy-mid:#1a3260;
+  --gold:#c9a84c;--gold-light:#e8c97a;--gold-pale:#faf3e0;
+  --cream:#fdfbf7;--white:#ffffff;
+  --gray-50:#f8f7f5;--gray-100:#eeece8;--gray-200:#d8d5ce;
+  --gray-300:#c0bcb3;--gray-400:#9e9b93;--gray-600:#6b6860;--gray-800:#2c2b27;
+  --green:#639922;--green-lt:#EAF3DE;--green-txt:#27500A;
+  --red:#E24B4A;--red-lt:#FCEBEB;--red-txt:#7F1D1D;
+  --amber:#EF9F27;--amber-lt:#FAEEDA;--amber-txt:#412402;
+  --purple:#7F77DD;--purple-lt:#EEEDFE;--purple-txt:#3C3489;
+  --blue:#378ADD;--blue-lt:#E6F1FB;--blue-txt:#0C447C;
+  --teal:#1D9E75;--teal-lt:#E1F5EE;--teal-txt:#085041;
+  --sidebar:260px;--topbar:56px;
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;
+  --shadow:0 1px 3px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-800);display:flex;min-height:100vh}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+.sidebar{width:var(--sidebar);background:var(--navy);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sidebar-logo-name{font-family:'DM Serif Display',serif;font-size:20px;color:var(--white);letter-spacing:.02em}
+.sidebar-logo-sub{font-size:9px;color:rgba(201,168,76,.7);letter-spacing:.18em;text-transform:uppercase;margin-top:5px;font-weight:500}
+.sidebar-section{padding:14px 0 4px}
+.sidebar-label{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:0 20px 7px}
+.sidebar-btn{display:flex;align-items:center;gap:9px;padding:8px 20px;font-size:12px;color:rgba(255,255,255,.62);cursor:pointer;border:none;background:transparent;width:100%;text-align:left;border-left:3px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif}
+.sidebar-btn:hover{color:var(--white);background:rgba(255,255,255,.05)}
+.sidebar-btn.active{color:var(--white);border-left-color:var(--gold);background:rgba(201,168,76,.08)}
+.sidebar-btn svg{width:15px;height:15px;opacity:.6;flex-shrink:0}
+.sidebar-btn.active svg{opacity:1}
+.sidebar-divider{height:1px;background:rgba(255,255,255,.07);margin:8px 20px}
+.proj-list{padding:4px 0}
+.proj-item{display:flex;align-items:center;gap:8px;padding:6px 20px 6px 24px;font-size:11px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-item:hover{color:rgba(255,255,255,.85)}
+.proj-item.active{color:var(--gold-light);font-weight:500}
+.proj-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,.07);font-size:10px;color:rgba(255,255,255,.28);line-height:1.5}
+
+/* ── MAIN ────────────────────────────────────── */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--topbar);background:var(--white);border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-title{font-size:15px;font-weight:500;color:var(--gray-800)}
+.topbar-badge{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.view-toggle{display:flex;border:1px solid var(--gray-200);border-radius:20px;overflow:hidden;background:var(--white)}
+.vt-btn{font-size:11px;padding:5px 14px;background:transparent;border:none;color:var(--gray-400);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px}
+.vt-btn.active{background:var(--navy);color:var(--white)}
+.btn{font-size:11px;padding:5px 13px;border-radius:var(--r8);border:1px solid var(--gray-200);background:var(--white);color:var(--gray-600);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px}
+.btn:hover{background:var(--gray-50);border-color:var(--gray-300)}
+.btn-primary{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.btn-primary:hover{background:var(--navy-mid)}
+.content{padding:24px 28px;flex:1}
+
+/* ── LOADING ─────────────────────────────────── */
+#loading{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:12px}
+.spinner{width:32px;height:32px;border:2px solid var(--gray-200);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SUMMARY CARDS ───────────────────────────── */
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px}
+.sum-card{border-radius:var(--r12);padding:14px 16px}
+.sum-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;opacity:.8}
+.sum-num{font-size:28px;font-weight:500;line-height:1;margin-bottom:3px}
+.sum-sub{font-size:10px;opacity:.75}
+
+/* ── PIPELINE STRIP ──────────────────────────── */
+.pipeline-strip{display:flex;border-bottom:1px solid var(--gray-100);margin-bottom:16px;overflow-x:auto;background:var(--white);border-radius:var(--r12) var(--r12) 0 0;box-shadow:var(--shadow)}
+.pipe-tab{flex:1;min-width:80px;padding:10px 6px 12px;text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;position:relative}
+.pipe-dot{width:7px;height:7px;border-radius:50%;margin:0 auto 5px}
+.pipe-name{font-size:9px;font-weight:500;line-height:1.25;color:var(--gray-400)}
+.pipe-tab.active .pipe-name{color:var(--gray-800)}
+.pipe-count{font-size:9px;font-weight:500;margin-top:2px}
+
+/* ── FILTER ROW ──────────────────────────────── */
+.filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filt{font-size:11px;padding:4px 12px;border-radius:12px;border:1px solid var(--gray-200);background:transparent;color:var(--gray-400);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.filt:hover{border-color:var(--gray-300);color:var(--gray-600)}
+.filt.active{background:var(--gray-800);color:var(--white);border-color:var(--gray-800)}
+.filt.red-active{background:var(--red-lt);color:var(--red-txt);border-color:var(--red)}
+.filt.amber-active{background:var(--amber-lt);color:var(--amber-txt);border-color:var(--amber)}
+
+/* ── PROJECT CARDS ───────────────────────────── */
+.proj-cards{display:flex;flex-direction:column;gap:8px}
+.pcard{background:var(--white);border:1px solid var(--gray-100);border-radius:var(--r12);overflow:hidden;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s}
+.pcard:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:var(--gray-200)}
+.pcard.open{border-color:var(--gray-300)}
+.pcard.red  .pcard-head{border-left:4px solid var(--red)}
+.pcard.amber.pcard-head,.pcard.amber > .pcard-head{border-left:4px solid var(--amber)}
+.pcard.green > .pcard-head{border-left:4px solid var(--green)}
+.pcard-head{padding:12px 16px;display:flex;align-items:flex-start;gap:10px;border-left:4px solid transparent;transition:background .1s}
+.pcard:hover .pcard-head{background:var(--gray-50)}
+.pcard.open .pcard-head{border-bottom:1px solid var(--gray-100)}
+.pc-main{flex:1;min-width:0}
+.pc-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px}
+.pc-name{font-size:13px;font-weight:500;color:var(--gray-800)}
+.pc-client{font-size:11px;color:var(--gray-400)}
+.pc-pills{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.badge{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:500;white-space:nowrap}
+.days-badge{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.prog-mini{display:flex;align-items:center;gap:5px;margin-left:auto}
+.prog-bar-mini{width:56px;height:4px;background:var(--gray-100);border-radius:2px;overflow:hidden}
+.prog-fill-mini{height:100%;border-radius:2px;transition:width .3s}
+.alert-row{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.alert-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:var(--r8);border:1px solid}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.alert-body{flex:1}
+.alert-title{font-size:11px;font-weight:500;line-height:1.3}
+.alert-sub{font-size:10px;margin-top:2px;opacity:.8;line-height:1.4}
+.md-req{font-size:9px;padding:1px 6px;border-radius:5px;background:var(--red-lt);color:var(--red-txt);font-weight:500;flex-shrink:0;white-space:nowrap;align-self:flex-start}
+
+/* ── EXPANDED BODY ───────────────────────────── */
+.pcard-body{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pb-title{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-400);margin-bottom:8px}
+.pcl-item{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--gray-50);font-size:11px}
+.pcl-item:last-child{border-bottom:none}
+.pcl-tick{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--gray-200)}
+.pcl-tick.done{background:var(--green-lt);border-color:transparent}
+.pcl-tick.done::after{content:'✓';font-size:8px;color:var(--green-txt)}
+.pcl-text{flex:1;color:var(--gray-800);line-height:1.3}
+.pcl-text.done{text-decoration:line-through;color:var(--gray-300)}
+.blocker-bang{font-size:9px;padding:1px 5px;border-radius:5px;background:var(--red-lt);color:var(--red-txt);font-weight:500}
+.pcard-btns{padding:8px 16px 10px;border-top:1px solid var(--gray-50);display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── OWNER VIEW ──────────────────────────────── */
+.owner-wrap{}
+.owner-proj-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.opill{font-size:11px;padding:4px 12px;border-radius:12px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-400);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.opill.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.stage-tabs-row{display:flex;overflow-x:auto;border-bottom:1px solid var(--gray-100);margin-bottom:16px;background:var(--white);border-radius:var(--r12) var(--r12) 0 0;box-shadow:var(--shadow)}
+.stab{flex:1;min-width:80px;padding:9px 4px 11px;text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:all .12s}
+.stab-dot{width:6px;height:6px;border-radius:50%;margin:0 auto 4px}
+.stab-name{font-size:9px;font-weight:500;color:var(--gray-400);line-height:1.2}
+.stab-now{font-size:8px;font-weight:500;margin-top:2px}
+.stab.active .stab-name{color:var(--gray-800)}
+.owner-panel{background:var(--white);border:1px solid var(--gray-100);border-radius:0 0 var(--r12) var(--r12);box-shadow:var(--shadow);overflow:hidden}
+.op-head{padding:10px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.op-stage-name{font-size:14px;font-weight:500;color:var(--gray-800)}
+.op-pct{font-size:11px;color:var(--gray-400);margin-left:auto}
+.gates-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px;border-bottom:1px solid var(--gray-100)}
+.gate-box{border-radius:var(--r8);padding:8px 10px}
+.gate-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.gate-txt{font-size:11px;font-weight:500;line-height:1.4}
+.prog-row-full{padding:8px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:10px}
+.prog-bar-full{flex:1;height:5px;background:var(--gray-100);border-radius:3px;overflow:hidden}
+.prog-fill-full{height:100%;border-radius:3px;transition:width .3s}
+.groups{padding:8px 16px}
+.grp{border:1px solid var(--gray-100);border-radius:var(--r8);margin-bottom:7px;overflow:hidden}
+.grp:last-child{margin-bottom:0}
+.grp-head{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--gray-50);cursor:pointer;border-bottom:1px solid var(--gray-100)}
+.grp-head.collapsed{border-bottom:none}
+.grp-icon{font-size:13px;color:var(--gray-400)}
+.grp-name{font-size:11px;font-weight:500;color:var(--gray-800)}
+.grp-stats{font-size:10px;color:var(--gray-400);margin-left:auto}
+.q-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-bottom:1px solid var(--gray-50);cursor:pointer;transition:background .1s}
+.q-row:last-child{border-bottom:none}
+.q-row:hover{background:var(--gray-50)}
+.qtick{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--gray-200);font-size:9px;margin-top:1px}
+.qtick.y{background:var(--green-lt);border-color:transparent;color:var(--green-txt)}
+.qtick.n{background:var(--red-lt);border-color:transparent;color:var(--red-txt)}
+.qtick.na{background:var(--gray-50);color:var(--gray-400)}
+.qtick.cond{background:var(--amber-lt);border-color:transparent;color:var(--amber-txt)}
+.qtick.u{background:transparent;border:1px dashed var(--gray-200);color:var(--gray-300)}
+.qbody{flex:1}
+.qtext{font-size:11px;color:var(--gray-800);line-height:1.4}
+.qsub{font-size:10px;color:var(--gray-400);margin-top:2px;line-height:1.4}
+.qcrit{font-size:9px;padding:1px 6px;border-radius:6px;font-weight:500;flex-shrink:0;white-space:nowrap;align-self:flex-start;margin-top:2px}
+.q-expand{padding:8px 10px 10px 35px;display:none;border-bottom:1px solid var(--gray-50);background:var(--gray-50)}
+.q-row.open+.q-expand{display:block}
+.qdetail{font-size:10px;color:var(--gray-600);line-height:1.6;margin-bottom:8px}
+.qbtns{display:flex;gap:5px;flex-wrap:wrap}
+.qb{font-size:11px;padding:4px 12px;border-radius:var(--r8);border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .12s}
+.qb.y{border-color:var(--green);color:var(--green-txt)}.qb.y:hover{background:var(--green-lt)}
+.qb.n{border-color:var(--red);color:var(--red-txt)}.qb.n:hover{background:var(--red-lt)}
+.qb.na{border-color:var(--gray-200);color:var(--gray-400)}.qb.na:hover{background:var(--gray-50)}
+.cond-block{background:var(--amber-lt);border:1px solid var(--amber);border-radius:var(--r8);padding:9px 11px;margin-top:6px}
+.cond-q{font-size:11px;font-weight:500;color:var(--amber-txt);margin-bottom:7px}
+.cond-btns{display:flex;gap:6px;flex-wrap:wrap}
+.cond-btn{font-size:11px;padding:4px 12px;border-radius:var(--r8);border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500}
+.cond-btn.req{border-color:var(--amber);color:var(--amber-txt)}.cond-btn.req:hover{background:var(--amber-lt)}
+.cond-btn.skip{border-color:var(--gray-200);color:var(--gray-400)}.cond-btn.skip:hover{background:var(--gray-50)}
+.status-strip{padding:8px 16px;display:flex;align-items:center;gap:7px;border-top:1px solid var(--gray-100)}
+.ss-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.cl-section{padding:8px 16px;border-top:1px solid var(--gray-100)}
+.cl-title{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-400);margin-bottom:7px}
+.cl-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--gray-100);border-radius:var(--r8);margin-bottom:4px}
+.cl-row:last-child{margin-bottom:0}
+.cl-badge{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:500;white-space:nowrap}
+.cl-desc{flex:1;font-size:10px;color:var(--gray-400)}
+.cl-open{font-size:10px;padding:3px 10px;border-radius:var(--r8);border:1px solid var(--gray-300);background:var(--white);color:var(--gray-800);cursor:pointer;font-family:'DM Sans',sans-serif}
+.cl-open:hover{background:var(--gray-50)}
+.fin-note{margin:0 16px 12px;padding:8px 10px;border-radius:var(--r8);border-left:3px solid var(--gold);background:var(--gold-pale);font-size:10px;color:var(--gray-600);line-height:1.6}
+.fin-lbl{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+
+/* ── MODAL ───────────────────────────────────── */
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,31,61,.4);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px}
+.modal{background:var(--white);border-radius:var(--r16);padding:20px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h3{font-size:14px;font-weight:500;color:var(--gray-800);margin-bottom:14px}
+.modal label{font-size:11px;color:var(--gray-400);display:block;margin-bottom:3px;margin-top:10px}
+.modal input,.modal select{width:100%;padding:7px 10px;border:1px solid var(--gray-200);border-radius:var(--r8);font-size:12px;font-family:'DM Sans',sans-serif;color:var(--gray-800);background:var(--white);outline:none}
+.modal input:focus,.modal select:focus{border-color:var(--navy)}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+
+/* ── SAVING INDICATOR ────────────────────────── */
+.save-indicator{position:fixed;bottom:20px;right:20px;background:var(--navy);color:var(--white);font-size:11px;padding:8px 14px;border-radius:var(--r8);z-index:200;display:none;align-items:center;gap:7px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.save-indicator.show{display:flex}
+
+/* ── EMPTY STATE ─────────────────────────────── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--gray-400);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ──────────────────────────────── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-name">Trimstone</div>
+    <div class="sidebar-logo-sub">Pipeline dashboard</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Views</div>
+    <button class="sidebar-btn active" id="sb-owner" onclick="setMainView('owner')">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      My project
+    </button>
+    <button class="sidebar-btn" id="sb-partners" onclick="setMainView('partners')">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="11" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 14c0-2.761 1.791-5 4-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 14c0-2.761-1.791-5-4-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 9c2.209 0 4 2.239 4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 9c-2.209 0-4 2.239-4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Partners meeting
+    </button>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Projects</div>
+    <div class="proj-list" id="sidebar-projects"></div>
+  </div>
+
+  <div class="sidebar-footer">
+    Trimstone Partners · v1.0<br>
+    Connected to Supabase
+  </div>
+</nav>
+
+<!-- ── MAIN ─────────────────────────────────── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-title">Pipeline dashboard</div>
+      <div class="topbar-badge" id="topbar-badge" style="background:var(--navy-mid);color:var(--white)"></div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn" onclick="openAdd()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add project
+      </button>
+      <button class="btn btn-primary" onclick="loadDashboard()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 112 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 6V3M10 6H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Loading -->
+    <div id="loading">
+      <div class="spinner"></div>
+      <div style="font-size:12px;color:var(--gray-400)">Loading projects…</div>
+    </div>
+
+    <!-- Owner view -->
+    <div id="owner-view" style="display:none">
+      <div class="owner-proj-pills" id="owner-pills"></div>
+      <div class="stage-tabs-row" id="stage-tabs"></div>
+      <div class="owner-panel" id="owner-panel"></div>
+    </div>
+
+    <!-- Partners view -->
+    <div id="partners-view" style="display:none">
+      <div class="summary-grid" id="summary-grid"></div>
+      <div class="filter-row" id="filter-row"></div>
+      <div class="pipeline-strip" id="pipeline-strip"></div>
+      <div class="proj-cards" id="proj-cards"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal" style="display:none" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>Add project</h3>
+    <label>Project name (deal name)</label>
+    <input id="m-name" type="text" placeholder="e.g. Chief Transformation Officer">
+    <label>Client (account name)</label>
+    <input id="m-client" type="text" placeholder="e.g. NHBC">
+    <label>Lead partner (deal owner)</label>
+    <input id="m-lp" type="text" placeholder="e.g. Will">
+    <label>Stage</label>
+    <select id="m-stage">
+      <option value="discussions">In discussions</option>
+      <option value="scoping">Prospecting & scoping</option>
+      <option value="pricing">Pricing & proposing</option>
+      <option value="contracting">Contracting</option>
+      <option value="executing">Executing</option>
+      <option value="closing">Closing down (won)</option>
+      <option value="hold">On hold</option>
+    </select>
+    <div class="mbtns">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addProject()">Add project</button>
+    </div>
+  </div>
+</div>
+
+<!-- Save indicator -->
+<div class="save-indicator" id="save-ind">
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 3L5 9L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Saved
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIGURATION — replace with your values
+// ══════════════════════════════════════════════
+const SUPABASE_URL = 'https://zdlqjyszqlymppodgyi.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkbHFqeXN6cWx5eG1wcG9kZ3lpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyOTQwNjMsImV4cCI6MjA5Mjg3MDA2M30.TzZ1jxgYL4x4WvCgMPb9guTI8LE0nzo9svn_amr9Uok' // legacy anon JWT
+
+// ── DEMO MODE ─────────────────────────────────
+// Works immediately without Supabase credentials.
+// Replace SUPABASE_URL and SUPABASE_KEY above to go live.
+const DEMO_PROJECTS = [
+  {id:'NHBC-CTO',    deal_name:'Chief Transformation Officer', account_name:'NHBC',    deal_owner:'Will',  current_stage:'contracting', updated_at:'2026-05-19'},
+  {id:'Barclays-DS', deal_name:'Digital Strategy Review',      account_name:'Barclays',deal_owner:'Miguel',current_stage:'executing',   updated_at:'2026-05-12'},
+  {id:'Aviva-OM',    deal_name:'Operating Model Design',       account_name:'Aviva',   deal_owner:'Will',  current_stage:'pricing',     updated_at:'2026-05-28'},
+  {id:'GSK-ME',      deal_name:'Market Entry Assessment',      account_name:'GSK',     deal_owner:'James', current_stage:'discussions', updated_at:'2026-05-20'},
+  {id:'Lloyds-RC',   deal_name:'Regulatory Change Programme',  account_name:'Lloyds',  deal_owner:'Iryna', current_stage:'scoping',     updated_at:'2026-05-30'},
+  {id:'BT-WT',       deal_name:'Workforce Transformation',     account_name:'BT Group',deal_owner:'Will',  current_stage:'hold',        updated_at:'2026-05-01'},
+]
+const DEMO_TICKS = [
+  {project_id:'NHBC-CTO',    stage_key:'contracting', action_id:'crm1', is_done:true,  is_na:false},
+  {project_id:'Barclays-DS', stage_key:'executing',   action_id:'crm1', is_done:true,  is_na:false},
+  {project_id:'Barclays-DS', stage_key:'executing',   action_id:'torr1',is_done:true,  is_na:false},
+  {project_id:'Barclays-DS', stage_key:'executing',   action_id:'xero1',is_done:true,  is_na:false},
+  {project_id:'Barclays-DS', stage_key:'executing',   action_id:'tm1',  is_done:true,  is_na:false},
+  {project_id:'Aviva-OM',    stage_key:'pricing',     action_id:'crm1', is_done:true,  is_na:false},
+  {project_id:'Aviva-OM',    stage_key:'pricing',     action_id:'cl1',  is_done:true,  is_na:false},
+  {project_id:'GSK-ME',      stage_key:'discussions', action_id:'crm1', is_done:true,  is_na:false},
+  {project_id:'Lloyds-RC',   stage_key:'scoping',     action_id:'crm1', is_done:true,  is_na:false},
+  {project_id:'Lloyds-RC',   stage_key:'scoping',     action_id:'crm2', is_done:true,  is_na:false},
+  {project_id:'Lloyds-RC',   stage_key:'scoping',     action_id:'torr1',is_done:true,  is_na:false},
+  {project_id:'BT-WT',       stage_key:'hold',        action_id:'crm1', is_done:true,  is_na:false},
+  {project_id:'BT-WT',       stage_key:'hold',        action_id:'crm2', is_done:true,  is_na:false},
+]
+const DEMO_MODE = SUPABASE_URL.includes('YOUR-PROJECT')
+
+// ══════════════════════════════════════════════
+// STAGE DEFINITIONS
+// ══════════════════════════════════════════════
+const STAGES = [
+  {id:'discussions', short:'Discussing',  color:'#378ADD',bg:'#E6F1FB',tc:'#0C447C'},
+  {id:'scoping',     short:'Scoping',     color:'#7F77DD',bg:'#EEEDFE',tc:'#3C3489'},
+  {id:'pricing',     short:'Pricing',     color:'#1D9E75',bg:'#E1F5EE',tc:'#085041'},
+  {id:'contracting', short:'Contracting', color:'#EF9F27',bg:'#FAEEDA',tc:'#633806'},
+  {id:'executing',   short:'Executing',   color:'#639922',bg:'#EAF3DE',tc:'#27500A'},
+  {id:'closing',     short:'Closing',     color:'#2d6a4f',bg:'#d1fae5',tc:'#04342C'},
+  {id:'hold',        short:'On Hold',     color:'#BA7517',bg:'#FAEEDA',tc:'#412402'},
+]
+const stFor = id => STAGES.find(s=>s.id===id) || STAGES[0]
+
+const LP_C = {
+  Will:  {bg:'#E6F1FB',tc:'#0C447C'},
+  Miguel:{bg:'#EEEDFE',tc:'#3C3489'},
+  James: {bg:'#E1F5EE',tc:'#085041'},
+  Iryna: {bg:'#EAF3DE',tc:'#27500A'},
+}
+const GI = {'Zoho CRM':'🗄','Torr Portal':'📋','Client':'🏢','Team':'👥','Xero':'🧾','Finance':'💰'}
+
+// ══════════════════════════════════════════════
+// STAGE ASSESSMENT DATA
+// ══════════════════════════════════════════════
+const OWNER_STAGES = {
+  discussions:{
+    full:'In discussions',
+    entry:'A specific project opportunity identified',
+    exit:'Client requests further engagement',
+    finance:'Core Partners not reimbursed at this stage.',
+    roles:[{label:'Lead Partner',color:'#E6F1FB',tc:'#0C447C',desc:'Create and manage deal in CRM'}],
+    groups:[
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Deal created in Zoho CRM, linked to correct Account and Contact?',sub:'Deal name must reflect a specific project.',detail:'Go to Zoho CRM → Deals → New Deal. Link to Account and Contact.',blocker:true},
+        {id:'crm2',text:'Account priority set to High (H) in CRM?',sub:'Triggers Torr client visibility automatically.',detail:'Set in the Account record.',blocker:true},
+        {id:'crm3',text:'Next Step and Next Step Date recorded in CRM?',sub:'No deal should exist without a next step.',detail:'Set a specific next action and date.',blocker:true},
+      ]},
+      {name:'Client',qs:[
+        {id:'cl1',text:'Key client contacts and decision maker recorded in CRM?',sub:'Minimum one primary contact linked to the deal.',detail:'Record main client contact and decision maker.',blocker:false},
+        {id:'cl2',text:'Has the client actively requested further engagement?',sub:'Exit gate — until they ask for more, the deal stays here.',detail:'Log the client request in CRM as a note.',blocker:true},
+      ]}
+    ]
+  },
+  scoping:{
+    full:'Prospecting & scoping',
+    entry:'Client requested further engagement',
+    exit:'Trimstone preparing a formal commercial proposition',
+    finance:'Core Partners not reimbursed for proposal costs.',
+    roles:[{label:'Lead Partner',color:'#EEEDFE',tc:'#3C3489',desc:'Workspace setup, CRM, approach'},{label:'Co-owner / Core Partner',color:'#EEEDFE',tc:'#534AB7',desc:'Delivery hypothesis & cost agreement'}],
+    groups:[
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Deal stage updated to Prospecting & Scoping in Zoho CRM?',sub:'Triggers Zoho workflow and email notification.',detail:'Update immediately when client requests further engagement.',blocker:true},
+        {id:'crm2',text:'Co-Owners recorded in CRM with proposal cost agreement?',sub:'Co-owners share proposal costs if deal does not materialise.',detail:'Add Core Partners as Co-Owners.',blocker:true},
+        {id:'crm3',text:'Expected project start date entered in CRM?',sub:'Set far enough out to allow negotiations.',detail:'Enter a realistic start date.',blocker:false},
+      ]},
+      {name:'Torr Portal',qs:[
+        {id:'torr1',text:'Project workspace and project code auto-created in Torr?',sub:'Triggered automatically when CRM stage is updated.',detail:'Check workspace has appeared. If not, contact James.',blocker:true},
+        {id:'torr2',text:'Discovery notes and client materials stored in Torr workspace?',sub:'Torr workspace is the authoritative storage from this stage.',detail:'Upload all meeting notes, client materials, discovery outputs.',blocker:false},
+      ]},
+      {name:'Client',qs:[
+        {id:'cl1',text:'Formal proposal prepared?',sub:'Do not share externally until Pricing Sheet v2 approved by MD.',detail:'Use Torr tools — Proposal Generator, TAIA, PPT Generator.',blocker:true},
+      ]}
+    ]
+  },
+  pricing:{
+    full:'Pricing & proposing',
+    entry:'Preparing a formal or semi-formal proposal',
+    exit:'Pricing Sheet v4 MD sign-off + client email confirmation of award',
+    finance:'Partners may transfer prior personal expenses to project code only at Executing stage.',
+    roles:[{label:'Lead Partner',color:'#E1F5EE',tc:'#085041',desc:'Pricing sheet owner — v1, v3, v4'},{label:'Co-owner / Core Partner',color:'#E1F5EE',tc:'#0F6E56',desc:'Margin & staffing input'},{label:'Consulting MD',color:'#9FE1CB',tc:'#085041',desc:'v2 & v4 sign-off'}],
+    groups:[
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Pricing & Proposing in Zoho CRM?',sub:'Triggers email notification with pricing template.',detail:'Update as soon as you move to formal proposal preparation.',blocker:true}]},
+      {name:'Client',qs:[
+        {id:'cl1',text:'Pricing Sheet v1 completed — delivery model, roles, rates, assumptions?',sub:'Internal only. Submit to MD before sharing anything externally.',detail:'Complete all sections. Do not share externally.',blocker:true},
+        {id:'cl2',text:'Consulting MD approved Pricing Sheet v2 before any external sharing?',sub:'No proposal shared externally below v2 — no exceptions.',detail:'Only after v2 approval can you share with the client.',blocker:true},
+        {id:'cl3',text:'Negotiation changes captured and Pricing Sheet updated to v3?',sub:'v3 reflects what the client believes they are buying.',detail:'Update after client discussions and negotiations.',blocker:true},
+        {id:'cl4',text:'Pricing Sheet v4 completed, correctly named, and MD final sign-off obtained?',sub:'Format: [Client]: [Project ID] [Project name] Pricing Sheet v.Final [Date]',detail:'Submit v4 to MD (CC Iryna). Store in Confidential folder.',blocker:true},
+        {id:'cl5',text:'Client email confirmation of award received?',sub:'Exit gate — unlocks move to Contracting.',detail:'Written confirmation must be received and stored in Torr workspace.',blocker:true},
+      ]}
+    ]
+  },
+  contracting:{
+    full:'Contracting',
+    entry:'Client award confirmed + MD sign-off on Pricing Sheet v4',
+    exit:'Signed SoW + all MSAs countersigned by MD — within 2 weeks',
+    finance:'Work may begin at risk. Expenses held until Executing.',
+    roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#633806',desc:'SoW, CRM update, onboarding lead'},{label:'Iryna',color:'#FAC775',tc:'#412402',desc:'NDAs, MSAs, KYC/AML'},{label:'Consulting MD',color:'#EF9F27',tc:'#412402',desc:'SoW + MSA countersigning'},{label:'James / Miguel',color:'#FAEEDA',tc:'#633806',desc:'M365, Torr, WeWork'}],
+    groups:[
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Contracting — start date, end date, contract amount in CRM?',sub:'Dates and amount must match Pricing Sheet v4.',detail:'Update immediately on award confirmation.',blocker:true}]},
+      {name:'Client',qs:[
+        {id:'cl1',text:'Client SoW is signed?',sub:'MD signs all SoWs. Do not move to Executing without a signed SoW.',detail:'Draft SoW, send via Zoho Sign (CC MD and Iryna). Follow up after 5 days. Escalate to MD after 10.',blocker:true},
+        {id:'cl2',text:'KYC/AML and confidential client requirements completed?',sub:'If needed — required for regulated clients (banks, FCA firms).',detail:'Iryna manages. Covers insurances, cyber security, supplier onboarding.',blocker:true,conditional:true},
+      ]},
+      {name:'Team',qs:[
+        {id:'tm1',text:'Subcontractor MSA contracts signed by staff and countersigned by MD?',sub:'Iryna drafts. MD countersigns all. Save in Confidential folder.',detail:'Use Trimstone_MSA_Final.docx. MD must countersign all executed MSAs.',blocker:true},
+        {id:'tm2',text:'NDAs signed by all project team members who require them?',sub:'If needed — use Zoho Sign.',detail:'Iryna prepares using Trimstone_Standard NDA_Corporate_Template.docx.',blocker:false,conditional:true},
+        {id:'tm3',text:'Team onboarded — M365 account, Torr access, WeWork passes?',sub:'Critical — confirm if new subcontractors on this project, mark N/A if not.',detail:'James creates M365 accounts and grants Torr access. Miguel issues WeWork passes. Send welcome message from Trimstone account (CC team).',blocker:true,conditional:true},
+        {id:'tm4',text:'All team members added to Torr Portal Team tab with full details?',sub:'Full name, role, email, time, hours — all required fields.',detail:'Required before timesheets can be enabled in Executing.',blocker:true},
+        {id:'tm5',text:'Team trained on Torr (timesheets, TAIA, folders) and WeWork?',sub:'Lead Partner / PMO responsible.',detail:'Confirm all team members can log in and submit timesheets.',blocker:false},
+      ]}
+    ]
+  },
+  executing:{
+    full:'Executing (project live)',
+    entry:'Internal MD sign-off from Contracting',
+    exit:'Delivery complete',
+    finance:'First stage expenses can be formally assigned to project code. Escalate invoices after 45 days.',
+    roles:[{label:'Lead Partner',color:'#EAF3DE',tc:'#27500A',desc:'Delivery governance, timesheets, CRM'},{label:'Iryna',color:'#C0DD97',tc:'#27500A',desc:'Monthly invoicing, supplier reminders'},{label:'Filip',color:'#EAF3DE',tc:'#3B6D11',desc:'Xero setup, profitability reporting'}],
+    groups:[
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Executing — start/end dates and final budget confirmed?',sub:'End date tracked throughout delivery.',detail:'Update stage. Confirm dates consistent with Xero.',blocker:true}]},
+      {name:'Torr Portal',qs:[{id:'torr1',text:'Timesheets enabled in Torr and all team members submitting weekly?',sub:'LP approves weekly. Reconcile against invoice.',detail:'Enable timesheets for the project. All team members submit weekly.',blocker:true}]},
+      {name:'Xero',qs:[{id:'xero1',text:'Project set up in Xero by Filip — finance code matches Torr project code?',sub:'Finance code must match Torr code exactly.',detail:'Ask Iryna to request Filip. Finance code must match Torr code.',blocker:true}]},
+      {name:'Team',qs:[
+        {id:'tm1',text:'Internal and client kickoff meetings run?',sub:'Internal first, then client kickoff with delivery plan.',detail:'Internal kickoff first. Then client kickoff.',blocker:true},
+        {id:'tm2',text:'Team trained on Xero expenses (Appendix B) and Torr timesheets?',sub:'All team members must be able to submit before delivery begins.',detail:'Training on Xero expense submission and Torr timesheet entry.',blocker:false},
+      ]}
+    ]
+  },
+  closing:{
+    full:'Closing down (won)',
+    entry:'Delivery complete',
+    exit:'Invoice issued · payment received · access removed · knowledge captured',
+    finance:'All expenses submitted before final invoice. Review window 3rd–6th of month.',
+    roles:[{label:'Lead Partner',color:'#d1fae5',tc:'#04342C',desc:'Client confirmation, CRM, follow-on'},{label:'Finance / Filip',color:'#9FE1CB',tc:'#085041',desc:'Final invoice, expense reconciliation'},{label:'James / Ops',color:'#d1fae5',tc:'#04342C',desc:'Access removal'}],
+    groups:[
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Closing Down (Won) in CRM?',sub:'Set immediately on delivery completion.',detail:'Update deal stage. Record potential extensions, new workstreams, or referrals.',blocker:true}]},
+      {name:'Client',qs:[
+        {id:'cl1',text:'Written confirmation of delivery completion received from client?',sub:'Email is sufficient. Retain in Torr workspace.',detail:'Get written confirmation.',blocker:true},
+        {id:'cl2',text:'Client system access removed for all Trimstone team members?',sub:'Client\'s responsibility — Lead Partner confirms.',detail:'Contact the client to confirm.',blocker:false},
+      ]},
+      {name:'Xero',qs:[
+        {id:'xero1',text:'All expenses submitted and reconciled before final invoice?',sub:'All team expenses in before final invoice goes out.',detail:'Expenses submitted by 3rd. LP and Filip review 3rd–6th.',blocker:true},
+        {id:'xero2',text:'Final invoice issued and payment received?',sub:'Payment overdue 45+ days triggers Finance escalation.',detail:'Filip issues final invoice after expenses cleared.',blocker:true},
+      ]},
+      {name:'Torr Portal',qs:[{id:'torr1',text:'Project materials archived in Torr workspace?',sub:'All outputs and correspondence archived.',detail:'Ensure all materials are in correct folders.',blocker:false}]},
+      {name:'Team',qs:[{id:'tm1',text:'Trimstone system access removed for all rolling-off consultants?',sub:'James removes Torr, M365, Xero. Exceptions must be recorded.',detail:'James removes access. Exceptions must be recorded.',blocker:true}]}
+    ]
+  },
+  hold:{
+    full:'On hold',
+    entry:'4-weekly review decision to pause',
+    exit:'Re-activate or move to Closed Lost',
+    finance:'No new pursuit costs unless explicitly approved by MD.',
+    roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#412402',desc:'CRM update, review scheduling'}],
+    groups:[
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Deal stage updated to On Hold with specific reason recorded?',sub:'Be specific about what caused the pause.',detail:'Record the exact reason.',blocker:true},
+        {id:'crm2',text:'Next Review Date set aligned to 4-weekly portfolio review?',sub:'All on-hold deals reviewed on the same fixed day.',detail:'If not re-activated within the window, move to Closed Lost.',blocker:true},
+      ]},
+      {name:'Client',qs:[{id:'cl1',text:'Restart trigger defined — what would cause this deal to re-activate?',sub:'Must be specific and measurable.',detail:'Record in CRM. E.g. "Client confirms new budget October 2026".',blocker:true}]}
+    ]
+  },
+}
+
+// ══════════════════════════════════════════════
+// STATE — direct REST fetch (no supabase-js needed)
+// ══════════════════════════════════════════════
+const HEADERS = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+}
+
+async function sbSelect(table, columns='*', filters={}) {
+  let url = `${SUPABASE_URL}/rest/v1/${table}?select=${columns}`
+  Object.entries(filters).forEach(([k,v]) => url += `&${k}=eq.${encodeURIComponent(v)}`)
+  const r = await fetch(url, { headers: HEADERS })
+  if (!r.ok) throw new Error(`${table}: ${r.status} ${await r.text()}`)
+  return r.json()
+}
+
+async function sbUpsert(table, row, onConflict) {
+  const url = `${SUPABASE_URL}/rest/v1/${table}?on_conflict=${onConflict}`
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { ...HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(row)
+  })
+  if (!r.ok) { const t = await r.text(); throw new Error(t) }
+  return { error: null }
+}
+
+async function sbInsert(table, row) {
+  const url = `${SUPABASE_URL}/rest/v1/${table}`
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: HEADERS,
+    body: JSON.stringify(row)
+  })
+  if (!r.ok) { const t = await r.text(); throw new Error(t) }
+  return { data: await r.json(), error: null }
+}
+const P = new URLSearchParams(location.search)
+const currentUser = P.get('user') || 'dashboard-user'
+const currentRole = P.get('role') || 'lead-partner'
+
+let projects = []
+let mainView = 'owner'
+let ownerSelId = null
+let ownerStage = null
+let ownerOpenQ = null
+let ownerCollapsed = new Set()
+let pFilter = 'all'
+let pStageFilter = 'all'
+let pOpenId = null
+const TODAY = new Date()
+
+function daysAgo(d) { return d ? Math.round((TODAY - new Date(d)) / 86400000) : 0 }
+function stO(s) { return s==='red'?0:s==='amber'?1:2 }
+
+// ══════════════════════════════════════════════
+// SUPABASE — LOAD
+// ══════════════════════════════════════════════
+async function loadDashboard() {
+  document.getElementById('loading').style.display = 'flex'
+  document.getElementById('owner-view').style.display = 'none'
+  document.getElementById('partners-view').style.display = 'none'
+
+  // Demo mode — works without Supabase credentials
+  if (DEMO_MODE) {
+    return loadDemoData()
+  }
+
+  try {
+    const [rows, prog, tix] = await Promise.all([
+      sbSelect('projects', 'id,deal_name,account_name,deal_owner,current_stage,updated_at'),
+      sbSelect('project_stage_progress', 'project_id,stage_key,done_count,total_count,pct_complete'),
+      sbSelect('ticks', 'project_id,stage_key,action_id,is_done,is_na,last_toggled_by,last_toggled_at'),
+    ])
+
+    // Build tick map: "pid__stage__action" → {done, na}
+    const tickMap = {}
+    tix.forEach(t => {
+      tickMap[`${t.project_id}__${t.stage_key}__${t.action_id}`] = {
+        done: t.is_done,
+        na:   t.is_na || false,
+        by:   t.last_toggled_by,
+        at:   t.last_toggled_at,
+      }
+    })
+
+    // Build progress map
+    const progMap = {}
+    prog.forEach(p => { progMap[`${p.project_id}__${p.stage_key}`] = p })
+
+    // Build projects array
+    projects = (rows || []).map(r => {
+      const answers = buildAnswers(r.id, r.current_stage, tickMap)
+      return {
+        id:         r.id,
+        name:       r.deal_name || 'Unnamed project',
+        client:     r.account_name || '—',
+        lp:         r.deal_owner || '—',
+        stage:      r.current_stage || 'discussions',
+        movedAt:    r.updated_at,
+        answers,
+        condAnswers:{},
+        progress:   progMap[`${r.id}__${r.current_stage}`] || {done_count:0,total_count:0,pct_complete:0},
+        status:     calcStatus(r.id, r.current_stage, tickMap),
+        alerts:     buildAlerts(r, tickMap),
+      }
+    })
+
+    // Apply URL params
+    if (P.get('project')) {
+      const found = projects.find(p => p.id === P.get('project'))
+      if (found) ownerSelId = found.id
+    }
+    if (!ownerSelId && projects.length) ownerSelId = projects[0].id
+    if (P.get('stage'))  ownerStage = P.get('stage')
+    if (P.get('view'))   setMainView(P.get('view'))
+    if (P.get('filter')) pFilter = P.get('filter')
+
+    subscribeToTicks()
+    renderSidebar()
+
+    document.getElementById('loading').style.display = 'none'
+    if (mainView === 'owner') renderOwner()
+    else renderPartners()
+
+  } catch(err) {
+    document.getElementById('loading').innerHTML =
+      `<div style="color:#A32D2D;text-align:center"><strong>Connection error</strong><br><span style="font-size:11px;color:#6b6860">${err.message}<br><br>Check SUPABASE_URL and SUPABASE_KEY at the top of this file.</span></div>`
+  }
+}
+
+function buildAnswers(pid, stageKey, tickMap) {
+  const answers = {}
+  const sd = OWNER_STAGES[stageKey]
+  if (!sd) return answers
+  sd.groups.flatMap(g => g.qs).forEach(q => {
+    const t = tickMap[`${pid}__${stageKey}__${q.id}`]
+    if (t) answers[q.id] = t.na ? 'na' : t.done ? 'yes' : 'no'
+  })
+  return answers
+}
+
+function calcStatus(pid, stageKey, tickMap) {
+  const sd = OWNER_STAGES[stageKey]
+  if (!sd) return 'green'
+  const qs = sd.groups.flatMap(g => g.qs)
+  const undone = qs.filter(q => q.blocker && !q.conditional &&
+    tickMap[`${pid}__${stageKey}__${q.id}`]?.done !== true).length
+  return undone > 2 ? 'red' : undone > 0 ? 'amber' : 'green'
+}
+
+function buildAlerts(r, tickMap) {
+  const alerts = []
+  const sd = OWNER_STAGES[r.current_stage]
+  if (!sd) return alerts
+  const blockers = sd.groups.flatMap(g=>g.qs).filter(q =>
+    q.blocker && !q.conditional &&
+    tickMap[`${r.id}__${r.current_stage}__${q.id}`]?.done !== true
+  )
+  if (blockers.length > 0) {
+    alerts.push({
+      icon:'⚠️',
+      title:`${blockers.length} critical action${blockers.length>1?'s':''} outstanding`,
+      sub: blockers.slice(0,2).map(q=>q.text).join(' · '),
+      mdAction: blockers.some(q=>q.id.includes('md') || q.text.toLowerCase().includes('md')),
+      urgency: blockers.length > 2 ? 'red' : 'amber'
+    })
+  }
+  const days = daysAgo(r.updated_at)
+  if (days > 10 && alerts.length === 0) {
+    alerts.push({icon:'⏰',title:`${days} days in this stage — no recent updates`,sub:'Check CRM is up to date and next step is set.',mdAction:false,urgency:'amber'})
+  }
+  if (alerts.length === 0) {
+    alerts.push({icon:'✅',title:'Progressing well',sub:'No critical actions outstanding.',mdAction:false,urgency:'green'})
+  }
+  return alerts
+}
+
+// ══════════════════════════════════════════════
+// SUPABASE — WRITE
+// ══════════════════════════════════════════════
+async function writeAnswer(p, qid, val) {
+  showSaving()
+  const isDone = val === 'yes'
+  const isNa   = val === 'na'
+
+  const { error } = await sbUpsert('ticks', {
+    project_id:        p.id,
+    stage_key:         p.stage,
+    action_id:         qid,
+    is_done:           isDone,
+    is_na:             isNa,
+    last_toggled_by:   currentUser,
+    last_toggled_role: currentRole,
+    last_toggled_at:   new Date().toISOString(),
+  }, 'project_id,action_id')
+
+  if (error) { console.error('Write failed:', error); hideSaving(false) }
+  else hideSaving(true)
+}
+
+// ══════════════════════════════════════════════
+// SUPABASE — REAL-TIME
+// ══════════════════════════════════════════════
+function subscribeToTicks() {
+  // Poll every 15 seconds for updates (real-time websocket replaced with polling)
+  setInterval(async () => {
+    try {
+      const tix = await sbSelect('ticks', 'project_id,stage_key,action_id,is_done,is_na')
+      tix.forEach(t => {
+        const p = projects.find(x => x.id === t.project_id)
+        if (!p) return
+        if (t.stage_key === p.stage) {
+          p.answers[t.action_id] = t.is_na ? 'na' : t.is_done ? 'yes' : 'no'
+          p.status = recalcStatus(p)
+        }
+      })
+      if (mainView === 'owner') renderOwner()
+      else renderPartners()
+    } catch(e) { /* silent fail on poll */ }
+  }, 15000)
+}
+
+function recalcStatus(p) {
+  const sd = OWNER_STAGES[p.stage]
+  if (!sd) return 'green'
+  const undone = sd.groups.flatMap(g=>g.qs).filter(q =>
+    q.blocker && !q.conditional && p.answers[q.id] !== 'yes'
+  ).length
+  return undone > 2 ? 'red' : undone > 0 ? 'amber' : 'green'
+}
+
+// ══════════════════════════════════════════════
+// SAVE INDICATOR
+// ══════════════════════════════════════════════
+let saveTimer
+function showSaving() {
+  const el = document.getElementById('save-ind')
+  el.innerHTML = '<span style="width:10px;height:10px;border:1.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block"></span> Saving…'
+  el.classList.add('show')
+}
+function hideSaving(ok) {
+  const el = document.getElementById('save-ind')
+  el.innerHTML = ok ? '✓ Saved' : '✗ Error saving'
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(() => el.classList.remove('show'), 1800)
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function isEffectiveBlocker(p, q) {
+  if (!q.conditional) return q.blocker
+  const req = p.condAnswers[`${p.stage}_${q.id}_req`]
+  if (req === 'na') return false
+  if (req === 'yes') return q.blocker
+  return false
+}
+
+function critLabel(p, q) {
+  if (!q.conditional) {
+    return q.blocker
+      ? `<span class="qcrit" style="background:#FCEBEB;color:#A32D2D">Critical</span>`
+      : `<span class="qcrit" style="background:var(--gray-50);color:var(--gray-400)">Recommended</span>`
+  }
+  const req = p.condAnswers[`${p.stage}_${q.id}_req`]
+  if (req === 'yes') return q.blocker
+    ? `<span class="qcrit" style="background:#FCEBEB;color:#A32D2D">Critical</span>`
+    : `<span class="qcrit" style="background:var(--gray-50);color:var(--gray-400)">Recommended</span>`
+  if (req === 'na') return `<span class="qcrit" style="background:var(--gray-50);color:var(--gray-400)">N/A</span>`
+  return `<span class="qcrit" style="background:#FAEEDA;color:#854F0B">If needed</span>`
+}
+
+function condQ(qid) {
+  if (qid === 'tm3') return 'Are there new subcontractors on this project that need onboarding?'
+  if (qid === 'tm2') return 'Do any project team members require NDAs?'
+  if (qid === 'cl2') return 'Does this client require KYC/AML or confidential compliance steps?'
+  return 'Is this required for this project?'
+}
+
+// ══════════════════════════════════════════════
+// VIEW TOGGLE
+// ══════════════════════════════════════════════
+function setMainView(v) {
+  mainView = v
+  document.getElementById('owner-view').style.display = v==='owner' ? 'block' : 'none'
+  document.getElementById('partners-view').style.display = v==='partners' ? 'block' : 'none'
+  document.getElementById('topbar-title').textContent = v==='owner' ? 'My project' : 'Partners meeting'
+  document.getElementById('sb-owner').className = 'sidebar-btn' + (v==='owner' ? ' active' : '')
+  document.getElementById('sb-partners').className = 'sidebar-btn' + (v==='partners' ? ' active' : '')
+  if (v==='owner') renderOwner(); else renderPartners()
+}
+
+// ══════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════
+function renderSidebar() {
+  document.getElementById('sidebar-projects').innerHTML = projects.map(p => {
+    const st = stFor(p.stage)
+    return `<div class="proj-item ${ownerSelId===p.id?'active':''}" onclick="selProj('${p.id}')">
+      <div class="proj-dot" style="background:${st.color}"></div>
+      <span style="overflow:hidden;text-overflow:ellipsis">${p.name}</span>
+    </div>`
+  }).join('')
+}
+
+// ══════════════════════════════════════════════
+// OWNER VIEW
+// ══════════════════════════════════════════════
+function renderOwner() {
+  const p = projects.find(x => x.id === ownerSelId)
+  if (!p) { document.getElementById('owner-view').innerHTML = '<div class="empty">Select a project from the sidebar.</div>'; return }
+
+  const viewSt = ownerStage || p.stage
+  const vst = stFor(viewSt)
+  const vsd = OWNER_STAGES[viewSt]
+  if (!vsd) return
+  const isCur = viewSt === p.stage
+  const answers = isCur ? p.answers : {}
+  const condAns = isCur ? p.condAnswers : {}
+  const allQs = vsd.groups.flatMap(g => g.qs)
+  const yCount = allQs.filter(q => answers[q.id] === 'yes').length
+  const pct = allQs.length ? Math.round((yCount/allQs.length)*100) : 0
+  const bLeft = allQs.filter(q => isEffectiveBlocker(p,q) && answers[q.id] !== 'yes' && answers[q.id] !== 'na').length
+
+  // Pills
+  document.getElementById('owner-pills').innerHTML =
+    projects.map(px => `<button class="opill ${ownerSelId===px.id?'active':''}" onclick="selProj('${px.id}')">${px.name}</button>`).join('')
+
+  // Stage tabs
+  document.getElementById('stage-tabs').innerHTML = STAGES.map(st => {
+    const isCurSt = p.stage === st.id
+    const isAct = viewSt === st.id
+    return `<div class="stab ${isAct?'active':''}" style="border-bottom:2px solid ${isAct?st.color:'transparent'}" onclick="oSetStage('${st.id}')">
+      <div class="stab-dot" style="background:${st.color}"></div>
+      <div class="stab-name" style="${isAct?`color:${st.color}`:''}; font-size:9px">${st.short}</div>
+      ${isCurSt ? `<div class="stab-now" style="color:${st.color}">▶ now</div>` : '<div style="height:11px"></div>'}
+    </div>`
+  }).join('')
+
+  // Groups
+  const groupsHtml = vsd.groups.map(g => {
+    const gId = `${viewSt}-${g.name}`
+    const isCol = ownerCollapsed.has(gId)
+    const gDone = g.qs.filter(q => answers[q.id] === 'yes').length
+
+    const qsHtml = g.qs.map(q => {
+      const ans = answers[q.id]
+      const reqKey = `${p.stage}_${q.id}_req`
+      const req = condAns[reqKey]
+      const isOpen = ownerOpenQ === `${ownerSelId}-${viewSt}-${q.id}`
+
+      let tCls, tIcon
+      if (q.conditional && req===undefined) { tCls='cond'; tIcon='?' }
+      else if (ans==='yes') { tCls='y'; tIcon='✓' }
+      else if (ans==='no')  { tCls='n'; tIcon='✗' }
+      else if (ans==='na' || req==='na') { tCls='na'; tIcon='—' }
+      else { tCls='u'; tIcon='?' }
+
+      let actionBlock = ''
+      if (isOpen && isCur) {
+        if (q.conditional) {
+          if (req === undefined) {
+            actionBlock = `<div class="cond-block">
+              <div class="cond-q">${condQ(q.id)}</div>
+              <div class="cond-btns">
+                <button class="cond-btn req" onclick="setReq('${reqKey}','yes')">✓ Yes — required${q.blocker?' (becomes Critical)':''}</button>
+                <button class="cond-btn skip" onclick="setReq('${reqKey}','na')">— N/A — not needed</button>
+              </div>
+            </div>`
+          } else if (req === 'yes') {
+            actionBlock = `<div class="qbtns" style="margin-top:6px">
+              <button class="qb y" onclick="oSetA('${q.id}','yes')">✓ Yes — done</button>
+              <button class="qb n" onclick="oSetA('${q.id}','no')">✗ No — not yet</button>
+              <button class="qb na" onclick="setReq('${reqKey}','na')">— Mark N/A instead</button>
+            </div>`
+          } else {
+            actionBlock = `<div style="font-size:10px;color:var(--gray-400);margin-top:6px">Marked as not required. <button class="qb na" style="font-size:10px;padding:2px 8px" onclick="setReq('${reqKey}',undefined)">Change</button></div>`
+          }
+        } else {
+          actionBlock = `<div class="qbtns">
+            <button class="qb y" onclick="oSetA('${q.id}','yes')">✓ Yes — done</button>
+            <button class="qb n" onclick="oSetA('${q.id}','no')">✗ No — not yet</button>
+            <button class="qb na" onclick="oSetA('${q.id}','na')">— N/A</button>
+          </div>`
+        }
+      }
+
+      return `<div class="q-row ${isOpen?'open':''}" onclick="oToggleQ('${ownerSelId}-${viewSt}-${q.id}')">
+        <div class="qtick ${tCls}">${tIcon}</div>
+        <div class="qbody">
+          <div class="qtext">${q.text}</div>
+          ${q.sub ? `<div class="qsub">${q.sub}</div>` : ''}
+        </div>
+        ${critLabel(p, q)}
+        <span style="font-size:11px;color:var(--gray-300);margin-left:4px;margin-top:2px">${isOpen?'▲':'▼'}</span>
+      </div>
+      <div class="q-expand">
+        <div class="qdetail">${q.detail}</div>
+        ${actionBlock}
+      </div>`
+    }).join('')
+
+    return `<div class="grp">
+      <div class="grp-head ${isCol?'collapsed':''}" onclick="oToggleGrp('${gId}')">
+        <span class="grp-icon">${GI[g.name]||'📋'}</span>
+        <span class="grp-name">${g.name}</span>
+        <span class="grp-stats">${gDone}/${g.qs.length} done</span>
+        <span style="font-size:10px;color:var(--gray-300);margin-left:4px">${isCol?'▼':'▲'}</span>
+      </div>
+      ${isCol ? '' : qsHtml}
+    </div>`
+  }).join('')
+
+  const clHtml = vsd.roles.map(r => `
+    <div class="cl-row">
+      <span class="cl-badge" style="background:${r.color};color:${r.tc}">${r.label}</span>
+      <span class="cl-desc">${r.desc}</span>
+      <button class="cl-open" onclick="openChecklist('${p.id}','${viewSt}','${r.label}')">Open →</button>
+    </div>`).join('')
+
+  const status = isCur
+    ? (bLeft===0
+      ? `<div class="status-strip"><div class="ss-dot" style="background:var(--green)"></div><span style="font-size:11px;color:var(--green-txt)">All critical actions cleared — ready to advance</span></div>`
+      : `<div class="status-strip"><div class="ss-dot" style="background:var(--red)"></div><span style="font-size:11px;color:var(--red-txt)">${bLeft} critical action${bLeft>1?'s':''} outstanding before advancing</span></div>`)
+    : ''
+
+  document.getElementById('owner-panel').innerHTML = `
+    <div class="op-head">
+      <div style="width:8px;height:8px;border-radius:50%;background:${vst.color}"></div>
+      <div class="op-stage-name">${vsd.full}</div>
+      ${isCur
+        ? `<span class="badge" style="background:${vst.bg};color:${vst.tc}">Current — ${p.name}</span><span class="op-pct">${yCount}/${allQs.length} done</span>`
+        : `<span class="badge" style="background:var(--gray-100);color:var(--gray-600)">Reference view</span>`}
+    </div>
+    <div class="gates-row">
+      <div class="gate-box" style="background:${vst.bg}30;border:1px solid ${vst.color}40">
+        <div class="gate-lbl" style="color:${vst.tc}">Entry gate</div>
+        <div class="gate-txt">${vsd.entry}</div>
+      </div>
+      <div class="gate-box" style="background:var(--amber-lt);border:1px solid var(--amber)">
+        <div class="gate-lbl" style="color:#854F0B">Exit gate — must achieve</div>
+        <div class="gate-txt" style="color:var(--amber-txt)">${vsd.exit}</div>
+      </div>
+    </div>
+    ${isCur ? `<div class="prog-row-full"><div class="prog-bar-full"><div class="prog-fill-full" style="width:${pct}%;background:${vst.color}"></div></div><span style="font-size:11px;color:var(--gray-400)">${pct}%</span></div>` : ''}
+    <div class="groups">${groupsHtml}</div>
+    ${status}
+    <div class="cl-section">
+      <div class="cl-title">Open shared project checklist</div>
+      ${clHtml}
+      <div style="font-size:10px;color:var(--gray-400);margin-top:5px">Stage: <strong>${vsd.full}</strong> · Project: <strong>${p.name}</strong> · Role pre-filled automatically</div>
+    </div>
+    <div class="fin-note" style="margin-top:8px">
+      <div class="fin-lbl">Finance note</div>${vsd.finance}
+    </div>`
+
+  document.getElementById('topbar-badge').textContent = p.name
+  document.getElementById('topbar-badge').style.cssText = `background:${vst.bg};color:${vst.tc}`
+}
+
+function openChecklist(pid, stageKey, role) {
+  // Wire to your GitHub Pages URL — replace with your actual URL
+  const base = 'https://trimstone-app.github.io/handbook'
+  const url = `${base}?project=${encodeURIComponent(pid)}&stage=${stageKey}&role=${encodeURIComponent(role)}`
+  window.open(url, '_blank')
+}
+
+// Owner actions
+function selProj(id) { ownerSelId=id; ownerStage=null; ownerOpenQ=null; ownerCollapsed.clear(); renderSidebar(); renderOwner() }
+function oSetStage(id) { ownerStage=id; ownerOpenQ=null; ownerCollapsed.clear(); renderOwner() }
+function oToggleQ(k) { ownerOpenQ = ownerOpenQ===k ? null : k; renderOwner() }
+function oToggleGrp(id) { ownerCollapsed.has(id) ? ownerCollapsed.delete(id) : ownerCollapsed.add(id); renderOwner() }
+
+async function oSetA(qid, val) {
+  const p = projects.find(x => x.id === ownerSelId)
+  if (!p) return
+  p.answers[qid] = val
+  p.status = recalcStatus(p)
+  ownerOpenQ = null
+  renderOwner()
+  await writeAnswer(p, qid, val)
+}
+
+function setReq(key, val) {
+  const p = projects.find(x => x.id === ownerSelId)
+  if (!p) return
+  if (val === undefined) delete p.condAnswers[key]
+  else p.condAnswers[key] = val
+  ownerOpenQ = null
+  renderOwner()
+}
+
+// ══════════════════════════════════════════════
+// PARTNERS VIEW
+// ══════════════════════════════════════════════
+function renderPartners() {
+  const red    = projects.filter(p => p.status==='red').length
+  const amber  = projects.filter(p => p.status==='amber').length
+  const green  = projects.filter(p => p.status==='green').length
+  const mdN    = projects.filter(p => p.alerts.some(a => a.mdAction)).length
+
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="sum-card" style="background:var(--red-lt)">
+      <div class="sum-label" style="color:var(--red-txt)">Blocked</div>
+      <div class="sum-num" style="color:var(--red-txt)">${red}</div>
+      <div class="sum-sub" style="color:var(--red-txt)">critical action missing</div>
+    </div>
+    <div class="sum-card" style="background:var(--amber-lt)">
+      <div class="sum-label" style="color:var(--amber-txt)">Needs attention</div>
+      <div class="sum-num" style="color:var(--amber-txt)">${amber}</div>
+      <div class="sum-sub" style="color:var(--amber-txt)">owner to act</div>
+    </div>
+    <div class="sum-card" style="background:var(--green-lt)">
+      <div class="sum-label" style="color:var(--green-txt)">On track</div>
+      <div class="sum-num" style="color:var(--green-txt)">${green}</div>
+      <div class="sum-sub" style="color:var(--green-txt)">progressing well</div>
+    </div>
+    <div class="sum-card" style="background:var(--purple-lt)">
+      <div class="sum-label" style="color:var(--purple-txt)">MD sign-off needed</div>
+      <div class="sum-num" style="color:var(--purple-txt)">${mdN}</div>
+      <div class="sum-sub" style="color:var(--purple-txt)">waiting for MD</div>
+    </div>`
+
+  // Filter row
+  document.getElementById('filter-row').innerHTML = [
+    ['all','All projects',projects.length,''],
+    ['red','Blocked',red,'red-active'],
+    ['attention','Needs attention',red+amber,'amber-active'],
+    ['md','MD sign-off needed',mdN,''],
+  ].map(([f,label,cnt,extra]) =>
+    `<button class="filt ${pFilter===f?'active '+extra:''}" onclick="setPFilt('${f}')">${label} <span style="opacity:.6">${cnt}</span></button>`
+  ).join('')
+
+  // Stage bar
+  const stageCnts = {}
+  STAGES.forEach(s => stageCnts[s.id] = projects.filter(p => p.stage===s.id).length)
+  document.getElementById('pipeline-strip').innerHTML =
+    [{id:'all',short:'All',color:'#888780'},...STAGES].map(st => {
+      const cnt = st.id==='all' ? projects.length : (stageCnts[st.id]||0)
+      if (st.id!=='all' && cnt===0) return ''
+      const isAct = pStageFilter === st.id
+      return `<div class="pipe-tab ${isAct?'active':''}" style="border-bottom:2px solid ${isAct?st.color:'transparent'}" onclick="setPStage('${st.id}')">
+        <div class="pipe-dot" style="background:${st.color}"></div>
+        <div class="pipe-name" style="${isAct?`color:${st.color}`:''}">${st.short}</div>
+        <div class="pipe-count" style="color:${st.color}">${cnt}</div>
+      </div>`
+    }).join('')
+
+  // Cards
+  let visible = [...projects].sort((a,b) => stO(a.status)-stO(b.status))
+  if (pStageFilter !== 'all') visible = visible.filter(p => p.stage === pStageFilter)
+  if (pFilter === 'red') visible = visible.filter(p => p.status==='red')
+  if (pFilter === 'attention') visible = visible.filter(p => p.status!=='green')
+  if (pFilter === 'md') visible = visible.filter(p => p.alerts.some(a => a.mdAction))
+
+  if (!visible.length) {
+    document.getElementById('proj-cards').innerHTML = '<div class="empty">No projects match this filter.</div>'
+    return
+  }
+
+  document.getElementById('proj-cards').innerHTML = visible.map(p => {
+    const st = stFor(p.stage)
+    const lpc = LP_C[p.lp] || {bg:'#F1EFE8',tc:'#444'}
+    const days = daysAgo(p.movedAt)
+    const daysColor = days>14?'var(--red-txt)':days>7?'var(--amber-txt)':'var(--gray-400)'
+    const daysBg = days>14?'var(--red-lt)':days>7?'var(--amber-lt)':'var(--gray-50)'
+    const prog = p.progress
+    const pct = prog.pct_complete ? Math.round(prog.pct_complete) : 0
+    const isOpen = pOpenId === p.id
+    const sd = OWNER_STAGES[p.stage]
+    const allQs = sd ? sd.groups.flatMap(g=>g.qs) : []
+
+    const alertsHtml = p.alerts.map(a => {
+      const uc = a.urgency==='red'
+        ? {bg:'var(--red-lt)',border:'#F09595',tc:'var(--red-txt)'}
+        : a.urgency==='amber'
+        ? {bg:'var(--amber-lt)',border:'#FAC775',tc:'var(--amber-txt)'}
+        : {bg:'var(--green-lt)',border:'#C0DD97',tc:'var(--green-txt)'}
+      return `<div class="alert-item" style="background:${uc.bg};border-color:${uc.border}">
+        <span class="alert-icon">${a.icon}</span>
+        <div class="alert-body">
+          <div class="alert-title" style="color:${uc.tc}">${a.title}</div>
+          <div class="alert-sub" style="color:${uc.tc}">${a.sub}</div>
+        </div>
+        ${a.mdAction ? `<span class="md-req">MD required</span>` : ''}
+      </div>`
+    }).join('')
+
+    const clHtml = allQs.slice(0,5).map(q => `
+      <div class="pcl-item">
+        <div class="pcl-tick ${p.answers[q.id]==='yes'?'done':''}"></div>
+        <span class="pcl-text ${p.answers[q.id]==='yes'?'done':''}">${q.text}</span>
+        ${q.blocker && p.answers[q.id] !== 'yes' ? `<span class="blocker-bang">!</span>` : ''}
+      </div>`).join('')
+
+    return `<div class="pcard ${p.status} ${isOpen?'open':''}" onclick="pToggle('${p.id}')">
+      <div class="pcard-head">
+        <div class="pc-main">
+          <div class="pc-top">
+            <span class="pc-name">${p.name}</span>
+            <span class="pc-client">${p.client}</span>
+          </div>
+          <div class="pc-pills">
+            <span class="badge" style="background:${st.bg||'#F1EFE8'};color:${st.tc||'#444'}">${st.short}</span>
+            <span class="badge" style="background:${lpc.bg};color:${lpc.tc}">${p.lp}</span>
+            ${p.alerts.some(a=>a.urgency==='red') ? `<span class="badge" style="background:var(--red-lt);color:var(--red-txt)">⚠ Blocked</span>` : ''}
+            ${p.alerts.some(a=>a.mdAction) ? `<span class="badge" style="background:var(--purple-lt);color:var(--purple-txt)">🔒 MD</span>` : ''}
+            <span class="days-badge" style="background:${daysBg};color:${daysColor}">${days}d</span>
+            <div class="prog-mini">
+              <div class="prog-bar-mini"><div class="prog-fill-mini" style="width:${pct}%;background:${st.color}"></div></div>
+              <span style="font-size:10px;color:var(--gray-400)">${prog.done_count||0}/${prog.total_count||allQs.length}</span>
+            </div>
+          </div>
+          <div class="alert-row">${alertsHtml}</div>
+        </div>
+        <span style="font-size:12px;color:var(--gray-300);margin-top:4px;flex-shrink:0">${isOpen?'▲':'▼'}</span>
+      </div>
+      ${isOpen ? `
+        <div class="pcard-body">
+          <div><div class="pb-title">Stage checklist</div>${clHtml}</div>
+          <div><div class="pb-title">What needs attention</div>${alertsHtml}</div>
+        </div>
+        <div class="pcard-btns">
+          <button class="btn btn-primary" onclick="event.stopPropagation();setMainView('owner');selProj('${p.id}')">Open owner view</button>
+          <button class="btn" onclick="event.stopPropagation();openChecklist('${p.id}','${p.stage}','Lead Partner')">Open checklist →</button>
+        </div>` : ''}
+    </div>`
+  }).join('')
+}
+
+function setPFilt(f) { pFilter=f; renderPartners() }
+function setPStage(s) { pStageFilter=s; renderPartners() }
+function pToggle(id) { pOpenId = pOpenId===id ? null : id; renderPartners() }
+
+// ══════════════════════════════════════════════
+// ADD PROJECT
+// ══════════════════════════════════════════════
+function openAdd() { document.getElementById('modal').style.display = 'flex' }
+function closeModal() { document.getElementById('modal').style.display = 'none' }
+
+async function addProject() {
+  const name  = document.getElementById('m-name').value.trim()
+  const client = document.getElementById('m-client').value.trim()
+  const lp    = document.getElementById('m-lp').value.trim()
+  const stage = document.getElementById('m-stage').value
+  if (!name || !client) return alert('Project name and client are required.')
+
+  showSaving()
+  const { data, error } = await sbInsert('projects', {
+    deal_name:     name,
+    account_name:  client,
+    deal_owner:    lp || 'Unknown',
+    current_stage: stage,
+  })
+
+  if (error) { hideSaving(false); return }
+  hideSaving(true)
+  closeModal()
+  await loadDashboard()
+}
+
+// ══════════════════════════════════════════════
+// DEMO MODE LOADER
+// ══════════════════════════════════════════════
+function loadDemoData() {
+  const tickMap = {}
+  DEMO_TICKS.forEach(t => {
+    tickMap[`${t.project_id}__${t.stage_key}__${t.action_id}`] = {done:t.is_done, na:t.is_na||false}
+  })
+
+  projects = DEMO_PROJECTS.map(r => {
+    const answers = buildAnswers(r.id, r.current_stage, tickMap)
+    return {
+      id:         r.id,
+      name:       r.deal_name,
+      client:     r.account_name,
+      lp:         r.deal_owner,
+      stage:      r.current_stage,
+      movedAt:    r.updated_at,
+      answers,
+      condAnswers:{},
+      progress:   calcDemoProgress(r.id, r.current_stage, tickMap),
+      status:     calcStatus(r.id, r.current_stage, tickMap),
+      alerts:     buildAlerts(r, tickMap),
+    }
+  })
+
+  if (P.get('project')) {
+    const found = projects.find(p => p.id === P.get('project'))
+    if (found) ownerSelId = found.id
+  }
+  if (!ownerSelId && projects.length) ownerSelId = projects[0].id
+  if (P.get('stage'))  ownerStage = P.get('stage')
+  if (P.get('view'))   setMainView(P.get('view'))
+  if (P.get('filter')) pFilter = P.get('filter')
+
+  document.getElementById('loading').style.display = 'none'
+
+  // Show demo banner
+  const banner = document.createElement('div')
+  banner.style.cssText = 'background:#FAEEDA;border-bottom:1px solid #FAC775;padding:7px 28px;font-size:11px;color:#633806;display:flex;align-items:center;gap:8px;'
+  banner.innerHTML = '<strong>Demo mode</strong> — showing sample data. Replace <code>SUPABASE_URL</code> and <code>SUPABASE_KEY</code> at the top of this file to connect to live data. Changes made here are not saved.'
+  document.querySelector('.main').insertBefore(banner, document.querySelector('.content'))
+
+  renderSidebar()
+  if (mainView === 'owner') renderOwner()
+  else renderPartners()
+}
+
+function calcDemoProgress(pid, stageKey, tickMap) {
+  const sd = OWNER_STAGES[stageKey]
+  if (!sd) return {done_count:0,total_count:0,pct_complete:0}
+  const qs = sd.groups.flatMap(g=>g.qs)
+  const done = qs.filter(q => tickMap[`${pid}__${stageKey}__${q.id}`]?.done === true).length
+  return {done_count:done, total_count:qs.length, pct_complete:Math.round((done/qs.length)*100)}
+}
+
+// In demo mode, writes update local state only (no Supabase)
+const _origWriteAnswer = writeAnswer
+async function writeAnswer(p, qid, val) {
+  if (DEMO_MODE) return // silently skip — demo banner explains why
+  return _origWriteAnswer(p, qid, val)
+}
+
+// In demo mode, skip Supabase insert for new projects
+const _origAddProject = addProject
+async function addProject() {
+  if (DEMO_MODE) {
+    const name  = document.getElementById('m-name').value.trim()
+    const client = document.getElementById('m-client').value.trim()
+    const lp    = document.getElementById('m-lp').value.trim()
+    const stage = document.getElementById('m-stage').value
+    if (!name || !client) return alert('Project name and client are required.')
+    const id = name.replace(/\s+/g,'-').substring(0,12) + '-' + Date.now()
+    projects.push({id,name,client,lp:lp||'—',stage,movedAt:new Date().toISOString().split('T')[0],answers:{},condAnswers:{},progress:{done_count:0,total_count:0,pct_complete:0},status:'green',alerts:[{icon:'✅',title:'Just added',sub:'Begin stage checklist.',mdAction:false,urgency:'green'}]})
+    ownerSelId = id
+    closeModal()
+    renderSidebar()
+    renderOwner()
+    return
+  }
+  return _origAddProject()
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadDashboard()
+</script>
+</body>
+</html>
