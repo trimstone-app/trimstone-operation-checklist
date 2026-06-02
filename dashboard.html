@@ -528,14 +528,17 @@ const HEADERS = {
   'apikey': SUPABASE_KEY,
   'Authorization': 'Bearer ' + SUPABASE_KEY,
   'Content-Type': 'application/json',
-  'Prefer': 'return=representation'
+  'Accept': 'application/json'
 }
 
 async function sbSelect(table, columns='*', filters={}) {
   let url = `${SUPABASE_URL}/rest/v1/${table}?select=${columns}`
   Object.entries(filters).forEach(([k,v]) => url += `&${k}=eq.${encodeURIComponent(v)}`)
-  const r = await fetch(url, { headers: HEADERS })
-  if (!r.ok) throw new Error(`${table}: ${r.status} ${await r.text()}`)
+  const r = await fetch(url, { headers: HEADERS, mode: 'cors' })
+  if (!r.ok) {
+    const txt = await r.text()
+    throw new Error(`${table} ${r.status}: ${txt}`)
+  }
   return r.json()
 }
 
@@ -650,7 +653,7 @@ async function loadDashboard() {
 
   } catch(err) {
     document.getElementById('loading').innerHTML =
-      `<div style="color:#A32D2D;text-align:center"><strong>Connection error</strong><br><span style="font-size:11px;color:#6b6860">${err.message}<br><br>Check SUPABASE_URL and SUPABASE_KEY at the top of this file.</span></div>`
+      `<div style="color:#A32D2D;text-align:center;padding:2rem"><strong>Connection error</strong><br><span style="font-size:11px;color:#6b6860;display:block;margin-top:8px">${err.message}</span><br><button onclick="loadDashboard()" style="font-size:11px;padding:6px 14px;border:1px solid #ccc;border-radius:6px;cursor:pointer;margin-top:8px">Retry</button></div>`
   }
 }
 
