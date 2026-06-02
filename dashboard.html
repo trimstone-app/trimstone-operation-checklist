@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -335,7 +335,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 // ══════════════════════════════════════════════
 // CONFIGURATION — replace with your values
 // ══════════════════════════════════════════════
-const SUPABASE_URL = 'https://zdlqjyszqlymppodgyi.supabase.co'
+const SUPABASE_URL = 'https://zdlqjyszqlyxmppodgyi.supabase.co'
+const SUPABASE_REST = 'https://' + 'zdlqjyszqlyxmppodgyi' + '.supabase.co/rest/v1'
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkbHFqeXN6cWx5eG1wcG9kZ3lpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyOTQwNjMsImV4cCI6MjA5Mjg3MDA2M30.TzZ1jxgYL4x4WvCgMPb9guTI8LE0nzo9svn_amr9Uok' // legacy anon JWT
 
 // ── DEMO MODE ─────────────────────────────────
@@ -532,7 +533,7 @@ const HEADERS = {
 }
 
 async function sbSelect(table, columns='*', filters={}) {
-  let url = `${SUPABASE_URL}/rest/v1/${table}?select=${columns}`
+  let url = SUPABASE_REST + '/' + table + '?select=' + columns
   Object.entries(filters).forEach(([k,v]) => url += `&${k}=eq.${encodeURIComponent(v)}`)
   const r = await fetch(url, { headers: HEADERS, mode: 'cors' })
   if (!r.ok) {
@@ -543,7 +544,7 @@ async function sbSelect(table, columns='*', filters={}) {
 }
 
 async function sbUpsert(table, row, onConflict) {
-  const url = `${SUPABASE_URL}/rest/v1/${table}?on_conflict=${onConflict}`
+  const url = SUPABASE_REST + '/' + table + '?on_conflict=' + onConflict
   const r = await fetch(url, {
     method: 'POST',
     headers: { ...HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
@@ -554,7 +555,7 @@ async function sbUpsert(table, row, onConflict) {
 }
 
 async function sbInsert(table, row) {
-  const url = `${SUPABASE_URL}/rest/v1/${table}`
+  const url = SUPABASE_REST + '/' + table
   const r = await fetch(url, {
     method: 'POST',
     headers: HEADERS,
