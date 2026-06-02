@@ -219,6 +219,57 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 
 /* ── EMPTY STATE ─────────────────────────────── */
 .empty{text-align:center;padding:3rem 1rem;color:var(--gray-400);font-size:13px}
+
+/* ── GRID VIEW ───────────────────────────────── */
+.grid-wrap{overflow-x:auto}
+.grid-legend{display:flex;gap:12px;align-items:center;margin-bottom:10px;flex-wrap:wrap;padding:8px 0}
+.gl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-600)}
+.gl-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+.grid-proj-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.grid-pill{font-size:11px;padding:4px 12px;border-radius:12px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-600);cursor:pointer;transition:all .12s;font-family:'DM Sans',sans-serif}
+.grid-pill.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.gtable{border-collapse:collapse;min-width:100%}
+.gtable th{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);padding:6px 4px;text-align:center;border-bottom:1px solid var(--gray-100);white-space:nowrap;min-width:52px}
+.gtable th.th-label{text-align:left;min-width:130px;padding-left:0;color:var(--gray-600)}
+.gtable th.th-stage{cursor:pointer;transition:all .12s;padding:6px 3px}
+.gtable th.th-stage:hover{background:var(--gray-50)}
+.gtable th.th-stage.cur{color:var(--navy)}
+.th-dot-g{width:7px;height:7px;border-radius:50%;margin:0 auto 3px}
+.th-now-g{font-size:8px;margin-top:2px;font-weight:600}
+.gtable tr.g-group-row td{background:var(--gray-50);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);padding:5px 4px;border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100);text-align:center}
+.gtable tr.g-group-row td.g-grp-label{text-align:left;padding-left:2px;display:flex;align-items:center;gap:5px}
+.gtable tr.g-action-row td{border-bottom:1px solid var(--gray-50);padding:1px 2px}
+.gtable tr.g-action-row td.g-row-label{font-size:10px;color:var(--gray-800);padding:5px 6px 5px 2px;line-height:1.3;vertical-align:middle;font-style:normal}
+.gtable tr.g-action-row td.g-row-label.cond-lbl{font-style:italic;color:var(--gray-400)}
+.gcell{width:52px;text-align:center;vertical-align:middle;cursor:pointer;transition:background .1s;position:relative}
+.gcell:hover{background:var(--gray-50)}
+.gcell.highlighted{background:#E6F1FB20}
+.gcell.cur-stage{background:#FAEEDA15}
+.tick{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:3px auto;font-size:10px;transition:all .2s;position:relative}
+.tick.done{background:var(--green-lt);color:var(--green-txt)}
+.tick.nope{background:var(--red-lt);color:var(--red-txt)}
+.tick.na{background:var(--gray-50);color:var(--gray-300);border:1px solid var(--gray-200)}
+.tick.cond{background:var(--amber-lt);color:var(--amber-txt)}
+.tick.unanswered{background:transparent;border:1.5px dashed var(--gray-200);color:var(--gray-300)}
+.tick.blocker{box-shadow:0 0 0 2px var(--red)}
+.g-count{font-size:9px;color:var(--gray-400);font-weight:500}
+.g-count.has-done{color:var(--green-txt)}
+/* Cell popup */
+.cell-popup{position:absolute;z-index:200;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r12);padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:200px;left:50%;transform:translateX(-50%);top:calc(100% + 6px);text-align:left}
+.cell-popup-title{font-size:11px;font-weight:500;color:var(--gray-800);margin-bottom:3px;line-height:1.4}
+.cell-popup-stage{font-size:10px;color:var(--gray-400);margin-bottom:10px}
+.cell-popup-btns{display:flex;gap:5px;flex-wrap:wrap}
+.cpb{font-size:11px;padding:5px 12px;border-radius:var(--r8);border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .12s;white-space:nowrap}
+.cpb.y{border-color:var(--green);color:var(--green-txt)}.cpb.y:hover{background:var(--green-lt)}
+.cpb.n{border-color:var(--red);color:var(--red-txt)}.cpb.n:hover{background:var(--red-lt)}
+.cpb.na{border-color:var(--gray-200);color:var(--gray-400)}.cpb.na:hover{background:var(--gray-50)}
+.cond-confirm{background:var(--amber-lt);border:1px solid var(--amber);border-radius:var(--r8);padding:9px 10px;margin-bottom:8px}
+.cond-q{font-size:11px;font-weight:500;color:var(--amber-txt);margin-bottom:6px}
+.cond-btns{display:flex;gap:5px;flex-wrap:wrap}
+.cdb{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500}
+.cdb.req{border-color:var(--amber);color:var(--amber-txt)}.cdb.req:hover{background:var(--amber-lt)}
+.cdb.skip{border-color:var(--gray-200);color:var(--gray-400)}.cdb.skip:hover{background:var(--gray-50)}
+
 </style>
 </head>
 <body>
@@ -239,6 +290,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
     <button class="sidebar-btn" id="sb-partners" onclick="setMainView('partners')">
       <svg viewBox="0 0 16 16" fill="none"><circle cx="5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="11" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 14c0-2.761 1.791-5 4-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 14c0-2.761-1.791-5-4-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 9c2.209 0 4 2.239 4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 9c-2.209 0-4 2.239-4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Partners meeting
+    </button>
+    <button class="sidebar-btn" id="sb-grid" onclick="setMainView('grid')">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+      Pipeline grid
     </button>
   </div>
 
@@ -263,6 +318,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
       <div class="topbar-badge" id="topbar-badge" style="background:var(--navy-mid);color:var(--white)"></div>
     </div>
     <div class="topbar-right">
+      <div class="view-toggle">
+        <button class="vt-btn active" id="vbtn-owner" onclick="setMainView('owner')">My project</button>
+        <button class="vt-btn" id="vbtn-partners" onclick="setMainView('partners')">Partners meeting</button>
+        <button class="vt-btn" id="vbtn-grid" onclick="setMainView('grid')">Grid view</button>
+      </div>
       <button class="btn" onclick="openAdd()">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         Add project
@@ -294,6 +354,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
       <div class="filter-row" id="filter-row"></div>
       <div class="pipeline-strip" id="pipeline-strip"></div>
       <div class="proj-cards" id="proj-cards"></div>
+    </div>
+
+    <!-- Grid view -->
+    <div id="grid-view" style="display:none">
+      <div id="grid-container"></div>
     </div>
   </div>
 </div>
@@ -569,6 +634,7 @@ const currentUser = P.get('user') || 'dashboard-user'
 const currentRole = P.get('role') || 'lead-partner'
 
 let projects = []
+let allTicksCache = {} // pid__stage__action → {done, na}
 let mainView = 'owner'
 let ownerSelId = null
 let ownerStage = null
@@ -605,12 +671,10 @@ async function loadDashboard() {
     // Build tick map: "pid__stage__action" → {done, na}
     const tickMap = {}
     tix.forEach(t => {
-      tickMap[`${t.project_id}__${t.stage_key}__${t.action_id}`] = {
-        done: t.is_done,
-        na:   t.is_na || false,
-        by:   t.last_toggled_by,
-        at:   t.last_toggled_at,
-      }
+      const k = `${t.project_id}__${t.stage_key}__${t.action_id}`
+      const v = { done: t.is_done, na: t.is_na || false, by: t.last_toggled_by, at: t.last_toggled_at }
+      tickMap[k] = v
+      allTicksCache[k] = v
     })
 
     // Build progress map
@@ -814,10 +878,17 @@ function setMainView(v) {
   mainView = v
   document.getElementById('owner-view').style.display = v==='owner' ? 'block' : 'none'
   document.getElementById('partners-view').style.display = v==='partners' ? 'block' : 'none'
-  document.getElementById('topbar-title').textContent = v==='owner' ? 'My project' : 'Partners meeting'
+  document.getElementById('grid-view').style.display = v==='grid' ? 'block' : 'none'
+  document.getElementById('topbar-title').textContent = v==='owner' ? 'My project' : v==='grid' ? 'Pipeline grid' : 'Partners meeting'
   document.getElementById('sb-owner').className = 'sidebar-btn' + (v==='owner' ? ' active' : '')
   document.getElementById('sb-partners').className = 'sidebar-btn' + (v==='partners' ? ' active' : '')
-  if (v==='owner') renderOwner(); else renderPartners()
+  ;['owner','partners','grid'].forEach(x => {
+    const b = document.getElementById('vbtn-'+x)
+    if (b) b.className = 'vt-btn' + (v===x ? ' active' : '')
+  })
+  if (v==='owner') renderOwner()
+  else if (v==='grid') renderGrid()
+  else renderPartners()
 }
 
 // ══════════════════════════════════════════════
@@ -1234,6 +1305,7 @@ function loadDemoData() {
 
   renderSidebar()
   if (mainView === 'owner') renderOwner()
+  else if (mainView === 'grid') renderGrid()
   else renderPartners()
 }
 
@@ -1270,6 +1342,262 @@ async function addProject() {
     return
   }
   return _origAddProject()
+}
+
+
+// ══════════════════════════════════════════════
+// GRID VIEW
+// ══════════════════════════════════════════════
+const GRID_ROWS = [
+  {group:'Zoho CRM', icon:'🗄', items:[
+    {id:'crm1', label:'Stage updated in CRM',        applicable:['discussions','scoping','pricing','contracting','executing','closing','hold'], blocker:true},
+    {id:'crm2', label:'Next step & dates set',        applicable:['discussions','scoping','hold','contracting','executing'],                    blocker:true},
+    {id:'crm3', label:'Account priority set to High', applicable:['discussions'],                                                               blocker:true},
+    {id:'crm4', label:'Co-owners & costs agreed',     applicable:['scoping'],                                                                  blocker:true},
+  ]},
+  {group:'Torr Portal', icon:'📋', items:[
+    {id:'torr1', label:'Workspace created & team set up',  applicable:['scoping','pricing','contracting','executing','closing'],  blocker:true},
+    {id:'torr2', label:'Timesheets enabled & running',     applicable:['executing'],                                              blocker:true},
+    {id:'torr3', label:'Materials archived',               applicable:['closing'],                                               blocker:false},
+  ]},
+  {group:'Client', icon:'🏢', items:[
+    {id:'cl1',  label:'Proposal prepared',              applicable:['scoping','pricing'],           blocker:true},
+    {id:'cl2',  label:'Pricing Sheet v4 MD sign-off',   applicable:['pricing'],                     blocker:true},
+    {id:'cl3',  label:'Client SoW is signed',           applicable:['contracting'],                 blocker:true},
+    {id:'cl4',  label:'KYC / confidential reqs',        applicable:['contracting'],                 blocker:true,  conditional:true},
+    {id:'cl5',  label:'Delivery confirmed in writing',  applicable:['closing'],                     blocker:true},
+    {id:'cl6',  label:'Client access removed',          applicable:['closing'],                     blocker:false},
+  ]},
+  {group:'Team', icon:'👥', items:[
+    {id:'tm1', label:'MSA contracts signed',                   applicable:['contracting'],          blocker:true},
+    {id:'tm2', label:'NDAs signed',                            applicable:['contracting'],          blocker:false, conditional:true},
+    {id:'tm3', label:'Team onboarded (M365, Torr, WeWork)',    applicable:['contracting'],          blocker:true,  conditional:true},
+    {id:'tm4', label:'All team on Torr Team tab',              applicable:['contracting'],          blocker:true},
+    {id:'tm5', label:'Kickoff meetings run',                   applicable:['executing'],            blocker:true},
+    {id:'tm6', label:'Team trained (Torr, Xero, WeWork)',      applicable:['contracting','executing'], blocker:false},
+    {id:'tm7', label:'System access removed on close',         applicable:['closing'],              blocker:true},
+  ]},
+  {group:'Xero', icon:'🧾', items:[
+    {id:'xero1', label:'Project set up in Xero',     applicable:['executing','closing'],  blocker:true},
+    {id:'xero2', label:'Final invoice issued',        applicable:['closing'],             blocker:true},
+  ]},
+]
+
+let gridSelProj = null
+let gridOpenCell = null // {itemId, stageId}
+
+function renderGrid() {
+  const el = document.getElementById('grid-container')
+  if (!el) return
+  if (!projects.length) { el.innerHTML = '<div class="empty">No projects loaded.</div>'; return }
+
+  if (!gridSelProj) gridSelProj = projects[0].id
+  const p = projects.find(x => x.id === gridSelProj) || projects[0]
+
+  // Project pills
+  const pills = projects.map(px =>
+    `<button class="grid-pill ${px.id===gridSelProj?'active':''}" onclick="gridSelProject('${px.id}')">${px.name}</button>`
+  ).join('')
+
+  // Legend
+  const legend = `<div class="grid-legend">
+    <div class="gl-item"><div class="gl-dot" style="background:var(--green-lt);color:var(--green-txt)">✓</div> Done</div>
+    <div class="gl-item"><div class="gl-dot" style="background:var(--red-lt);color:var(--red-txt)">✗</div> Not yet</div>
+    <div class="gl-item"><div class="gl-dot" style="background:var(--gray-50);border:1px solid var(--gray-200);color:var(--gray-300)">—</div> N/A</div>
+    <div class="gl-item"><div class="gl-dot" style="background:var(--amber-lt);color:var(--amber-txt)">?</div> If needed</div>
+    <div class="gl-item"><div class="gl-dot" style="background:transparent;border:1.5px dashed var(--gray-200);color:var(--gray-300)">?</div> Unanswered</div>
+    <span style="margin-left:auto;font-size:11px;color:var(--gray-400)">Click any cell to update · <strong>${p.name}</strong> · ${p.client}</span>
+  </div>`
+
+  // Build table
+  let html = `<div class="grid-proj-pills">${pills}</div>${legend}<div class="grid-wrap"><table class="gtable">`
+
+  // Header row
+  html += '<thead><tr><th class="th-label"></th>'
+  STAGES.forEach(st => {
+    const isCur = st.id === p.stage
+    html += `<th class="th-stage ${isCur?'cur':''}" style="border-bottom:2px solid ${isCur?st.color:'transparent'}">
+      <div class="th-dot-g" style="background:${st.color}"></div>
+      <div style="font-size:9px;font-weight:500;color:${isCur?st.color:'var(--gray-400)'}">${st.short}</div>
+      ${isCur?`<div class="th-now-g" style="color:${st.color}">▶ now</div>`:'<div style="height:11px"></div>'}
+    </th>`
+  })
+  html += '</tr></thead><tbody>'
+
+  // Rows
+  GRID_ROWS.forEach(grp => {
+    // Group header row with counts
+    html += '<tr class="g-group-row">'
+    html += `<td class="g-grp-label">${grp.icon} ${grp.group}</td>`
+    STAGES.forEach(st => {
+      const rel = grp.items.filter(it => it.applicable.includes(st.id))
+      if (!rel.length) { html += '<td></td>'; return }
+      const done = rel.filter(it => {
+        const ans = (p.answers||{})[it.id]
+        return ans === 'yes'
+      }).length
+      const isCur = st.id === p.stage
+      html += `<td style="${isCur?`color:${st.color};font-weight:600`:''}" class="g-count ${done>0?'has-done':''}">${done}/${rel.length}</td>`
+    })
+    html += '</tr>'
+
+    // Item rows
+    grp.items.forEach(item => {
+      html += '<tr class="g-action-row">'
+      const isCondLabel = item.conditional
+      html += `<td class="g-row-label ${isCondLabel?'cond-lbl':''}">${item.label}${item.conditional?' <span style="font-size:9px;color:var(--amber)">if needed</span>':''}</td>`
+
+      STAGES.forEach(st => {
+        if (!item.applicable.includes(st.id)) {
+          html += `<td style="text-align:center;color:var(--gray-200);font-size:11px">—</td>`
+          return
+        }
+
+        const isCur = st.id === p.stage
+        const ans = (p.answers||{})[item.id]
+        const condKey = `${p.stage}_${item.id}_req`
+        const condAns = (p.condAnswers||{})[condKey]
+        const isOpen = gridOpenCell && gridOpenCell.itemId === item.id && gridOpenCell.stageId === st.id && gridOpenCell.projId === p.id
+
+        // Get tick state for this specific stage
+        const stageAns = getStageAnswer(p, item.id, st.id)
+        const stageCond = getStageCondAns(p, item.id, st.id)
+
+        // Determine tick state
+        let tickCls, tickIcon
+        if (item.conditional) {
+          if (stageCond === 'na') { tickCls='na'; tickIcon='—' }
+          else if (stageCond === 'yes') {
+            if (stageAns==='yes') { tickCls='done'; tickIcon='✓' }
+            else if (stageAns==='no') { tickCls='nope'; tickIcon='✗' }
+            else { tickCls='unanswered'; tickIcon='?' }
+          } else { tickCls='cond'; tickIcon='?' }
+        } else {
+          if (stageAns==='yes')     { tickCls='done'; tickIcon='✓' }
+          else if (stageAns==='no') { tickCls='nope'; tickIcon='✗' }
+          else if (stageAns==='na') { tickCls='na'; tickIcon='—' }
+          else                      { tickCls='unanswered'; tickIcon='?' }
+        }
+
+        const isBlocker = item.blocker && isCur && tickCls!=='done' && tickCls!=='na'
+        const popupHtml = isOpen ? buildCellPopup(item, st, p, stageAns, stageCond, condKey) : ''
+
+        html += `<td class="gcell ${isCur?'cur-stage':''}" onclick="toggleCellPopup('${item.id}','${st.id}','${p.id}',event)" style="position:relative">
+          <div class="tick ${tickCls} ${isBlocker?'blocker':''}">${tickIcon}</div>
+          ${popupHtml}
+        </td>`
+      })
+      html += '</tr>'
+    })
+  })
+
+  html += '</tbody></table></div>'
+  el.innerHTML = html
+}
+
+function buildCellPopup(item, st, p, ans, condAns, condKey) {
+  let inner = `<div class="cell-popup-title">${item.label}</div>
+    <div class="cell-popup-stage" style="color:${st.color}">${st.short}${st.id===p.stage?' · current stage':''}</div>`
+
+  if (item.conditional && st.id === p.stage) {
+    if (!condAns || condAns === undefined) {
+      inner += `<div class="cond-confirm">
+        <div class="cond-q">Is this required for ${p.name}?</div>
+        <div class="cond-btns">
+          <button class="cdb req" onclick="gridSetCond('${condKey}','yes',event)">✓ Yes — required${item.blocker?' (Critical)':''}</button>
+          <button class="cdb skip" onclick="gridSetCond('${condKey}','na',event)">— Not needed</button>
+        </div>
+      </div>`
+    } else if (condAns === 'yes') {
+      inner += `<div class="cell-popup-btns">
+        <button class="cpb y" onclick="gridSetAnswer('${item.id}','yes',event)">✓ Yes — done</button>
+        <button class="cpb n" onclick="gridSetAnswer('${item.id}','no',event)">✗ Not yet</button>
+        <button class="cpb na" onclick="gridSetCond('${condKey}','na',event)">— Mark N/A</button>
+      </div>`
+    } else {
+      inner += `<div style="font-size:11px;color:var(--gray-400);margin-bottom:8px">Marked as not required.</div>
+        <button class="cpb na" onclick="gridSetCond('${condKey}',undefined,event)">Change</button>`
+    }
+  } else {
+    inner += `<div class="cell-popup-btns">
+      <button class="cpb y" onclick="gridSetAnswer('${item.id}','yes',event)">✓ Yes — done</button>
+      <button class="cpb n" onclick="gridSetAnswer('${item.id}','no',event)">✗ Not yet</button>
+      <button class="cpb na" onclick="gridSetAnswer('${item.id}','na',event)">— N/A</button>
+    </div>`
+  }
+
+  return `<div class="cell-popup" onclick="event.stopPropagation()">${inner}</div>`
+}
+
+function toggleCellPopup(itemId, stageId, projId, event) {
+  event.stopPropagation()
+  if (gridOpenCell && gridOpenCell.itemId===itemId && gridOpenCell.stageId===stageId && gridOpenCell.projId===projId) {
+    gridOpenCell = null
+  } else {
+    gridOpenCell = {itemId, stageId, projId}
+  }
+  renderGrid()
+}
+
+// Close popup on outside click
+document.addEventListener('click', () => { if(gridOpenCell){gridOpenCell=null;renderGrid()} })
+
+// Per-stage answer helpers — answers are keyed by stageKey__actionId in full data
+// For the current stage they're in p.answers; for other stages we need the raw tick data
+function getStageAnswer(p, actionId, stageId) {
+  if (stageId === p.stage) return (p.answers||{})[actionId]
+  // Check allTicks cache
+  const key = p.id + '__' + stageId + '__' + actionId
+  const t = allTicksCache[key]
+  if (!t) return undefined
+  return t.na ? 'na' : t.done ? 'yes' : 'no'
+}
+function getStageCondAns(p, actionId, stageId) {
+  if (stageId === p.stage) {
+    const key = stageId + '_' + actionId + '_req'
+    return (p.condAnswers||{})[key]
+  }
+  return undefined // for other stages, treat as not confirmed
+}
+
+function gridSelProject(id) { gridSelProj=id; gridOpenCell=null; renderGrid() }
+
+async function gridSetAnswer(qid, val, event) {
+  event.stopPropagation()
+  const p = projects.find(x => x.id === gridSelProj)
+  if (!p) return
+  const stageId = gridOpenCell ? gridOpenCell.stageId : p.stage
+  // Update local state
+  if (stageId === p.stage) {
+    p.answers[qid] = val
+    p.status = recalcStatus(p)
+  }
+  // Update cache
+  const cacheKey = p.id + '__' + stageId + '__' + qid
+  allTicksCache[cacheKey] = { done: val==='yes', na: val==='na' }
+  gridOpenCell = null
+  renderGrid()
+  // Write to Supabase with correct stage
+  const isDone = val === 'yes'
+  const isNa   = val === 'na'
+  await sbUpsert('ticks', {
+    project_id: p.id, stage_key: stageId, action_id: qid,
+    is_done: isDone, is_na: isNa,
+    last_toggled_by: currentUser, last_toggled_role: currentRole,
+    last_toggled_at: new Date().toISOString(),
+  }, 'project_id,action_id')
+  showSaving(); hideSaving(true)
+}
+
+function gridSetCond(key, val, event) {
+  event.stopPropagation()
+  const p = projects.find(x => x.id === gridSelProj)
+  if (!p) return
+  if (!p.condAnswers) p.condAnswers = {}
+  if (val === undefined) delete p.condAnswers[key]
+  else p.condAnswers[key] = val
+  gridOpenCell = null
+  renderGrid()
 }
 
 // ══════════════════════════════════════════════
