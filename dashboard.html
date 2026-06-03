@@ -145,7 +145,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .stab-name{font-size:9px;font-weight:500;color:var(--gray-400);line-height:1.2}
 .stab-now{font-size:8px;font-weight:500;margin-top:2px}
 .stab.active .stab-name{color:var(--gray-800)}
-.owner-panel{background:var(--white);border:1px solid var(--gray-100);border-radius:0 0 var(--r12) var(--r12);box-shadow:var(--shadow);overflow:hidden}
+.owner-panel{background:transparent;border:none;border-radius:0;box-shadow:none}
 .op-head{padding:10px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .op-stage-name{font-size:14px;font-weight:500;color:var(--gray-800)}
 .op-pct{font-size:11px;color:var(--gray-400);margin-left:auto}
@@ -285,6 +285,51 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .proj-item.active{color:var(--gold-light);font-weight:500;background:rgba(201,168,76,.1)}
 .proj-item:hover{background:rgba(255,255,255,.06)}
 
+
+/* ══ MY PROJECT — handbook v1.3 ══════════════════════════════════ */
+:root{--cl-navy:#0f1f3d;--cl-gold:#c9a84c;--cl-gold-pale:#faf3e0;--cl-gray-50:#f8f7f5;--cl-gray-100:#eeece8;--cl-gray-200:#d8d5ce;--cl-gray-400:#9e9b93;--cl-gray-600:#6b6860;--cl-gray-700:#4a4842;--cl-amber:#92400e;--cl-red:#991b1b;--cl-red-lt:#fee2e2;--cl-red-txt:#7f1d1d;--cl-green:#2d6a4f;--cl-green-lt:#e8f5ee;--cl-green-txt:#1b4332}
+.act-stage-banner{border-radius:10px;padding:18px 22px;margin-bottom:18px;color:#fff;overflow:hidden}
+.act-banner-eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;opacity:.85;margin-bottom:4px}
+.act-banner-title{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:8px;line-height:1.2}
+.act-banner-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;margin-top:8px;opacity:.95}
+.act-finance{border-radius:8px;padding:12px 16px;margin:0 0 16px;font-size:12.5px;line-height:1.6;display:flex;align-items:flex-start;gap:10px;background:var(--cl-gold-pale);color:var(--cl-amber);border-left:3px solid var(--cl-gold)}
+.act-prog{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.act-prog-bar{flex:1;height:5px;background:var(--cl-gray-100);border-radius:3px;overflow:hidden}
+.act-prog-fill{height:100%;border-radius:3px;transition:width .3s}
+.act-card{background:#fff;border:1px solid var(--cl-gray-100);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.act-card-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--cl-navy);margin-bottom:14px}
+.act-dot{width:6px;height:6px;border-radius:50%;background:var(--cl-gold);flex-shrink:0}
+.action-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:8px;overflow:hidden;margin:8px 0 0;border:1px solid var(--cl-gray-100)}
+.action-table thead{background:var(--cl-navy);color:#fff}
+.action-table th{padding:10px 12px;text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#fff}
+.action-table td{padding:9px 12px;border-top:1px solid var(--cl-gray-100);vertical-align:top;color:var(--cl-gray-700);line-height:1.55;font-size:12px}
+.action-table tbody tr:hover td{background:var(--cl-gray-50)}
+.action-table .group-row td{background:var(--cl-gold-pale);color:var(--cl-amber);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:7px 12px;border-top:none}
+.action-table .check{text-align:center;width:36px;padding:8px 6px;cursor:pointer;user-select:none;vertical-align:middle}
+.action-table .check .box{display:inline-block;width:18px;height:18px;border-radius:4px;border:1.5px solid var(--cl-gray-200);background:#fff;position:relative;transition:all .15s;vertical-align:middle}
+.action-table .check:hover .box{border-color:var(--cl-navy);background:var(--cl-gray-50)}
+.action-table .check.done .box{background:var(--cl-navy);border-color:var(--cl-navy)}
+.action-table .check.done .box::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.action-table tr.done-row td{color:var(--cl-gray-200)}
+.action-table tr.done-row td:nth-child(3){text-decoration:line-through;text-decoration-color:var(--cl-gray-200);text-decoration-thickness:1px}
+.action-table .num{color:var(--cl-gray-400);font-weight:600;text-align:center;width:28px;font-size:11px}
+.action-table .role{font-weight:500;color:var(--cl-navy);white-space:nowrap;font-size:11px}
+.action-table .tool{color:var(--cl-gray-600);white-space:nowrap;font-size:11px}
+.action-table .notes-cell{color:var(--cl-gray-400);font-size:11px;line-height:1.5}
+.act-detail{font-size:11.5px;color:var(--cl-gray-600);line-height:1.6;margin-top:6px;padding:8px 12px;background:var(--cl-gray-50);border-radius:6px}
+.act-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.a-btn{font-size:12px;padding:6px 14px;border-radius:6px;border:1px solid;cursor:pointer;background:transparent;font-weight:500;font-family:'DM Sans',sans-serif;transition:background .12s}
+.a-btn-y{border-color:var(--cl-green);color:var(--cl-green-txt)}.a-btn-y:hover{background:var(--cl-green-lt)}
+.a-btn-n{border-color:var(--cl-red);color:var(--cl-red-txt)}.a-btn-n:hover{background:var(--cl-red-lt)}
+.a-btn-na{border-color:var(--cl-gray-200);color:var(--cl-gray-600)}.a-btn-na:hover{background:var(--cl-gray-50)}
+.act-sp-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;font-size:12px;padding:7px 14px;border-radius:6px;border:1px solid #B5D4F4;background:#E6F1FB;color:#1e40af;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:10px;transition:background .12s}
+.act-sp-btn:hover{background:#dbeafe}
+.cond-confirm{background:var(--cl-gold-pale);border:1px solid var(--cl-gold);border-radius:8px;padding:10px 14px;margin-top:8px}
+.cond-confirm-q{font-size:12px;font-weight:600;color:var(--cl-amber);margin-bottom:8px}
+.cond-confirm-btns{display:flex;gap:6px;flex-wrap:wrap}
+.cb-yes{font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid var(--cl-gold);color:var(--cl-amber);cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif}.cb-yes:hover{background:var(--cl-gold-pale)}
+.cb-na{font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid var(--cl-gray-200);color:var(--cl-gray-600);cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif}.cb-na:hover{background:var(--cl-gray-50)}
+/* ══ /MY PROJECT ══════════════════════════════════════════════════ */
 </style>
 </head>
 <body>
@@ -327,7 +372,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-title" id="topbar-title">Pipeline grid</div>
-      <div class="topbar-badge" id="topbar-badge" style="background:var(--navy-mid);color:var(--white)"></div>
+      <div id="topbar-badge" style="font-size:13px;font-weight:500;color:var(--gray-800)"></div>
     </div>
     <div class="topbar-right">
       <div class="view-toggle">
@@ -356,7 +401,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
     <!-- Owner view -->
     <div id="owner-view" style="display:none">
       <div id="owner-pills" style="display:none"></div>
-      <div class="stage-tabs-row" id="stage-tabs"></div>
+      <div id="stage-tabs" style="display:none"></div>
       <div class="owner-panel" id="owner-panel"></div>
     </div>
 
@@ -489,16 +534,11 @@ function normaliseStage(raw) {
 // SharePoint links — appear after ticking Yes on specific actions
 // IDs match OWNER_STAGES exactly
 const ACTION_LINKS = {
-  // Contracting: NDAs signed → MSAs folder
-  'tm2': { label: 'NDAs folder',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCxvz1pu3NmRqql5x-DHL1wAXglvNaZvxtH8skMsbsivZE?e=te7YSV', icon: '📝' },
-  // Contracting: Client SoW signed → SOWs folder
-  'cl5': { label: 'SOWs folder',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgBgVQE-vq1nTonnbSe9F-n4ATNqUdA5jTC0g-wf8iyAvMk?e=vKhh6y', icon: '📄' },
-  // Contracting: MSA contracts signed → MSAs folder
-  'tm1': { label: 'MSAs folder',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgDZTtNUMtNgSLcu_Tp5NakNATb2qwvDcQP-zADEQepUI-k?e=yFmYHK', icon: '📝' },
-  // Pricing: Pricing Sheet v4 final sign-off → Pricing Sheets folder
-  'cl4': { label: 'Pricing Sheets', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgAmOz6OPDZ8QJVgZUEAhCmwAb1kBpWvstZHYH8k7dkJhYU?e=mY2ctu', icon: '💰' },
-  // Executing: Timesheets enabled (torr1 in executing) → Time Sheets folder
-  'torr1': { label: 'Time Sheets',  url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgA92S4E821YRb1At_4mD6eKAQKc6YEy8ZudC6aRssCTosA?e=PqBRW2', icon: '⏱' },
+  'cl1':   { label: 'SOWs folder',                  url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgBgVQE-vq1nTonnbSe9F-n4ATNqUdA5jTC0g-wf8iyAvMk?e=vKhh6y', icon: '📄' },
+  'cl5':   { label: 'Pricing Sheets (Confidential)', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgAmOz6OPDZ8QJVgZUEAhCmwAb1kBpWvstZHYH8k7dkJhYU?e=mY2ctu', icon: '💰' },
+  'tm2':   { label: 'NDAs folder',                   url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCxvz1pu3NmRqql5x-DHL1wAXglvNaZvxtH8skMsbsivZE?e=te7YSV', icon: '📝' },
+  'tm1':   { label: 'MSAs folder (Confidential)',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgDZTtNUMtNgSLcu_Tp5NakNATb2qwvDcQP-zADEQepUI-k?e=yFmYHK', icon: '📝' },
+  'torr1': { label: 'Time Sheets',                   url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgA92S4E821YRb1At_4mD6eKAQKc6YEy8ZudC6aRssCTosA?e=PqBRW2', icon: '⏱' },
 }
 // KYC is conditional (cl2 in contracting) — shown separately
 const KYC_LINK = { label: 'KYC folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCpQWfWBBBzSYc1gmDVkS9zAU_p3eUKayMmto0MYfgidPE?e=l06yHU', icon: '🔒' }
@@ -519,128 +559,234 @@ const GI = {'Zoho CRM':'🗄','Torr Portal':'📋','Client':'🏢','Team':'👥'
 const OWNER_STAGES = {
   discussions:{
     full:'In discussions',
-    entry:'A specific project opportunity identified',
-    exit:'Client requests further engagement',
-    finance:'Core Partners not reimbursed at this stage.',
-    roles:[{label:'Lead Partner',color:'#E6F1FB',tc:'#0C447C',desc:'Create and manage deal in CRM'}],
+    entry:'A specific project opportunity has been identified',
+    exit:'Client requests further engagement — RFI, proposal, or approach shaping',
+    finance:'All travel and related expenses are charged to the individual Partner\'s personal cost code. No reimbursement is made at this stage.',
+    roles:[{label:'Lead Partner',color:'#E6F1FB',tc:'#0C447C',desc:'Create and manage the deal in CRM'}],
     groups:[
       {name:'Zoho CRM',qs:[
-        {id:'crm1',text:'Deal created in Zoho CRM, linked to correct Account and Contact?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Deal is created automatically when stage changes in Zoho CRM.',blocker:true,autoYes:true},
-        {id:'crm2',text:'Account priority set to High (H) in CRM?',sub:'Triggers Torr client visibility automatically.',detail:'Set in the Account record.',blocker:true},
-        {id:'crm3',text:'Next Step and Next Step Date recorded in CRM?',sub:'No deal should exist without a next step.',detail:'Set a specific next action and date.',blocker:true},
+        {id:'crm1',text:'Create deal in Zoho CRM linked to Account and Contact',owner:'Lead Partner',sub:'Deal name must reflect a specific project, not just a client name',detail:'Lead Partner · Zoho CRM · Deal name must reflect a specific project, not just a client name',blocker:true,autoYes:true},
+        {id:'crm2',text:'Assign Lead Partner as deal owner in CRM',owner:'Lead Partner',sub:'LP responsible for pipeline status',detail:'Lead Partner · Zoho CRM · LP responsible for pipeline status',blocker:false},
+        {id:'cl1',text:'Record key client contacts and decision maker',owner:'Lead Partner',sub:'At minimum one primary contact must be recorded',detail:'Lead Partner · Zoho CRM · At minimum one primary contact must be recorded',blocker:false},
+        {id:'crm2b',text:'Capture brief project description for internal clarity in Zoho Deal',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Zoho CRM',blocker:false},
+        {id:'crm4',text:'Set Next Step and Next Step Date in CRM',owner:'Lead Partner',sub:'No deal should exist without a next step recorded',detail:'Lead Partner · Zoho CRM · No deal should exist without a next step recorded',blocker:true},
+        {id:'crm3',text:'Confirm Account priority (H/M/L) in CRM',owner:'Lead Partner',sub:'Triggers Torr Portal client visibility',detail:'Lead Partner · Zoho CRM · Triggers Torr Portal client visibility',blocker:true},
       ]},
-      {name:'Client',qs:[
-        {id:'cl1',text:'Key client contacts and decision maker recorded in CRM?',sub:'Minimum one primary contact linked to the deal.',detail:'Record main client contact and decision maker.',blocker:true},
-        {id:'cl2',text:'Has the client actively requested further engagement?',sub:'Exit gate — until they ask for more, the deal stays here.',detail:'Log the client request in CRM as a note.',blocker:true},
-      ]}
+      {name:'Torr Portal',qs:[
+        {id:'torr_store',text:'Store early meeting notes in Client → Documents-03 → \'Client meetings\'',owner:'Lead Partner',sub:'Maintain minimal hygiene only — no full team or workspace required yet',detail:'Lead Partner · Torr Portal · Maintain minimal hygiene only — no full team or workspace required yet',blocker:false},
+      ]},
     ]
   },
   scoping:{
     full:'Prospecting & scoping',
-    entry:'Client requested further engagement',
-    exit:'Trimstone preparing a formal commercial proposition',
-    finance:'Core Partners not reimbursed for proposal costs.',
-    roles:[{label:'Lead Partner',color:'#EEEDFE',tc:'#3C3489',desc:'Workspace setup, CRM, approach'},{label:'Co-owner / Core Partner',color:'#EEEDFE',tc:'#534AB7',desc:'Delivery hypothesis & cost agreement'}],
+    entry:'Client requested further engagement (RFI / approach request)',
+    exit:'Trimstone is preparing a formal commercial proposition',
+    finance:'Core Partners are not reimbursed for time, effort, or personal costs. Proposal costs are borne collectively by the Core Partner group.',
+    roles:[{label:'Lead Partner',color:'#EEEDFE',tc:'#3C3489',desc:'Workspace setup, CRM, approach framing'},{label:'Co-owner / Core Partner',color:'#EEEDFE',tc:'#534AB7',desc:'Delivery hypothesis & proposal cost agreement'}],
     groups:[
       {name:'Zoho CRM',qs:[
-        {id:'crm1',text:'Deal stage updated to Prospecting & Scoping in Zoho CRM?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Stage is updated automatically in Zoho CRM.',blocker:true,autoYes:true},
-        {id:'crm3',text:'Expected project start date entered in CRM?',sub:'Set far enough out to allow negotiations.',detail:'Enter a realistic start date.',blocker:true},
+        {id:'crm1',text:'Update deal stage to \'Prospecting & Scoping\'',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Zoho CRM',blocker:true,autoYes:true},
+        {id:'crm2',text:'Record core partner team as Co-Owners — agree to share proposal costs if deal does not materialise',owner:'Lead Partner',sub:'Co-owners share proposal costs proportionally',detail:'Lead Partner · Zoho CRM · Co-owners share proposal costs proportionally',blocker:true,conditional:true},
+        {id:'crm3',text:'Enter expected project start date in CRM',owner:'Lead Partner',sub:'Set far enough out to allow negotiations',detail:'Lead Partner · Zoho CRM · Set far enough out to allow negotiations',blocker:false},
+        {id:'torr1',text:'Project workspace and project code auto-created in Torr',owner:'System (Torr)',sub:'Triggered automatically on stage change',detail:'System (Torr) · Torr Portal · Triggered automatically on stage change',blocker:true},
       ]},
       {name:'Torr Portal',qs:[
-        {id:'torr1',text:'Project workspace and project code auto-created in Torr?',sub:'Triggered automatically when CRM stage is updated.',detail:'Check workspace has appeared. If not, contact James.',blocker:true},
-        {id:'torr2',text:'Discovery notes and client materials stored in Torr workspace?',sub:'Torr workspace is the authoritative storage from this stage.',detail:'Upload all meeting notes, client materials, discovery outputs.',blocker:true},
+        {id:'torr2',text:'Upload discovery notes, meeting notes, and client materials into project workspace',owner:'Lead Partner',sub:'Project workspace is the authoritative storage from this stage',detail:'Lead Partner · Torr Portal · Project workspace is the authoritative storage from this stage',blocker:false},
+        {id:'disc1',text:'Identify delivery hypotheses and outline approach',owner:'LP + Core Partners',sub:'Responsible: LP + Core Partners',detail:'LP + Core Partners · —',blocker:false},
+        {id:'disc2',text:'Identify potential delivery team members or SMEs',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · —',blocker:false},
+        {id:'disc3',text:'Prepare outline approach / proposal framing materials',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr / TAIA',blocker:false},
+        {id:'disc4',text:'Identify any non-core Partner/Supplier supporting the proposal — add as team member in Torr',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr Portal',blocker:false},
+        {id:'disc5',text:'If third-party expenses required: LP coordinates with MD; once approved, grant Xero access and link expenses to LP code',owner:'LP + MD + Miguel + Filip',sub:'Responsible: LP + MD + Miguel + Filip',detail:'LP + MD + Miguel + Filip · Torr / Xero',blocker:false},
       ]},
-      {name:'Client',qs:[
-        {id:'cl1',text:'Formal proposal prepared?',sub:'Do not share externally until Pricing Sheet v2 approved by MD.',detail:'Use Torr tools — Proposal Generator, TAIA, PPT Generator.',blocker:true},
-      ]}
     ]
   },
   pricing:{
     full:'Pricing & proposing',
-    entry:'Preparing a formal or semi-formal proposal',
+    entry:'Trimstone is preparing a formal or semi-formal proposal (RFP, written proposal, or structured commercial discussions)',
     exit:'Pricing Sheet v4 MD sign-off + client email confirmation of award',
-    finance:'Partners may transfer prior personal expenses to project code only at Executing stage.',
-    roles:[{label:'Lead Partner',color:'#E1F5EE',tc:'#085041',desc:'Pricing sheet owner — v1, v3, v4'},{label:'Co-owner / Core Partner',color:'#E1F5EE',tc:'#0F6E56',desc:'Margin & staffing input'},{label:'Consulting MD',color:'#9FE1CB',tc:'#085041',desc:'v2 & v4 sign-off'}],
+    finance:'Partners may transfer legitimate prior personal expenses to the project code only at the Executing stage.',
+    roles:[{label:'Lead Partner',color:'#E1F5EE',tc:'#085041',desc:'Pricing sheet owner — v1, v3, v4 prep'},{label:'Co-owner / Core Partner',color:'#E1F5EE',tc:'#0F6E56',desc:'Margin & staffing input'},{label:'Consulting MD',color:'#9FE1CB',tc:'#085041',desc:'v2 & v4 sign-off — required before external sharing'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Pricing & Proposing in Zoho CRM?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Stage is updated automatically in Zoho CRM.',blocker:true,autoYes:true}]},
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Deal stage updated to \'Pricing & Proposing\'',owner:'Lead Partner',sub:'Stage updates in Torr automatically',detail:'Lead Partner · Zoho CRM / Torr · Stage updates in Torr automatically',blocker:true,autoYes:true},
+      ]},
       {name:'Client',qs:[
-        {id:'cl1',text:'Pricing Sheet v1 completed — delivery model, roles, rates, assumptions?',sub:'Internal only. Submit to MD before sharing anything externally.',detail:'Complete all sections. Do not share externally.',blocker:true},
-        {id:'cl2',text:'Consulting MD approved Pricing Sheet v2 before any external sharing?',sub:'No proposal shared externally below v2 — no exceptions.',detail:'Only after v2 approval can you share with the client.',blocker:true},
-        {id:'cl3',text:'Negotiation changes captured and Pricing Sheet updated to v3?',sub:'v3 reflects what the client believes they are buying.',detail:'Update after client discussions and negotiations.',blocker:true},
-        {id:'cl4',text:'Pricing Sheet v4 completed, correctly named, and MD final sign-off obtained?',sub:'Format: [Client]: [Project ID] [Project name] Pricing Sheet v.Final [Date]',detail:'Submit v4 to MD (CC Iryna). Store in Confidential folder.',blocker:true},
-        {id:'cl5',text:'Client email confirmation of award received?',sub:'Exit gate — unlocks move to Contracting.',detail:'Written confirmation must be received and stored in Torr workspace.',blocker:true},
-      ]}
+        {id:'cl1',text:'Complete Pricing Sheet v1: project definition, delivery model, roles, rates, commercial assumptions',owner:'Lead Partner',sub:'Template received via email notification',detail:'Lead Partner · Pricing Sheet · Template received via email notification',blocker:false},
+        {id:'cl1b',text:'Document commercial assumptions, scope boundaries, and exclusions',owner:'Lead Partner',sub:'Carry assumptions forward into the proposal',detail:'Lead Partner · Pricing Sheet · Carry assumptions forward into the proposal',blocker:false},
+        {id:'cl1c',text:'Confirm margin expectations and platform fee assumptions',owner:'LP + Core Partners',sub:'Any variation to standard platform fee requires MD sign-off',detail:'LP + Core Partners · Pricing Sheet · Any variation to standard platform fee requires MD sign-off',blocker:false},
+        {id:'cl1d',text:'Validate delivery model and staffing assumptions with core partners',owner:'LP + Core Partners',sub:'Responsible: LP + Core Partners',detail:'LP + Core Partners · —',blocker:false},
+        {id:'cl1e',text:'Add internal staff names and roles in the Pricing Sheet',owner:'LP + Core Partners',sub:'Staffing ratios not required at this stage',detail:'LP + Core Partners · Pricing Sheet · Staffing ratios not required at this stage',blocker:false},
+        {id:'cl1f',text:'Identify contractor staff from approved agencies (Barton, Eames, Tarka)',owner:'LP + Core Partners',sub:'Add full names and roles',detail:'LP + Core Partners · Pricing Sheet · Add full names and roles',blocker:false},
+        {id:'cl1g',text:'Store pricing sheet v1 and commercial assumptions in project workspace',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr Portal',blocker:false},
+        {id:'cl2_sub',text:'Submit pricing sheet v1 to Consulting MD for approval to move to v2',owner:'Lead Partner',sub:'v2 is the minimum version permitted for external sharing',detail:'Lead Partner · Torr / Email · v2 is the minimum version permitted for external sharing',blocker:true},
+        {id:'cl2',text:'Consulting MD reviews and approves pricing sheet v2',owner:'Consulting MD',sub:'MD approval required before any external sharing',detail:'Consulting MD · Pricing Sheet / Email · MD approval required before any external sharing',blocker:true},
+        {id:'cl2b',text:'Prepare proposal / RFP response using Torr tools (Proposal Generator, TAIA, PPT Generator)',owner:'Lead Partner',sub:'Align proposal scope with pricing sheet assumptions',detail:'Lead Partner · Torr / TAIA · Align proposal scope with pricing sheet assumptions',blocker:false},
+        {id:'cl2c',text:'Align proposal scope with pricing sheet assumptions',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · —',blocker:false},
+        {id:'cl2d',text:'Share proposal externally only once pricing sheet v2 is approved',owner:'Lead Partner',sub:'No external sharing below v2 under any circumstances',detail:'Lead Partner · — · No external sharing below v2 under any circumstances',blocker:false},
+        {id:'cl2e',text:'Store approved pricing sheet v2 and commercial assumptions in project workspace',owner:'Lead Partner',sub:'All versions v1–v4 must be stored',detail:'Lead Partner · Torr Portal · All versions v1–v4 must be stored',blocker:false},
+        {id:'cl3',text:'Capture negotiation changes or commercial concessions',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Pricing Sheet',blocker:false},
+        {id:'cl3b',text:'Update pricing sheet to v3 once client agrees scope and commercials',owner:'Lead Partner',sub:'v3 reflects what the client believes they are buying',detail:'Lead Partner · Pricing Sheet · v3 reflects what the client believes they are buying',blocker:false},
+        {id:'cl4',text:'Complete final Pricing Sheet v4 — full team names/roles, profitability, profit share, staffing ratios',owner:'Lead Partner',sub:'Authoritative baseline for contracting and execution',detail:'Lead Partner · Pricing Sheet · Authoritative baseline for contracting and execution',blocker:true},
+        {id:'cl4b',text:'Name file: [Client]: [Project ID] [Project name] Pricing Sheet v.Final [Date]',owner:'Lead Partner',sub:'e.g. "NHBC: 10139-03 Chief Transformation Officer Pricing Sheet v.Final 5 May 2026"',detail:'Lead Partner · Pricing Sheet · e.g. "NHBC: 10139-03 Chief Transformation Officer Pricing Sheet v.Final 5 May 2026"',blocker:false},
+        {id:'cl4c',text:'Submit pricing sheet v4 to Consulting MD (CC Iryna) for approval',owner:'Lead Partner',sub:'MD must approve all staff assignments; no contractor onboarded without being named in v4',detail:'Lead Partner · Email · MD must approve all staff assignments; no contractor onboarded without being named in v4',blocker:true},
+        {id:'cl5',text:'Obtain Consulting MD final sign-off (v4) before award confirmation',owner:'Consulting MD',sub:'v4 MD sign-off required before client SOW is sent',detail:'Consulting MD · Email · v4 MD sign-off required before client SOW is sent',blocker:true},
+        {id:'cl5b',text:'Store final Pricing Sheet v4 in Confidential folder (Torr / SharePoint until Torr feature available)',owner:'Consulting MD / Iryna',sub:'MD access only',detail:'Consulting MD / Iryna · Torr (Confidential) · MD access only',blocker:false},
+      ]},
     ]
   },
   contracting:{
     full:'Contracting',
-    entry:'Client award confirmed + MD sign-off on Pricing Sheet v4',
-    exit:'Signed SoW + all MSAs countersigned by MD — within 2 weeks',
-    finance:'Work may begin at risk. Expenses held until Executing.',
-    roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#633806',desc:'SoW, CRM update, onboarding lead'},{label:'Iryna',color:'#FAC775',tc:'#412402',desc:'NDAs, MSAs, KYC/AML'},{label:'Consulting MD',color:'#EF9F27',tc:'#412402',desc:'SoW + MSA countersigning'},{label:'James / Miguel',color:'#FAEEDA',tc:'#633806',desc:'M365, Torr, WeWork'}],
+    entry:'Client award confirmed + MD sign-off on commercials',
+    exit:'Internal Consulting MD sign-off — max 2 weeks',
+    finance:'Work and billing may begin at risk. Expenses held — cannot be formally assigned to project code until Executing.',
+    roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#633806',desc:'SoW, CRM update, team onboarding lead'},{label:'Iryna',color:'#FAC775',tc:'#412402',desc:'NDAs, MSA drafting, KYC/AML, procurement'},{label:'Consulting MD',color:'#EF9F27',tc:'#412402',desc:'SoW + MSA countersigning — required'},{label:'James / Miguel',color:'#FAEEDA',tc:'#633806',desc:'M365 accounts, Torr access, WeWork'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'CRM updated: stage set to Contracting — start date, end date and contract amount entered?',sub:'Start and end dates must be entered — this is required for invoicing and Xero.',detail:'Update stage to Contracting. Enter start date, end date and contract amount. Must match Pricing Sheet v4.',blocker:true}]},
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Update CRM: start date, contract amount, deal stage \'Contracting\'',owner:'LP / Co-owner',sub:'Responsible: LP / Co-owner',detail:'LP / Co-owner · Zoho CRM',blocker:true},
+      ]},
       {name:'Client',qs:[
-        {id:'cl1',text:'Client SoW is signed?',sub:'MD signs all SoWs. Do not move to Executing without a signed SoW.',detail:'Draft SoW, send via Zoho Sign (CC MD and Iryna). Follow up after 5 days. Escalate to MD after 10.',blocker:true},
-        {id:'cl2',text:'KYC/AML and confidential client requirements completed?',sub:'If needed — required for regulated clients (banks, FCA firms).',detail:'Iryna manages. Covers insurances, cyber security, supplier onboarding.',blocker:true,conditional:true},
+        {id:'cl1',text:'Draft and agree client SOW or equivalent contracting documentation',owner:'Lead Partner',sub:'MD signs all SoWs until signing rights formally confirmed',detail:'Lead Partner · Zoho Sign · MD signs all SoWs until signing rights formally confirmed',blocker:true},
+        {id:'cl_proc',text:'Complete procurement / onboarding steps (supplier list, insurances, cyber security, compliance)',owner:'LP (Iryna supports)',sub:'Responsible: LP (Iryna supports)',detail:'LP (Iryna supports) · —',blocker:false},
+        {id:'cl2',text:'Complete risk and regulation steps (KYC, AML, Confidential status)',owner:'Iryna',sub:'Required when client contract demands it (regulated FIs)',detail:'Iryna · — · Required when client contract demands it (regulated FIs)',blocker:true,conditional:true},
+        {id:'cl_tech',text:'Complete client technology requirements (email, SharePoint, access credentials)',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · M365',blocker:false},
+        {id:'cl_sow_sign',text:'Get client signature(s) on client SOW (CC Consulting MD and Iryna)',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Zoho Sign',blocker:true},
+        {id:'cl_sow_fu',text:'If SOW not received within 5 working days: follow up in writing. If still not received within 10 working days: escalate to Consulting MD',owner:'Lead Partner',sub:'Do not move to \'Executing\' with an unsigned SOW unless MD has approved an explicit exception',detail:'Lead Partner · — · Do not move to \'Executing\' with an unsigned SOW unless MD has approved an explicit exception',blocker:true},
+        {id:'cl_sow_recv',text:'Received signed contracts (CC Consulting MD and Iryna)',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Zoho Sign',blocker:true},
+        {id:'cl_conf',text:'Save signed contract in Confidential folder',owner:'Consulting MD / Iryna',sub:'Responsible: Consulting MD / Iryna',detail:'Consulting MD / Iryna · SharePoint',blocker:true},
       ]},
       {name:'Team',qs:[
-        {id:'tm1',text:'Subcontractor MSA contracts signed by staff and countersigned by MD?',sub:'Iryna drafts. MD countersigns all. Save in Confidential folder.',detail:'Use Trimstone_MSA_Final.docx. MD must countersign all executed MSAs.',blocker:true},
-        {id:'tm2',text:'NDAs signed by all project team members who require them?',sub:'If needed — use Zoho Sign.',detail:'Iryna prepares using Trimstone_Standard NDA_Corporate_Template.docx.',blocker:false,conditional:true},
-        {id:'tm3',text:'Team onboarded — M365 account, Torr access, WeWork passes?',sub:'Important — confirm if new subcontractors on this project, mark N/A if not.',detail:'James creates M365 accounts and grants Torr access. Miguel issues WeWork passes. Send welcome message from Trimstone account (CC team).',blocker:true},
-        {id:'tm4',text:'All team members added to Torr Portal Team tab with full details?',sub:'Full name, role, email, time, hours — all required fields.',detail:'Required before timesheets can be enabled in Executing.',blocker:true},
-        {id:'tm5',text:'Team trained on Torr (timesheets, TAIA, folders) and WeWork?',sub:'Lead Partner / PMO responsible.',detail:'Confirm all team members can log in and submit timesheets.',blocker:true},
-      ]}
+        {id:'tm2',text:'Prepare Zoho Sign NDA contracts for all project team members (if needed)',owner:'Iryna',sub:'Reference: Trimstone_Standard NDA_Corporate_Template.docx',detail:'Iryna · Zoho Sign · Reference: Trimstone_Standard NDA_Corporate_Template.docx',blocker:false,conditional:true},
+        {id:'tm_msa_draft',text:'Draft MSA contracts for all third-party team members — share with staff & MD; do not sign yet',owner:'Iryna',sub:'Trimstone_MSA_Final.docx; do not proceed to signature yet',detail:'Iryna · — · Trimstone_MSA_Final.docx; do not proceed to signature yet',blocker:false},
+        {id:'tm1',text:'Send Zoho Sign MSAs to LP; obtain contractor signatures; send countersigned copy to MD',owner:'Iryna',sub:'Responsible: Iryna',detail:'Iryna · Zoho Sign',blocker:true},
+        {id:'tm1b',text:'Consulting MD countersigns all executed MSAs; save in Confidential folder (Torr / SharePoint)',owner:'MD / Iryna',sub:'If any MSA changes are made, MD must approve and countersign',detail:'MD / Iryna · Zoho Sign / Torr / SharePoint · If any MSA changes are made, MD must approve and countersign',blocker:true},
+        {id:'tm_welcome',text:'Send welcome message to new team members from Trimstone account (CC team)',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · M365 / Email',blocker:false},
+        {id:'tm3',text:'Create new Microsoft Trimstone corporate accounts, grant Torr Portal access, and issue WeWork passes',owner:'James / Miguel',sub:'James creates M365 + Torr access. Miguel issues WeWork passes.',detail:'James / Miguel · M365 / Torr Portal / WeWork',blocker:true},
+        {id:'tm4',text:'Add team members in Torr Team tab — complete role, hours, project fields',owner:'LP (Iryna supports)',sub:'Responsible: LP (Iryna supports)',detail:'LP (Iryna supports) · Torr Portal',blocker:false},
+        {id:'tm5',text:'Train team on Torr (timesheets, TAIA, folders) and WeWork logistics',owner:'LP / Project PMO',sub:'Responsible: LP / Project PMO',detail:'LP / Project PMO · Torr / WeWork',blocker:false},
+      ]},
+      {name:'Torr Portal',qs:[
+        {id:'tm_docs',text:'Move all pre-prepared project documents into correct folder structure in Torr (SharePoint) Workspace',owner:'LP + Team',sub:'Delegate to responsible team members',detail:'LP + Team · Torr / SharePoint · Delegate to responsible team members',blocker:false},
+        {id:'tm6',text:'Populate Confidential folder: SOW, MSAs, Pricing Sheet v4, KYC',owner:'Consulting MD / Iryna',sub:'Restricted to MD access only',detail:'Consulting MD / Iryna · Torr (Confidential) · Restricted to MD access only',blocker:true},
+      ]},
     ]
   },
   executing:{
     full:'Executing (project live)',
-    entry:'Internal MD sign-off from Contracting',
-    exit:'Delivery complete',
-    finance:'First stage expenses can be formally assigned to project code. Escalate invoices after 45 days.',
-    roles:[{label:'Lead Partner',color:'#EAF3DE',tc:'#27500A',desc:'Delivery governance, timesheets, CRM'},{label:'Iryna',color:'#C0DD97',tc:'#27500A',desc:'Monthly invoicing, supplier reminders'},{label:'Filip',color:'#EAF3DE',tc:'#3B6D11',desc:'Xero setup, profitability reporting'}],
+    entry:'Consulting MD internal sign-off from Contracting',
+    exit:'Delivery complete → Closing Down',
+    finance:'First stage at which expenses can be formally assigned to the project code. Finance cadence monthly. Escalate invoices after 45 days outstanding.',
+    roles:[{label:'Lead Partner',color:'#EAF3DE',tc:'#27500A',desc:'Delivery governance, timesheets, CRM updates'},{label:'Iryna',color:'#C0DD97',tc:'#27500A',desc:'Monthly invoicing cycle, supplier reminders'},{label:'Filip',color:'#EAF3DE',tc:'#3B6D11',desc:'Xero setup, profitability reporting'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'CRM updated: stage set to Executing — start date and end date confirmed in CRM?',sub:'End date tracked throughout delivery — must match Xero.',detail:'Update stage to Executing. Confirm start and end dates are correct and consistent with Xero.',blocker:true}]},
-      {name:'Torr Portal',qs:[{id:'torr1',text:'Timesheets enabled in Torr and all team members submitting weekly?',sub:'LP approves weekly. Reconcile against invoice.',detail:'Enable timesheets for the project. All team members submit weekly.',blocker:true}]},
-      {name:'Xero',qs:[{id:'xero1',text:'Project set up in Xero by Filip — finance code matches Torr project code?',sub:'Finance code must match Torr code exactly.',detail:'Ask Iryna to request Filip. Finance code must match Torr code.',blocker:true}]},
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Update deal stage to Executing (Project Live) in Zoho CRM',owner:'Lead Partner',sub:'—',detail:'Lead Partner · CRM / Torr',blocker:true},
+        {id:'crm1b',text:'Confirm start/end dates + final budget in CRM (consistent with Xero)',owner:'Lead Partner',sub:'End date tracked throughout delivery',detail:'Lead Partner · CRM / Torr',blocker:true},
+        {id:'crm_forecast',text:'Keep CRM updated with current revenue forecast and project duration',owner:'Lead Partner',sub:'—',detail:'Lead Partner · CRM / Torr',blocker:false},
+        {id:'crm_profit',text:'Project profitability reporting — monthly',owner:'Lead Partner',sub:'—',detail:'Lead Partner · —',blocker:false},
+        {id:'crm_analytics',text:'Zoho Analytics reports every Wednesday',owner:'Iryna',sub:'—',detail:'Iryna · Zoho Analytics',blocker:false},
+        {id:'crm_review',text:'Cost and expense forecast review — fortnightly',owner:'Consulting MD',sub:'All LPs come prepared with updated project financials',detail:'Consulting MD · CRM + Xero',blocker:false},
+      ]},
+      {name:'Torr Portal',qs:[
+        {id:'torr1b',text:'Confirm full project team assignment in Torr Portal',owner:'Lead Partner',sub:'—',detail:'Lead Partner · Torr Portal',blocker:true},
+        {id:'torr1c',text:'Finalise workspace structure and ensure team access',owner:'LP / PMO',sub:'—',detail:'LP / PMO · Torr Portal',blocker:true},
+        {id:'torr1',text:'All team members submit timesheets via Torr by 12:00 every Friday',owner:'All team',sub:'Required to enable accurate profitability tracking',detail:'All team · Torr Portal',blocker:true},
+        {id:'torr_remind',text:'Send Friday 9:00 AM timesheet reminder + Monday follow-up to anyone who has not submitted',owner:'Iryna',sub:'Full automation via Cowork (hands-free)',detail:'Iryna · Power Automate / Cowork',blocker:false},
+        {id:'torr_approve',text:'LP / Project Leader approves timesheets weekly',owner:'Lead Partner',sub:'—',detail:'Lead Partner · Torr Portal',blocker:false},
+        {id:'xero_remind_ac',text:'Send fortnightly reminders to ACs (suppliers) re Xero expenses — 1st reminder on the 13th, 2nd at end of month',owner:'Iryna',sub:'Replaces previous single monthly reminder',detail:'Iryna · Power Automate',blocker:false},
+      ]},
+      {name:'Xero',qs:[
+        {id:'xero_ts',text:'Enable timesheets and expense tracking in Xero',owner:'Filip',sub:'—',detail:'Filip · Xero',blocker:true},
+        {id:'xero_inv',text:'Set invoicing schedule and billing milestones in Xero',owner:'Filip',sub:'—',detail:'Filip · Xero',blocker:true},
+        {id:'xero_req',text:'Ask Filip to set up project in Xero with full details (project number/name, LP, start date, budget, duration, team)',owner:'Iryna',sub:'CC to Lead Partner',detail:'Iryna · Email',blocker:true},
+        {id:'xero1',text:'Set up Client/Project in Xero — finance code must match Torr Portal code; include forecasts, partners, subcontractors, consultants per pricing sheet',owner:'Filip',sub:'Finance code must match Torr project code',detail:'Filip · Xero',blocker:true},
+        {id:'xero_exp_move',text:'Move legitimate earlier expenses from personal codes to project code (subject to partner agreement)',owner:'LP / Filip',sub:'—',detail:'LP / Filip · Xero',blocker:false},
+        {id:'xero_run',text:'Review/approve expenses across both runs — Run 1 (1st–2nd, pay 3rd) & Run 2 (15th–16th, pay 17th)',owner:'LP (approves) / Filip (processes)',sub:'Ref: Payment Rules & Finance Cadence Policy',detail:'LP / Filip · Xero',blocker:false},
+        {id:'xero_profit',text:'Track project profitability and margin reporting monthly',owner:'Filip / Finance',sub:'—',detail:'Filip / Finance · Xero',blocker:false},
+        {id:'xero_cc',text:'Support credit control / client payment follow-up where invoices are overdue',owner:'Finance + LP',sub:'Escalate after 45 days outstanding',detail:'Finance + LP · Xero',blocker:false},
+      ]},
       {name:'Team',qs:[
-        {id:'tm1',text:'Internal and client kickoff meetings run?',sub:'Internal first, then client kickoff with delivery plan.',detail:'Internal kickoff first. Then client kickoff.',blocker:true},
-        {id:'tm2',text:'Team trained on Xero expenses (Appendix B) and Torr timesheets?',sub:'All team members must be able to submit before delivery begins.',detail:'Training on Xero expense submission and Torr timesheet entry.',blocker:true},
-      ]}
+        {id:'tm1',text:'Run internal kickoff meeting',owner:'Lead Partner',sub:'—',detail:'Lead Partner · —',blocker:true},
+        {id:'xero_acc',text:'Give access to Xero (expense submission)',owner:'Filip / Miguel',sub:'—',detail:'Filip / Miguel · Xero',blocker:true},
+        {id:'tm2',text:'Train team on Xero (expenses · Appendix B) and Torr timesheets',owner:'LP / PMO',sub:'—',detail:'LP / PMO · —',blocker:true},
+        {id:'tm_gov',text:'Run delivery governance meetings and steering committees',owner:'Lead Partner',sub:'—',detail:'Lead Partner · —',blocker:false},
+        {id:'tm_scope',text:'Record any scope changes; seek MD approval for all material changes',owner:'Lead Partner',sub:'Material scope changes require MD sign-off before proceeding',detail:'Lead Partner · —',blocker:false},
+        {id:'tm_pause',text:'If delivery pauses: LP records reason/date in Torr scope log; notifies MD within 24h; communicates to client within 48h; invoicing pauses',owner:'LP / Consulting MD',sub:'Invoicing resumes only when restart conditions are agreed and documented',detail:'LP / Consulting MD · Torr / CRM',blocker:false},
+        {id:'torr_days',text:'LP communicates expected days per team member; team reflects this in weekly timesheets; reconciled vs invoice',owner:'Lead Partner',sub:'Discrepancies escalated to LP',detail:'Lead Partner · —',blocker:false},
+        {id:'torr_pol',text:'Once MSA signed, send Trimstone Expense Policy to all third-party + internal team members',owner:'Iryna',sub:'Ref: Trimstone_Expense_Policy 1.docx',detail:'Iryna · Email',blocker:false},
+        {id:'xero_remind_int',text:'Send monthly reminder to internal team to submit project expenses in Xero (CC LP + Filip)',owner:'Iryna',sub:'—',detail:'Iryna · Power Automate',blocker:false},
+        {id:'xero_verify',text:'Each month verify Filip received supplier invoices; request client invoice preparation',owner:'Iryna',sub:'—',detail:'Iryna · —',blocker:false},
+        {id:'xero_inv_prep',text:'Prepare client invoice; send to LP and MD for approval',owner:'Filip / Finance',sub:'—',detail:'Filip / Finance · Xero / Email',blocker:false},
+        {id:'xero_send',text:'Send monthly invoices to client by 6th of each month',owner:'Filip / Finance',sub:'—',detail:'Filip / Finance · Xero',blocker:false},
+      ]},
+      {name:'Client',qs:[
+        {id:'tm1b',text:'Run client kickoff meeting and present delivery plan',owner:'Lead Partner',sub:'—',detail:'Lead Partner · —',blocker:true},
+        {id:'cl_feedback',text:'Gather and document client feedback monthly; escalate material concerns to MD',owner:'Lead Partner',sub:'Feedback logged in project workspace',detail:'Lead Partner · Email / Forms / Torr',blocker:false},
+      ]},
     ]
   },
   closing:{
     full:'Closing down (won)',
-    entry:'Delivery complete',
+    entry:'Delivery complete; engagement ending successfully',
     exit:'Invoice issued · payment received · access removed · knowledge captured',
-    finance:'All expenses submitted before final invoice. Review window 3rd–6th of month.',
-    roles:[{label:'Lead Partner',color:'#d1fae5',tc:'#04342C',desc:'Client confirmation, CRM, follow-on'},{label:'Finance / Filip',color:'#9FE1CB',tc:'#085041',desc:'Final invoice, expense reconciliation'},{label:'James / Ops',color:'#d1fae5',tc:'#04342C',desc:'Access removal'}],
+    finance:'Ensure all reimbursable expenses are captured. Ensure final invoice reflects any agreed final items.',
+    roles:[{label:'Lead Partner',color:'#d1fae5',tc:'#04342C',desc:'Client confirmation, CRM close-out, follow-on logging'},{label:'Finance / Filip',color:'#9FE1CB',tc:'#085041',desc:'Final invoice, expense reconciliation'},{label:'James / Ops',color:'#d1fae5',tc:'#04342C',desc:'Access removal for all rolling-off consultants'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Closing Down (Won) in CRM?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Stage is updated automatically in Zoho CRM.',blocker:true,autoYes:true}]},
-      {name:'Client',qs:[
-        {id:'cl1',text:'Written confirmation of delivery completion received from client?',sub:'Email is sufficient. Retain in Torr workspace.',detail:'Get written confirmation.',blocker:true},
-        {id:'cl2',text:'Client system access removed for all Trimstone team members?',sub:'Client\'s responsibility — Lead Partner confirms.',detail:'Contact the client to confirm.',blocker:true},
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Update Deal Stage to \'Closing Down (Won)\' in CRM',owner:'Lead Partner',sub:'Set status immediately on confirmation of delivery completion',detail:'Lead Partner · CRM / Torr · Set status immediately on confirmation of delivery completion',blocker:true,autoYes:true},
+        {id:'crm_end',text:'Confirm project end date in CRM',owner:'Project Owner',sub:'Responsible: Project Owner',detail:'Project Owner · CRM / Torr',blocker:false},
+        {id:'cl1',text:'Confirm final delivery completion formally with client — written confirmation preferred',owner:'Project Owner',sub:'Retain written confirmation in project workspace',detail:'Project Owner · — · Retain written confirmation in project workspace',blocker:true},
       ]},
       {name:'Xero',qs:[
-        {id:'xero1',text:'All expenses submitted and reconciled before final invoice?',sub:'All team expenses in before final invoice goes out.',detail:'Expenses submitted by 3rd. LP and Filip review 3rd–6th.',blocker:true},
-        {id:'xero2',text:'Final invoice issued and payment received?',sub:'Payment overdue 45+ days triggers Finance escalation.',detail:'Filip issues final invoice after expenses cleared.',blocker:true},
+        {id:'xero1',text:'Collect and submit all outstanding expenses before final invoice is raised',owner:'Project Team',sub:'All expenses must be submitted before final invoice',detail:'Project Team · Xero · All expenses must be submitted before final invoice',blocker:true},
+        {id:'xero2',text:'Issue final invoice — include all agreed final items and reimbursables',owner:'Filip / Finance',sub:'Responsible: Filip / Finance',detail:'Filip / Finance · Xero',blocker:true},
+        {id:'xero_profit',text:'Complete partner profit payout calculations per pricing sheet',owner:'Filip / Finance',sub:'Responsible: Filip / Finance',detail:'Filip / Finance · Xero',blocker:false},
+        {id:'xero3',text:'Confirm financial closure of project in Xero — no further costs/revenues expected',owner:'Filip / Finance',sub:'Close monthly processes',detail:'Filip / Finance · Xero · Close monthly processes',blocker:true},
       ]},
-      {name:'Torr Portal',qs:[{id:'torr1',text:'Project materials archived in Torr workspace?',sub:'All outputs and correspondence archived.',detail:'Ensure all materials are in correct folders.',blocker:true}]},
-      {name:'Team',qs:[{id:'tm1',text:'Trimstone system access removed for all rolling-off consultants?',sub:'James removes Torr, M365, Xero. Exceptions must be recorded.',detail:'James removes access. Exceptions must be recorded.',blocker:true}]}
+      {name:'Torr Portal',qs:[
+        {id:'torr1',text:'Archive all project materials in project workspace in Torr',owner:'Project Owner',sub:'Archive final deliverables and key working materials',detail:'Project Owner · Torr / SharePoint · Archive final deliverables and key working materials',blocker:true},
+        {id:'torr_lessons',text:'Capture lessons learned, knowledge, and delivery insights',owner:'LP + Team',sub:'Store lessons-learned summary and follow-on notes',detail:'LP + Team · Torr Portal · Store lessons-learned summary and follow-on notes',blocker:false},
+        {id:'crm_followon',text:'Record any follow-on opportunities in CRM',owner:'Lead Partner',sub:'Log potential extensions, new workstreams, or referrals',detail:'Lead Partner · Torr / CRM · Log potential extensions, new workstreams, or referrals',blocker:false},
+      ]},
+      {name:'Team',qs:[
+        {id:'tm1',text:'Remove Trimstone system access for all consultants rolling off the project',owner:'James / Ops',sub:'Exceptions: (1) rolling onto another Trimstone project; (2) by request where consultant likely to work with Trimstone again. Exceptions must be recorded.',detail:'James / Ops · M365 / Torr / Xero · Exceptions: (1) rolling onto another Trimstone project; (2) by request where consultant likely to work with Trimstone again. Exceptions must be recorded.',blocker:true},
+        {id:'cl2',text:'Confirm client system access has been removed (client\'s responsibility)',owner:'Lead Partner',sub:'LP to confirm this has occurred',detail:'Lead Partner · — · LP to confirm this has occurred',blocker:false},
+      ]},
     ]
   },
   hold:{
     full:'On hold',
-    entry:'4-weekly review decision to pause',
-    exit:'Re-activate or move to Closed Lost',
-    finance:'No new pursuit costs unless explicitly approved by MD.',
-    roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#412402',desc:'CRM update, review scheduling'}],
+    entry:'4-weekly review decision that opportunity is not progressing',
+    exit:'Re-activate to active stage, or close to Closed Lost',
+    finance:'No additional financial rules beyond the stage the deal is coming from. Avoid incurring new costs unless explicitly justified and recorded.',
+    roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#412402',desc:'CRM update, review scheduling, activity pause'}],
     groups:[
       {name:'Zoho CRM',qs:[
-        {id:'crm1',text:'Deal stage updated to On Hold — specific reason recorded in CRM?',sub:'Auto-confirmed — triggered by Zoho workflow. Ensure reason is recorded.',detail:'Stage is updated automatically. Make sure to add the reason for hold in the CRM notes.',blocker:true,autoYes:true},
-        {id:'crm2',text:'Next Review Date set aligned to 4-weekly portfolio review?',sub:'All on-hold deals reviewed on the same fixed day.',detail:'If not re-activated within the window, move to Closed Lost.',blocker:true},
+        {id:'crm1',text:'Update Deal Stage to \'On Hold\' in CRM',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr / CRM',blocker:true,autoYes:true},
+        {id:'cl1',text:'Record reason for hold and the restart trigger in CRM — be specific',owner:'Lead Partner',sub:'What would cause this deal to re-activate?',detail:'Lead Partner · Torr / CRM · What would cause this deal to re-activate?',blocker:true},
+        {id:'crm2',text:'Set Next Review Date aligned to next 4-weekly portfolio review',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr / CRM',blocker:true},
+        {id:'hold_pause',text:'Pause all proposal activity unless the deal is formally re-activated',owner:'Lead Partner',sub:'No new pursuit activity while on hold',detail:'Lead Partner · — · No new pursuit activity while on hold',blocker:false},
+        {id:'hold_cost',text:'Do not incur new pursuit costs unless explicitly approved and recorded',owner:'Lead Partner',sub:'Any exceptions must be justified and noted in CRM',detail:'Lead Partner · — · Any exceptions must be justified and noted in CRM',blocker:false},
+        {id:'hold_review',text:'Re-assess at each 4-weekly portfolio review: re-activate, re-date, or close',owner:'MD + LP',sub:'Explicit decision recorded at each review — no passive roll-forward',detail:'MD + LP · Torr / CRM · Explicit decision recorded at each review — no passive roll-forward',blocker:false},
+        {id:'hold_reactivate',text:'Move back to appropriate active stage if client momentum resumes',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr / CRM',blocker:false},
       ]},
-      {name:'Client',qs:[{id:'cl1',text:'Restart trigger defined — what would cause this deal to re-activate?',sub:'Must be specific and measurable.',detail:'Record in CRM. E.g. "Client confirms new budget October 2026".',blocker:true}]}
+    ]
+  },
+  lost:{
+    full:'Closed lost',
+    entry:'Client decision not to award, or LP kills the opportunity',
+    exit:'CRM reason recorded · costs settled · archives complete · lessons captured',
+    finance:'Proposal and prospecting costs are allocated to the core partners (Deal Owners). No further reimbursement occurs.',
+    roles:[{label:'Lead Partner',color:'#F1EFE8',tc:'#2C2C2A',desc:'CRM close-out, archive, lessons learned'},{label:'Finance / Filip',color:'#D3D1C7',tc:'#2C2C2A',desc:'Third-party cost settlement and reallocation'}],
+    groups:[
+      {name:'Zoho CRM',qs:[
+        {id:'crm1',text:'Update Deal Stage to \'Closed Lost\' in CRM',owner:'Lead Partner',sub:'Responsible: Lead Partner',detail:'Lead Partner · Torr / CRM',blocker:true},
+        {id:'crm_reason',text:'Record Closed Lost reason and short narrative explanation in CRM',owner:'Lead Partner',sub:'Captures institutional learning',detail:'Lead Partner · Torr / CRM · Captures institutional learning',blocker:true},
+        {id:'fin_confirm',text:'Confirm core partner group responsible for proposal costs',owner:'Finance / Filip',sub:'Identify Deal Owner and core group for cost allocation',detail:'Finance / Filip · Xero · Identify Deal Owner and core group for cost allocation',blocker:false},
+        {id:'fin1',text:'Reallocate proposal costs across core partner accounts if required',owner:'Finance / Filip',sub:'Net off personal spend; reallocate proportionally',detail:'Finance / Filip · Xero · Net off personal spend; reallocate proportionally',blocker:false},
+        {id:'fin_tp',text:'Ensure any third-party costs are settled per agreed approach',owner:'Finance / Filip',sub:'Responsible: Finance / Filip',detail:'Finance / Filip · Xero',blocker:false},
+        {id:'torr1',text:'Archive pricing sheet, proposal materials, and relevant correspondence',owner:'Project Owner',sub:'Store in project workspace for future reference and pitch reuse',detail:'Project Owner · Torr / SharePoint · Store in project workspace for future reference and pitch reuse',blocker:false},
+        {id:'torr2',text:'Capture lessons learned from the opportunity',owner:'Lead Partner',sub:'What worked, what did not, what would change',detail:'Lead Partner · Torr Portal · What worked, what did not, what would change',blocker:false},
+        {id:'lost_share',text:'Share insights with partner group if strategically significant',owner:'Lead Partner',sub:'Discretionary — apply judgement',detail:'Lead Partner · — · Discretionary — apply judgement',blocker:false},
+      ]},
     ]
   },
 }
@@ -889,7 +1035,7 @@ async function writeAnswer(p, qid, val) {
     last_toggled_by:   currentUser,
     last_toggled_role: currentRole,
     last_toggled_at:   new Date().toISOString(),
-  }, 'project_id,action_id')
+  }, 'project_id,stage_key,action_id')
 
   if (error) { console.error('Write failed:', error); hideSaving(false) }
   else hideSaving(true)
@@ -1210,17 +1356,18 @@ function renderOwner() {
   const p = projects.find(x => x.id === ownerSelId)
   if (!p) { document.getElementById('owner-view').innerHTML = '<div class="empty">Select a project from the sidebar.</div>'; return }
 
-  const viewSt = ownerStage || p.stage
-  const vst = stFor(viewSt)
-  const vsd = OWNER_STAGES[viewSt]
+  const viewSt = p.stage  // always current stage — no switching allowed
+  const vst    = stFor(viewSt)
+  const vsd    = OWNER_STAGES[viewSt]
   if (!vsd) return
-  const isCur = viewSt === p.stage
-  const answers = isCur ? p.answers : {}
-  const condAns = isCur ? p.condAnswers : {}
-  const allQs = vsd.groups.flatMap(g => g.qs)
+  const isCur  = true  // always editing current stage
+  const answers  = isCur ? p.answers  : {}
+  const condAns  = isCur ? p.condAnswers : {}
+  const allQs  = vsd.groups.flatMap(g => g.qs)
   const yCount = allQs.filter(q => answers[q.id] === 'yes').length
-  const pct = allQs.length ? Math.round((yCount/allQs.length)*100) : 0
-  const bLeft = allQs.filter(q => isEffectiveBlocker(p,q) && answers[q.id] !== 'yes' && answers[q.id] !== 'na').length
+  const pct    = allQs.length ? Math.round((yCount / allQs.length) * 100) : 0
+  const bLeft  = allQs.filter(q => isEffectiveBlocker(p,q) && answers[q.id] !== 'yes' && answers[q.id] !== 'na').length
+  const stageIdx = ['discussions','scoping','pricing','contracting','executing','closing','hold','lost'].indexOf(viewSt) + 1
 
   // Pills
   document.getElementById('owner-pills').innerHTML =
@@ -1229,7 +1376,7 @@ function renderOwner() {
   // Stage tabs
   document.getElementById('stage-tabs').innerHTML = STAGES.map(st => {
     const isCurSt = p.stage === st.id
-    const isAct = viewSt === st.id
+    const isAct   = viewSt === st.id
     return `<div class="stab ${isAct?'active':''}" style="border-bottom:2px solid ${isAct?st.color:'transparent'}" onclick="oSetStage('${st.id}')">
       <div class="stab-dot" style="background:${st.color}"></div>
       <div class="stab-name" style="${isAct?`color:${st.color}`:''}; font-size:9px">${st.short}</div>
@@ -1237,104 +1384,94 @@ function renderOwner() {
     </div>`
   }).join('')
 
-  // Groups
-  const groupsHtml = vsd.groups.map(g => {
-    const gId = `${viewSt}-${g.name}`
-    const isCol = ownerCollapsed.has(gId)
-    const gDone = g.qs.filter(q => answers[q.id] === 'yes').length
-
-    const qsHtml = g.qs.map(q => {
-      const ans = answers[q.id]
+  // Build action table rows — exactly like checklist
+  let rowNum = 0
+  const tableRows = vsd.groups.map(g => {
+    const groupRow = `<tr class="group-row"><td colspan="7">${g.name}</td></tr>`
+    const actionRows = g.qs.map(q => {
+      rowNum++
+      const ans    = answers[q.id]
       const reqKey = `${p.stage}_${q.id}_req`
-      const req = condAns[reqKey]
+      const req    = condAns[reqKey]
+      const isDone = ans === 'yes'
+      const isNA   = ans === 'na' || req === 'na'
       const isOpen = ownerOpenQ === `${ownerSelId}-${viewSt}-${q.id}`
 
-      let tCls, tIcon
-      if (q.conditional && req===undefined) { tCls='cond'; tIcon='?' }
-      else if (ans==='yes') { tCls='y'; tIcon='✓' }
-      else if (ans==='no')  { tCls='n'; tIcon='✗' }
-      else if (ans==='na' || req==='na') { tCls='na'; tIcon='—' }
-      else { tCls='u'; tIcon='?' }
+      // Checkbox class
+      const chkCls = isDone ? 'done' : ''
 
-      let actionBlock = ''
-      if (isOpen && isCur && !q.autoYes) {
-        // SharePoint link for this action
-        const al = ACTION_LINKS[q.id]
-        const _al = al || (q.id === 'cl2' && req === 'yes' && p.stage === 'contracting' ? KYC_LINK : null)
-        const ownerSpBtn = _al
-          ? '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">' +
-            '<button onclick="window.open(\'' + _al.url + '\',\'_blank\')" ' +
-            'style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;' +
-            'font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid #B5D4F4;' +
-            'background:#E6F1FB;color:#0C447C;cursor:pointer;font-family:\'DM Sans\',sans-serif;font-weight:500">' +
-            _al.icon + ' Open ' + _al.label + ' in SharePoint →</button></div>'
+      // Detail + buttons (shown when row is clicked)
+      let detailHtml = ''
+      if (isOpen) {
+        // SharePoint / Zoho buttons
+        const al   = ACTION_LINKS[q.id]
+        const _al  = al || (q.id === 'cl2' && req === 'yes' && p.stage === 'contracting' ? KYC_LINK : null)
+        const spBtn = _al
+          ? `<button class="act-sp-btn" onclick="event.stopPropagation();window.open('${_al.url}','_blank')">${_al.icon} Open ${_al.label} in SharePoint →</button>`
           : ''
-
-        // Zoho CRM link — only for crm items
-        const zohoId = p.id.replace('zcrm_', '')
         const zohoBtn = q.id.startsWith('crm')
-          ? '<div style="margin-top:6px">' +
-            '<button onclick="window.open(\'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + zohoId + '\',\'_blank\')" ' +
-            'style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;' +
-            'font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid var(--gray-200);' +
-            'background:var(--gray-50);color:var(--gray-600);cursor:pointer;font-family:\'DM Sans\',sans-serif;font-weight:500">' +
-            '🔗 Open deal in Zoho CRM →</button></div>'
+          ? `<button class="act-sp-btn" style="background:#f8f7f5;border-color:#d8d5ce;color:#4a4842" onclick="event.stopPropagation();window.open('https://crm.zoho.eu/crm/org20109486492/tab/Potentials/${p.id.replace('zcrm_','')}','_blank')">🔗 Open deal in Zoho CRM →</button>`
           : ''
 
-        if (q.conditional) {
-          if (req === undefined) {
-            actionBlock = `<div class="cond-block">
-              <div class="cond-q">${condQ(q.id)}</div>
-              <div class="cond-btns">
-                <button class="cond-btn req" onclick="setReq('${reqKey}','yes')">✓ Yes — required${q.blocker?' (becomes Critical)':''}</button>
-                <button class="cond-btn skip" onclick="setReq('${reqKey}','na')">— N/A — not needed</button>
-              </div>
-            </div>` + zohoBtn
-          } else if (req === 'yes') {
-            actionBlock = `<div class="qbtns" style="margin-top:6px;flex-wrap:nowrap">
-              <button class="qb y" onclick="oSetA('${q.id}','yes')">✓ Yes — done</button>
-              <button class="qb n" onclick="oSetA('${q.id}','no')">✗ No — not yet</button>
-              <button class="qb na" onclick="setReq('${reqKey}','na')">— N/A</button>
-            </div>` + (ans === 'yes' ? ownerSpBtn : '') + zohoBtn
-          } else {
-            actionBlock = `<div style="font-size:10px;color:var(--gray-400);margin-top:6px">Marked as not required. <button class="qb na" style="font-size:10px;padding:2px 8px" onclick="setReq('${reqKey}',undefined)">Change</button></div>` + zohoBtn
+        let actionBtns = ''
+        if (isCur && !q.autoYes) {
+          if (q.conditional && req === undefined) {
+            actionBtns = `<div class="cond-confirm">
+              <div class="cond-confirm-q">${condQ(q.id)}</div>
+              <div class="cond-confirm-btns">
+                <button class="cb-yes" onclick="event.stopPropagation();setReq('${reqKey}','yes')">✓ Yes — required${q.blocker?' (Critical)':''}</button>
+                <button class="cb-na"  onclick="event.stopPropagation();setReq('${reqKey}','na')">— Not needed</button>
+              </div></div>`
+          } else if (q.conditional && req === 'yes') {
+            actionBtns = `<div class="act-btns">
+              <button class="a-btn a-btn-y" onclick="event.stopPropagation();oSetA('${q.id}','yes')">✓ Yes — done</button>
+              <button class="a-btn a-btn-n" onclick="event.stopPropagation();oSetA('${q.id}','no')">✗ Not yet</button>
+              <button class="a-btn a-btn-na" onclick="event.stopPropagation();setReq('${reqKey}','na')">— N/A</button>
+            </div>`
+          } else if (q.conditional && req === 'na') {
+            actionBtns = `<div style="font-size:11px;color:#9e9b93;margin-top:6px">Marked not required.
+              <button class="a-btn a-btn-na" style="padding:2px 8px;font-size:10px" onclick="event.stopPropagation();setReq('${reqKey}',undefined)">Change</button></div>`
+          } else if (!q.conditional) {
+            actionBtns = `<div class="act-btns">
+              <button class="a-btn a-btn-y" onclick="event.stopPropagation();oSetA('${q.id}','yes')">✓ Yes — done</button>
+              <button class="a-btn a-btn-n" onclick="event.stopPropagation();oSetA('${q.id}','no')">✗ Not yet</button>
+            </div>`
           }
-        } else {
-          const naBtn = !q.blocker ? `<button class="qb na" onclick="oSetA('${q.id}','na')">— N/A</button>` : ''
-          actionBlock = `<div class="qbtns" style="flex-wrap:nowrap">
-            <button class="qb y" onclick="oSetA('${q.id}','yes')">✓ Yes — done</button>
-            <button class="qb n" onclick="oSetA('${q.id}','no')">✗ No — not yet</button>
-            ${naBtn}
-          </div>` + (ans === 'yes' ? ownerSpBtn : '') + zohoBtn
         }
+        detailHtml = `<div class="act-detail">${q.detail}</div>${actionBtns}${isDone ? spBtn : ''}${zohoBtn}`
       }
 
-      return `<div class="q-row ${isOpen?'open':''}" onclick="oToggleQ('${ownerSelId}-${viewSt}-${q.id}')">
-        <div class="qtick ${tCls}">${tIcon}</div>
-        <div class="qbody">
-          <div class="qtext">${q.text}</div>
-          ${q.sub ? `<div class="qsub">${q.sub}</div>` : ''}
-        </div>
-        ${critLabel(p, q)}
-        <span style="font-size:11px;color:var(--gray-300);margin-left:4px;margin-top:2px">${isOpen?'▲':'▼'}</span>
-      </div>
-      <div class="q-expand">
-        <div class="qdetail">${q.detail}</div>
-        ${actionBlock}
-      </div>`
-    }).join('')
+      // Notes cell: use q.notes if exists, else sub
+      const notesTxt = q.notes || q.sub || '—'
 
-    return `<div class="grp">
-      <div class="grp-head ${isCol?'collapsed':''}" onclick="oToggleGrp('${gId}')">
-        <span class="grp-icon">${GI[g.name]||'📋'}</span>
-        <span class="grp-name">${g.name}</span>
-        <span class="grp-stats">${gDone}/${g.qs.length} done</span>
-        <span style="font-size:10px;color:var(--gray-300);margin-left:4px">${isCol?'▼':'▲'}</span>
-      </div>
-      ${isCol ? '' : qsHtml}
-    </div>`
+      return `<tr class="${isDone?'done-row':''}" onclick="oToggleQ('${ownerSelId}-${viewSt}-${q.id}')" style="cursor:pointer">
+        <td class="check ${chkCls}" onclick="event.stopPropagation();${
+          isCur && !q.conditional && !q.autoYes
+            ? `oSetA('${q.id}',${isDone?"'no'":"'yes'"})`
+            : `oToggleQ('${ownerSelId}-${viewSt}-${q.id}')`
+        }"><span class="box"></span></td>
+        <td class="num">${rowNum}</td>
+        <td>
+          <div>${q.text}${q.conditional && req===undefined?' <span style="font-size:9px;color:#92400e;font-style:italic">if needed</span>':''}${isNA?' <span style="font-size:9px;color:#9e9b93">(N/A)</span>':''}</div>
+          ${detailHtml}
+        </td>
+        <td class="role">${q.owner||'Lead Partner'}</td>
+        <td class="role">${q.owner||'Lead Partner'}</td>
+        <td class="tool">${q.tool||'—'}</td>
+        <td class="notes-cell">${notesTxt}</td>
+      </tr>`
+    }).join('')
+    return groupRow + actionRows
   }).join('')
 
+  // Status strip
+  const status = isCur
+    ? (bLeft === 0
+      ? `<div class="status-strip"><div class="ss-dot" style="background:var(--green)"></div><span style="font-size:11px;color:var(--green-txt)">All critical actions cleared — ready to advance</span></div>`
+      : `<div class="status-strip"><div class="ss-dot" style="background:var(--red)"></div><span style="font-size:11px;color:var(--red-txt)">${bLeft} critical action${bLeft>1?'s':''} outstanding before advancing</span></div>`)
+    : ''
+
+  // Checklist open buttons
   const clHtml = vsd.roles.map(r => `
     <div class="cl-row">
       <span class="cl-badge" style="background:${r.color};color:${r.tc}">${r.label}</span>
@@ -1342,50 +1479,56 @@ function renderOwner() {
       <button class="cl-open" onclick="openChecklist('${p.id}','${viewSt}','${r.label}')">Open →</button>
     </div>`).join('')
 
-  const status = isCur
-    ? (bLeft===0
-      ? `<div class="status-strip"><div class="ss-dot" style="background:var(--green)"></div><span style="font-size:11px;color:var(--green-txt)">All critical actions cleared — ready to advance</span></div>`
-      : `<div class="status-strip"><div class="ss-dot" style="background:var(--red)"></div><span style="font-size:11px;color:var(--red-txt)">${bLeft} critical action${bLeft>1?'s':''} outstanding before advancing</span></div>`)
-    : ''
-
   document.getElementById('owner-panel').innerHTML = `
-    <div class="op-head">
-      <div style="width:8px;height:8px;border-radius:50%;background:${vst.color}"></div>
-      <div class="op-stage-name">${vsd.full}</div>
-      ${isCur
-        ? `<span class="badge" style="background:${vst.bg};color:${vst.tc}">Current — ${p.name}</span><span class="op-pct">${yCount}/${allQs.length} done</span>`
-        : `<span class="badge" style="background:var(--gray-100);color:var(--gray-600)">Reference view</span>`}
-    </div>
-    <div class="gates-row">
-      <div class="gate-box" style="background:${vst.bg}30;border:1px solid ${vst.color}40">
-        <div class="gate-lbl" style="color:${vst.tc}">Entry gate</div>
-        <div class="gate-txt">${vsd.entry}</div>
-      </div>
-      <div class="gate-box" style="background:var(--amber-lt);border:1px solid var(--amber)">
-        <div class="gate-lbl" style="color:#854F0B">Exit gate — must achieve</div>
-        <div class="gate-txt" style="color:var(--amber-txt)">${vsd.exit}</div>
+    <div class="act-stage-banner" style="background:linear-gradient(135deg,${vst.color},${vst.color}aa)">
+      <div class="act-banner-eyebrow">Stage ${stageIdx} of 8</div>
+      <div class="act-banner-title">${vsd.full}</div>
+      <div class="act-banner-meta">
+        <div>🔒 <strong>Entry:</strong> ${vsd.entry}</div>
+        <div>↗ <strong>Exit:</strong> ${vsd.exit}</div>
       </div>
     </div>
-    ${isCur ? `<div class="prog-row-full"><div class="prog-bar-full"><div class="prog-fill-full" style="width:${pct}%;background:${vst.color}"></div></div><span style="font-size:11px;color:var(--gray-400)">${pct}%</span></div>` : ''}
-    <div class="groups">${groupsHtml}</div>
+
+    <div class="act-finance">
+      <span style="font-size:14px;flex-shrink:0">💷</span>
+      <div><strong>Financial treatment.</strong> ${vsd.finance}</div>
+    </div>
+
+    <div class="act-prog">
+      <div class="act-prog-bar"><div class="act-prog-fill" style="width:${pct}%;background:${vst.color}"></div></div>
+      <span style="font-size:11px;color:var(--cl-gray-400);white-space:nowrap">${yCount} of ${allQs.length} done · ${pct}%</span>
+    </div>
+
+    <div class="act-card">
+      <div class="act-card-title"><div class="act-dot"></div>Required actions</div>
+      <table class="action-table">
+        <thead>
+          <tr><th style="width:36px"></th><th style="width:28px">#</th><th>Action</th><th style="width:120px">Responsible</th><th style="width:120px">Accountable</th><th style="width:90px">Tool</th><th>Notes</th></tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+
     ${status}
+
     <div class="cl-section">
       <div class="cl-title">Open shared project checklist</div>
       ${clHtml}
-      <div style="font-size:10px;color:var(--gray-400);margin-top:5px">Stage: <strong>${vsd.full}</strong> · Project: <strong>${p.name}</strong> · Role pre-filled automatically</div>
-    </div>
-    <div class="fin-note" style="margin-top:8px">
-      <div class="fin-lbl">Finance note</div>${vsd.finance}
+      <div style="font-size:10px;color:var(--cl-gray-400);margin-top:5px">Stage: <strong>${vsd.full}</strong> · Project: <strong>${p.name}</strong> · Role pre-filled automatically</div>
     </div>`
 
-  document.getElementById('topbar-badge').textContent = p.name
-  document.getElementById('topbar-badge').style.cssText = `background:${vst.bg};color:${vst.tc}`
+  const _badge_o = document.getElementById('topbar-badge')
+  if (_badge_o) {
+    _badge_o.innerHTML = '<span style="font-size:13px;font-weight:500;color:var(--gray-800)">' + p.name + '</span>' + (p.client && p.client !== p.name ? '<span style="font-size:11px;color:var(--gray-400);margin-left:6px">' + p.client + '</span>' : '')
+    _badge_o.style.cssText = ''
+  }
 }
 
 function openChecklist(pid, stageKey, role) {
-  // Wire to your GitHub Pages URL — replace with your actual URL
-  const base = 'https://trimstone-app.github.io/handbook'
-  const url = `${base}?project=${encodeURIComponent(pid)}&stage=${stageKey}&role=${encodeURIComponent(role)}`
+  const base = 'https://trimstone-app.github.io/trimstone-operation-checklist/'
+  const roleMap = {'Lead Partner':'lp','Co-owner / Core Partner':'coown','Consulting MD':'md','Iryna':'iryna','James / Miguel':'james','Finance / Filip':'filip','James / Ops':'james'}
+  const roleKey = roleMap[role] || 'lp'
+  const url = `${base}?project=${encodeURIComponent(pid)}&stage=${stageKey}&role=${roleKey}&user=${encodeURIComponent(currentUser)}`
   window.open(url, '_blank')
 }
 
@@ -1405,6 +1548,8 @@ async function oSetA(qid, val) {
   allTicksCache[cacheKey] = { done: val==='yes', na: val==='na' }
   ownerOpenQ = null
   renderOwner()
+  // If grid is open, re-render it too so auto-tick updates immediately
+  if (mainView === 'grid') renderGrid()
   await writeAnswer(p, qid, val)
 }
 
@@ -1680,74 +1825,194 @@ async function addProject() {
 // ══════════════════════════════════════════════
 // GRID VIEW
 // ══════════════════════════════════════════════
-// GRID_ROWS built from OWNER_STAGES so grid and My project are always in sync
-function buildGridRows() {
-  const STAGE_IDS = ['discussions','scoping','pricing','contracting','executing','closing','hold']
-  const ALL_STAGES = STAGE_IDS
+// GRID_ROWS — curated key actions
+const GRID_ROWS = [
+  { group: 'Zoho CRM', icon: '🗄', items: [
+    { id:'crm1',
+      label:'CRM updated',
+      sub:'Stage · dates · amount',
+      applicable:['discussions','scoping','pricing','contracting','executing','closing','hold'],
+      blocker:true },
+    { id:'crm2',
+      label:'Co-owners agreed',
+      sub:'Proposal cost agreement in place',
+      applicable:['scoping'], blocker:true, conditional:true },
+  ]},
+  { group: 'Pricing sheet', icon: '💰', items: [
+    { id:'cl5',
+      label:'Pricing Sheet v4 signed and stored',
+      sub:'MD sign-off · stored in Confidential folder',
+      applicable:['pricing'], blocker:true },
+  ]},
+  { group: 'Client', icon: '🏢', items: [
+    { id:'cl1',
+      label:'SoW signed and stored',
+      sub:'MD signs · Zoho Sign · stored in Confidential folder',
+      applicable:['contracting'], blocker:true },
+    { id:'cl2',
+      label:'KYC / AML signed and stored',
+      sub:'If needed · regulated clients · Iryna manages',
+      applicable:['contracting'], blocker:true, conditional:true },
+  ]},
+  { group: 'Team', icon: '👥', items: [
+    { id:'tm2',
+      label:'NDAs signed and stored',
+      sub:'If needed · Iryna · Zoho Sign · NDA template',
+      applicable:['contracting'], blocker:false, conditional:true },
+    { id:'tm1',
+      label:'MSAs signed and stored',
+      sub:'Iryna drafts · MD countersigns · Confidential folder',
+      applicable:['contracting'], blocker:true },
+    { id:'tm3a',
+      label:'M365 accounts created',
+      sub:'James · new subcontractors',
+      applicable:['contracting'], blocker:true },
+    { id:'tm3b',
+      label:'Torr Portal access granted',
+      sub:'James · new subcontractors',
+      applicable:['contracting'], blocker:true },
+    { id:'tm3c',
+      label:'WeWork passes issued',
+      sub:'Miguel · new subcontractors',
+      applicable:['contracting'], blocker:true },
+    { id:'tm5',
+      label:'Torr & WeWork training done',
+      sub:'LP / PMO · timesheets · TAIA · folders · WeWork logistics',
+      applicable:['contracting'], blocker:true },
+    { id:'tm1_close',
+      label:'Access removed',
+      sub:'James · M365 / Torr / Xero · exceptions recorded',
+      applicable:['closing'], blocker:true, _realId:'tm1' },
+  ]},
+  { group: 'Xero', icon: '🧾', items: [
+    { id:'xero1',
+      label:'Xero project set up',
+      sub:'Filip · finance code = Torr code · forecasts · all team',
+      applicable:['executing'], blocker:true },
+    { id:'xero_acc',
+      label:'Xero access given',
+      sub:'Filip / Miguel · expense submission for all team',
+      applicable:['executing'], blocker:true },
+    { id:'tm2',
+      label:'Xero training done',
+      sub:'LP / PMO · expenses Appendix B · Torr timesheets',
+      applicable:['executing'], blocker:true },
+    { id:'xero2',
+      label:'Final invoice sent',
+      sub:'Filip · all expenses cleared · financial closure confirmed',
+      applicable:['closing'], blocker:true },
+  ]},
+  { group: 'Torr Portal', icon: '📋', items: [
+    { id:'tm4',
+      label:'Team added to Torr Team tab',
+      sub:'Role · hours · project fields complete',
+      applicable:['contracting'], blocker:true },
+    { id:'torr1',
+      label:'Timesheets enabled',
+      sub:'All team submitting weekly · LP approves',
+      applicable:['executing'], blocker:true },
+  ]},
+]
 
-  // Zoho CRM — exactly 2 rows
-  const zohoItems = [
-    {
-      id: 'crm1',
-      label: 'CRM updated: stage, start date & end date',
-      applicable: ALL_STAGES,
-      blocker: true,
-      autoYes: true,
-      autoYesExcept: ['contracting','executing']
-    },
-    {
-      id: 'crm2',
-      label: 'Account priority set to High',
-      applicable: ['discussions'],
-      blocker: true,
-      autoYes: false
-    },
-  ]
 
-  // All other groups — built dynamically from OWNER_STAGES, skipping crm1/crm2/crm3
-  const skipIds = new Set(['crm1','crm2','crm3'])
-  const groupOrder = []
-  const groupMap = {}
 
-  STAGE_IDS.forEach(stageId => {
-    const sd = OWNER_STAGES[stageId]
-    if (!sd) return
-    sd.groups.forEach(g => {
-      if (g.name === 'Zoho CRM') return // handled manually above
-      if (!groupMap[g.name]) {
-        groupMap[g.name] = { icon: GI[g.name]||'📋', items: {} }
-        groupOrder.push(g.name)
-      }
-      g.qs.forEach(q => {
-        const label = q.text.replace(/\?\s*$/, '')
-        const key = q.id + '__' + label
-        if (!groupMap[g.name].items[key]) {
-          groupMap[g.name].items[key] = {
-            id: q.id, label,
-            applicable: [],
-            blocker: q.blocker,
-            conditional: q.conditional || false,
-            autoYes: q.autoYes || false,
-            autoYesExcept: q.autoYesExcept || null,
-          }
-        }
-        if (!groupMap[g.name].items[key].applicable.includes(stageId)) {
-          groupMap[g.name].items[key].applicable.push(stageId)
-        }
-      })
-    })
-  })
+// ══════════════════════════════════════════════════════════════════
+// GRID AUTO-TICK RULES
+// When all listed My project actions are done → grid cell auto-ticks
+// ══════════════════════════════════════════════════════════════════
 
-  const otherGroups = groupOrder
-    .filter((v,i,a) => a.indexOf(v)===i)
-    .map(name => ({ group: name, icon: groupMap[name].icon, items: Object.values(groupMap[name].items) }))
 
-  return [
-    { group: 'Zoho CRM', icon: '🗄', items: zohoItems },
-    ...otherGroups
-  ]
+
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// GRID AUTO-TICK RULES
+// When all listed My project actions are done → grid cell auto-ticks
+// ══════════════════════════════════════════════════════════════════
+const GRID_AUTO_RULES = {
+  // CRM updated — all CRM actions in each stage
+  'crm1': {
+    'discussions': ['crm1','crm2','crm2b','crm4','crm3'],
+    'scoping':     ['crm1','crm2','crm3'],
+    'pricing':     ['crm1'],
+    'contracting': ['crm1'],
+    'executing':   ['crm1','crm1b'],
+    'closing':     ['crm1','crm_end'],
+    'hold':        ['crm1'],
+  },
+  // Pricing Sheet v4 signed and stored — cl5 in pricing
+  'cl5': {
+    'pricing': ['cl4','cl4b'],
+  },
+  // SoW signed and stored — all SoW actions in contracting
+  'cl1': {
+    'contracting': ['cl1','cl_sow_sign','cl_sow_recv','cl_conf'],
+  },
+  // KYC/AML — cl2 in contracting
+  'cl2': {
+    'contracting': ['cl2'],
+  },
+  // NDAs signed — tm2 in contracting
+  'tm2': {
+    'contracting': ['tm2'],
+    'executing':   ['tm2'],
+  },
+  // MSAs signed and stored — tm1 + countersign in contracting
+  'tm1': {
+    'contracting': ['tm1','tm1b'],
+  },
+  // M365 accounts created
+  'tm3a': {
+    'contracting': ['tm3'],
+  },
+  // Torr access granted — tm3b maps to same action
+  'tm3b': {
+    'contracting': ['tm3'],
+  },
+  // WeWork passes issued — tm3c maps to same action
+  'tm3c': {
+    'contracting': ['tm3'],
+  },
+  // Torr & WeWork training
+  'tm5': {
+    'contracting': ['tm5'],
+  },
+  // Team added to Torr tab
+  'tm4': {
+    'contracting': ['tm4'],
+  },
+  // Access removed (closing)
+  'tm1_close': {
+    'closing': ['tm1'],
+  },
+  // Xero project set up
+  'xero1': {
+    'executing': ['xero_req','xero1'],
+  },
+  // Xero access given
+  'xero_acc': {
+    'executing': ['xero_acc'],
+  },
+  // Xero training
+  'xero_train': {
+    'executing': ['tm2'],
+  },
+  // Final invoice
+  'xero2': {
+    'closing': ['xero2','xero3'],
+  },
+  // Timesheets enabled
+  'torr1': {
+    'executing': ['torr1'],
+  },
+  // Co-owners agreed
+  'crm2': {
+    'scoping': ['crm2'],
+  },
 }
-const GRID_ROWS = buildGridRows()
+
+
 
 
 let gridSelProj = null
@@ -1769,8 +2034,9 @@ function renderGrid() {
     const st = stFor(p.stage)
     const zohoId = p.id.replace('zcrm_', '')
     const zohoUrl = 'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + zohoId
-    _badge.innerHTML = '<span style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" onclick="window.open(\'' + zohoUrl + '\',\'_blank\')" title="Open in Zoho CRM">' + p.name + ' <span style="font-size:12px">🔗</span></span>'
-    _badge.style.cssText = 'background:' + st.bg + ';color:' + st.tc + ';padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;cursor:pointer'
+    const _clientPart = (p.client && p.client !== p.name) ? '<span style="font-size:11px;color:var(--gray-400);margin-left:6px">' + p.client + '</span>' : ''
+    _badge.innerHTML = '<span style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:500;color:var(--gray-800)" onclick="window.open(\'' + zohoUrl + '\',\'_blank\')" title="Open in Zoho CRM">' + p.name + ' <span style="font-size:11px">🔗</span></span>' + _clientPart
+    _badge.style.cssText = ''
   }
 
   // Project pills — removed from top, now in sidebar grouped by stage
@@ -1997,8 +2263,27 @@ document.addEventListener('click', () => { if(gridOpenCell){gridOpenCell=null;re
 // Per-stage answer helpers — answers are keyed by stageKey__actionId in full data
 // For the current stage they're in p.answers; for other stages we need the raw tick data
 function getStageAnswer(p, actionId, stageId) {
+  // Check auto-tick rules first — if all underlying actions are done, grid cell = yes
+  const rules = GRID_AUTO_RULES[actionId]
+  if (rules && rules[stageId]) {
+    const requiredIds = rules[stageId]
+    const answers = stageId === p.stage
+      ? (p.answers || {})
+      : Object.fromEntries(requiredIds.map(id => {
+          const key = p.id + '__' + stageId + '__' + id
+          const t = allTicksCache[key]
+          return [id, t ? (t.na ? 'na' : t.done ? 'yes' : 'no') : undefined]
+        }))
+    const allDone = requiredIds.every(id => answers[id] === 'yes')
+    const anyNo   = requiredIds.some(id => answers[id] === 'no')
+    if (allDone) return 'yes'
+    if (anyNo)   return 'no'
+    // Some answered, some not — show partial (unanswered)
+    return undefined
+  }
+
+  // Default: direct lookup
   if (stageId === p.stage) return (p.answers||{})[actionId]
-  // Check allTicks cache
   const key = p.id + '__' + stageId + '__' + actionId
   const t = allTicksCache[key]
   if (!t) return undefined
@@ -2041,7 +2326,7 @@ async function gridSetAnswer(qid, val, event) {
     is_done: isDone, is_na: isNa,
     last_toggled_by: currentUser, last_toggled_role: currentRole,
     last_toggled_at: new Date().toISOString(),
-  }, 'project_id,action_id')
+  }, 'project_id,stage_key,action_id')
   showSaving(); hideSaving(true)
 }
 
