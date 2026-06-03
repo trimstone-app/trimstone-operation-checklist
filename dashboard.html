@@ -187,7 +187,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .qb.na{border-color:var(--gray-200);color:var(--gray-400)}.qb.na:hover{background:var(--gray-50)}
 .cond-block{background:var(--amber-lt);border:1px solid var(--amber);border-radius:var(--r8);padding:9px 11px;margin-top:6px}
 .cond-q{font-size:11px;font-weight:500;color:var(--amber-txt);margin-bottom:7px}
-.cond-btns{display:flex;gap:6px;flex-wrap:wrap}
+.cond-btns{display:flex;gap:6px;flex-wrap:nowrap}
 .cond-btn{font-size:11px;padding:4px 12px;border-radius:var(--r8);border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500}
 .cond-btn.req{border-color:var(--amber);color:var(--amber-txt)}.cond-btn.req:hover{background:var(--amber-lt)}
 .cond-btn.skip{border-color:var(--gray-200);color:var(--gray-400)}.cond-btn.skip:hover{background:var(--gray-50)}
@@ -261,14 +261,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 .cell-popup{position:absolute;z-index:200;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r12);padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:200px;left:50%;transform:translateX(-50%);top:calc(100% + 6px);text-align:left}
 .cell-popup-title{font-size:11px;font-weight:500;color:var(--gray-800);margin-bottom:3px;line-height:1.4}
 .cell-popup-stage{font-size:10px;color:var(--gray-400);margin-bottom:10px}
-.cell-popup-btns{display:flex;gap:5px;flex-wrap:wrap}
+.cell-popup-btns{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
 .cpb{font-size:11px;padding:5px 12px;border-radius:var(--r8);border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .12s;white-space:nowrap}
 .cpb.y{border-color:var(--green);color:var(--green-txt)}.cpb.y:hover{background:var(--green-lt)}
 .cpb.n{border-color:var(--red);color:var(--red-txt)}.cpb.n:hover{background:var(--red-lt)}
 .cpb.na{border-color:var(--gray-200);color:var(--gray-400)}.cpb.na:hover{background:var(--gray-50)}
 .cond-confirm{background:var(--amber-lt);border:1px solid var(--amber);border-radius:var(--r8);padding:9px 10px;margin-bottom:8px}
 .cond-q{font-size:11px;font-weight:500;color:var(--amber-txt);margin-bottom:6px}
-.cond-btns{display:flex;gap:5px;flex-wrap:wrap}
+.cond-btns{display:flex;gap:6px;flex-wrap:nowrap}
 .cdb{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500}
 .cdb.req{border-color:var(--amber);color:var(--amber-txt)}.cdb.req:hover{background:var(--amber-lt)}
 .cdb.skip{border-color:var(--gray-200);color:var(--gray-400)}.cdb.skip:hover{background:var(--gray-50)}
@@ -486,13 +486,22 @@ function normaliseStage(raw) {
   return ZOHO_STAGE_MAP[lower] || lower
 }
 
+// SharePoint links — appear after ticking Yes on specific actions
+// IDs match OWNER_STAGES exactly
 const ACTION_LINKS = {
-  'cl3': { label: 'SOWs folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgBgVQE-vq1nTonnbSe9F-n4ATNqUdA5jTC0g-wf8iyAvMk?e=vKhh6y', icon: '📄' },
-  'tm1': { label: 'MSAs folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgDZTtNUMtNgSLcu_Tp5NakNATb2qwvDcQP-zADEQepUI-k?e=yFmYHK', icon: '📝' },
-  'cl4': { label: 'KYC folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCpQWfWBBBzSYc1gmDVkS9zAU_p3eUKayMmto0MYfgidPE?e=l06yHU', icon: '🔒' },
-  'cl2': { label: 'Pricing Sheets', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgAmOz6OPDZ8QJVgZUEAhCmwAb1kBpWvstZHYH8k7dkJhYU?e=mY2ctu', icon: '💰' },
-  'torr2': { label: 'Time Sheets', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgA92S4E821YRb1At_4mD6eKAQKc6YEy8ZudC6aRssCTosA?e=PqBRW2', icon: '⏱' },
+  // Contracting: NDAs signed → MSAs folder
+  'tm2': { label: 'NDAs folder',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCxvz1pu3NmRqql5x-DHL1wAXglvNaZvxtH8skMsbsivZE?e=te7YSV', icon: '📝' },
+  // Contracting: Client SoW signed → SOWs folder
+  'cl5': { label: 'SOWs folder',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgBgVQE-vq1nTonnbSe9F-n4ATNqUdA5jTC0g-wf8iyAvMk?e=vKhh6y', icon: '📄' },
+  // Contracting: MSA contracts signed → MSAs folder
+  'tm1': { label: 'MSAs folder',    url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgDZTtNUMtNgSLcu_Tp5NakNATb2qwvDcQP-zADEQepUI-k?e=yFmYHK', icon: '📝' },
+  // Pricing: Pricing Sheet v4 final sign-off → Pricing Sheets folder
+  'cl4': { label: 'Pricing Sheets', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgAmOz6OPDZ8QJVgZUEAhCmwAb1kBpWvstZHYH8k7dkJhYU?e=mY2ctu', icon: '💰' },
+  // Executing: Timesheets enabled (torr1 in executing) → Time Sheets folder
+  'torr1': { label: 'Time Sheets',  url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgA92S4E821YRb1At_4mD6eKAQKc6YEy8ZudC6aRssCTosA?e=PqBRW2', icon: '⏱' },
 }
+// KYC is conditional (cl2 in contracting) — shown separately
+const KYC_LINK = { label: 'KYC folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCpQWfWBBBzSYc1gmDVkS9zAU_p3eUKayMmto0MYfgidPE?e=l06yHU', icon: '🔒' }
 
 const stFor = id => STAGES.find(s=>s.id===id) || STAGES[0]
 
@@ -516,12 +525,12 @@ const OWNER_STAGES = {
     roles:[{label:'Lead Partner',color:'#E6F1FB',tc:'#0C447C',desc:'Create and manage deal in CRM'}],
     groups:[
       {name:'Zoho CRM',qs:[
-        {id:'crm1',text:'Deal created in Zoho CRM, linked to correct Account and Contact?',sub:'Deal name must reflect a specific project.',detail:'Go to Zoho CRM → Deals → New Deal. Link to Account and Contact.',blocker:true},
+        {id:'crm1',text:'Deal created in Zoho CRM, linked to correct Account and Contact?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Deal is created automatically when stage changes in Zoho CRM.',blocker:true,autoYes:true},
         {id:'crm2',text:'Account priority set to High (H) in CRM?',sub:'Triggers Torr client visibility automatically.',detail:'Set in the Account record.',blocker:true},
         {id:'crm3',text:'Next Step and Next Step Date recorded in CRM?',sub:'No deal should exist without a next step.',detail:'Set a specific next action and date.',blocker:true},
       ]},
       {name:'Client',qs:[
-        {id:'cl1',text:'Key client contacts and decision maker recorded in CRM?',sub:'Minimum one primary contact linked to the deal.',detail:'Record main client contact and decision maker.',blocker:false},
+        {id:'cl1',text:'Key client contacts and decision maker recorded in CRM?',sub:'Minimum one primary contact linked to the deal.',detail:'Record main client contact and decision maker.',blocker:true},
         {id:'cl2',text:'Has the client actively requested further engagement?',sub:'Exit gate — until they ask for more, the deal stays here.',detail:'Log the client request in CRM as a note.',blocker:true},
       ]}
     ]
@@ -534,13 +543,12 @@ const OWNER_STAGES = {
     roles:[{label:'Lead Partner',color:'#EEEDFE',tc:'#3C3489',desc:'Workspace setup, CRM, approach'},{label:'Co-owner / Core Partner',color:'#EEEDFE',tc:'#534AB7',desc:'Delivery hypothesis & cost agreement'}],
     groups:[
       {name:'Zoho CRM',qs:[
-        {id:'crm1',text:'Deal stage updated to Prospecting & Scoping in Zoho CRM?',sub:'Triggers Zoho workflow and email notification.',detail:'Update immediately when client requests further engagement.',blocker:true},
-        {id:'crm2',text:'Co-Owners recorded in CRM with proposal cost agreement?',sub:'Co-owners share proposal costs if deal does not materialise.',detail:'Add Core Partners as Co-Owners.',blocker:true},
-        {id:'crm3',text:'Expected project start date entered in CRM?',sub:'Set far enough out to allow negotiations.',detail:'Enter a realistic start date.',blocker:false},
+        {id:'crm1',text:'Deal stage updated to Prospecting & Scoping in Zoho CRM?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Stage is updated automatically in Zoho CRM.',blocker:true,autoYes:true},
+        {id:'crm3',text:'Expected project start date entered in CRM?',sub:'Set far enough out to allow negotiations.',detail:'Enter a realistic start date.',blocker:true},
       ]},
       {name:'Torr Portal',qs:[
         {id:'torr1',text:'Project workspace and project code auto-created in Torr?',sub:'Triggered automatically when CRM stage is updated.',detail:'Check workspace has appeared. If not, contact James.',blocker:true},
-        {id:'torr2',text:'Discovery notes and client materials stored in Torr workspace?',sub:'Torr workspace is the authoritative storage from this stage.',detail:'Upload all meeting notes, client materials, discovery outputs.',blocker:false},
+        {id:'torr2',text:'Discovery notes and client materials stored in Torr workspace?',sub:'Torr workspace is the authoritative storage from this stage.',detail:'Upload all meeting notes, client materials, discovery outputs.',blocker:true},
       ]},
       {name:'Client',qs:[
         {id:'cl1',text:'Formal proposal prepared?',sub:'Do not share externally until Pricing Sheet v2 approved by MD.',detail:'Use Torr tools — Proposal Generator, TAIA, PPT Generator.',blocker:true},
@@ -554,7 +562,7 @@ const OWNER_STAGES = {
     finance:'Partners may transfer prior personal expenses to project code only at Executing stage.',
     roles:[{label:'Lead Partner',color:'#E1F5EE',tc:'#085041',desc:'Pricing sheet owner — v1, v3, v4'},{label:'Co-owner / Core Partner',color:'#E1F5EE',tc:'#0F6E56',desc:'Margin & staffing input'},{label:'Consulting MD',color:'#9FE1CB',tc:'#085041',desc:'v2 & v4 sign-off'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Pricing & Proposing in Zoho CRM?',sub:'Triggers email notification with pricing template.',detail:'Update as soon as you move to formal proposal preparation.',blocker:true}]},
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Pricing & Proposing in Zoho CRM?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Stage is updated automatically in Zoho CRM.',blocker:true,autoYes:true}]},
       {name:'Client',qs:[
         {id:'cl1',text:'Pricing Sheet v1 completed — delivery model, roles, rates, assumptions?',sub:'Internal only. Submit to MD before sharing anything externally.',detail:'Complete all sections. Do not share externally.',blocker:true},
         {id:'cl2',text:'Consulting MD approved Pricing Sheet v2 before any external sharing?',sub:'No proposal shared externally below v2 — no exceptions.',detail:'Only after v2 approval can you share with the client.',blocker:true},
@@ -571,7 +579,7 @@ const OWNER_STAGES = {
     finance:'Work may begin at risk. Expenses held until Executing.',
     roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#633806',desc:'SoW, CRM update, onboarding lead'},{label:'Iryna',color:'#FAC775',tc:'#412402',desc:'NDAs, MSAs, KYC/AML'},{label:'Consulting MD',color:'#EF9F27',tc:'#412402',desc:'SoW + MSA countersigning'},{label:'James / Miguel',color:'#FAEEDA',tc:'#633806',desc:'M365, Torr, WeWork'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Contracting — start date, end date, contract amount in CRM?',sub:'Dates and amount must match Pricing Sheet v4.',detail:'Update immediately on award confirmation.',blocker:true}]},
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'CRM updated: stage set to Contracting — start date, end date and contract amount entered?',sub:'Start and end dates must be entered — this is required for invoicing and Xero.',detail:'Update stage to Contracting. Enter start date, end date and contract amount. Must match Pricing Sheet v4.',blocker:true}]},
       {name:'Client',qs:[
         {id:'cl1',text:'Client SoW is signed?',sub:'MD signs all SoWs. Do not move to Executing without a signed SoW.',detail:'Draft SoW, send via Zoho Sign (CC MD and Iryna). Follow up after 5 days. Escalate to MD after 10.',blocker:true},
         {id:'cl2',text:'KYC/AML and confidential client requirements completed?',sub:'If needed — required for regulated clients (banks, FCA firms).',detail:'Iryna manages. Covers insurances, cyber security, supplier onboarding.',blocker:true,conditional:true},
@@ -579,9 +587,9 @@ const OWNER_STAGES = {
       {name:'Team',qs:[
         {id:'tm1',text:'Subcontractor MSA contracts signed by staff and countersigned by MD?',sub:'Iryna drafts. MD countersigns all. Save in Confidential folder.',detail:'Use Trimstone_MSA_Final.docx. MD must countersign all executed MSAs.',blocker:true},
         {id:'tm2',text:'NDAs signed by all project team members who require them?',sub:'If needed — use Zoho Sign.',detail:'Iryna prepares using Trimstone_Standard NDA_Corporate_Template.docx.',blocker:false,conditional:true},
-        {id:'tm3',text:'Team onboarded — M365 account, Torr access, WeWork passes?',sub:'Critical — confirm if new subcontractors on this project, mark N/A if not.',detail:'James creates M365 accounts and grants Torr access. Miguel issues WeWork passes. Send welcome message from Trimstone account (CC team).',blocker:true,conditional:true},
+        {id:'tm3',text:'Team onboarded — M365 account, Torr access, WeWork passes?',sub:'Important — confirm if new subcontractors on this project, mark N/A if not.',detail:'James creates M365 accounts and grants Torr access. Miguel issues WeWork passes. Send welcome message from Trimstone account (CC team).',blocker:true},
         {id:'tm4',text:'All team members added to Torr Portal Team tab with full details?',sub:'Full name, role, email, time, hours — all required fields.',detail:'Required before timesheets can be enabled in Executing.',blocker:true},
-        {id:'tm5',text:'Team trained on Torr (timesheets, TAIA, folders) and WeWork?',sub:'Lead Partner / PMO responsible.',detail:'Confirm all team members can log in and submit timesheets.',blocker:false},
+        {id:'tm5',text:'Team trained on Torr (timesheets, TAIA, folders) and WeWork?',sub:'Lead Partner / PMO responsible.',detail:'Confirm all team members can log in and submit timesheets.',blocker:true},
       ]}
     ]
   },
@@ -592,12 +600,12 @@ const OWNER_STAGES = {
     finance:'First stage expenses can be formally assigned to project code. Escalate invoices after 45 days.',
     roles:[{label:'Lead Partner',color:'#EAF3DE',tc:'#27500A',desc:'Delivery governance, timesheets, CRM'},{label:'Iryna',color:'#C0DD97',tc:'#27500A',desc:'Monthly invoicing, supplier reminders'},{label:'Filip',color:'#EAF3DE',tc:'#3B6D11',desc:'Xero setup, profitability reporting'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Executing — start/end dates and final budget confirmed?',sub:'End date tracked throughout delivery.',detail:'Update stage. Confirm dates consistent with Xero.',blocker:true}]},
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'CRM updated: stage set to Executing — start date and end date confirmed in CRM?',sub:'End date tracked throughout delivery — must match Xero.',detail:'Update stage to Executing. Confirm start and end dates are correct and consistent with Xero.',blocker:true}]},
       {name:'Torr Portal',qs:[{id:'torr1',text:'Timesheets enabled in Torr and all team members submitting weekly?',sub:'LP approves weekly. Reconcile against invoice.',detail:'Enable timesheets for the project. All team members submit weekly.',blocker:true}]},
       {name:'Xero',qs:[{id:'xero1',text:'Project set up in Xero by Filip — finance code matches Torr project code?',sub:'Finance code must match Torr code exactly.',detail:'Ask Iryna to request Filip. Finance code must match Torr code.',blocker:true}]},
       {name:'Team',qs:[
         {id:'tm1',text:'Internal and client kickoff meetings run?',sub:'Internal first, then client kickoff with delivery plan.',detail:'Internal kickoff first. Then client kickoff.',blocker:true},
-        {id:'tm2',text:'Team trained on Xero expenses (Appendix B) and Torr timesheets?',sub:'All team members must be able to submit before delivery begins.',detail:'Training on Xero expense submission and Torr timesheet entry.',blocker:false},
+        {id:'tm2',text:'Team trained on Xero expenses (Appendix B) and Torr timesheets?',sub:'All team members must be able to submit before delivery begins.',detail:'Training on Xero expense submission and Torr timesheet entry.',blocker:true},
       ]}
     ]
   },
@@ -608,16 +616,16 @@ const OWNER_STAGES = {
     finance:'All expenses submitted before final invoice. Review window 3rd–6th of month.',
     roles:[{label:'Lead Partner',color:'#d1fae5',tc:'#04342C',desc:'Client confirmation, CRM, follow-on'},{label:'Finance / Filip',color:'#9FE1CB',tc:'#085041',desc:'Final invoice, expense reconciliation'},{label:'James / Ops',color:'#d1fae5',tc:'#04342C',desc:'Access removal'}],
     groups:[
-      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Closing Down (Won) in CRM?',sub:'Set immediately on delivery completion.',detail:'Update deal stage. Record potential extensions, new workstreams, or referrals.',blocker:true}]},
+      {name:'Zoho CRM',qs:[{id:'crm1',text:'Deal stage updated to Closing Down (Won) in CRM?',sub:'Auto-confirmed — triggered by Zoho workflow.',detail:'Stage is updated automatically in Zoho CRM.',blocker:true,autoYes:true}]},
       {name:'Client',qs:[
         {id:'cl1',text:'Written confirmation of delivery completion received from client?',sub:'Email is sufficient. Retain in Torr workspace.',detail:'Get written confirmation.',blocker:true},
-        {id:'cl2',text:'Client system access removed for all Trimstone team members?',sub:'Client\'s responsibility — Lead Partner confirms.',detail:'Contact the client to confirm.',blocker:false},
+        {id:'cl2',text:'Client system access removed for all Trimstone team members?',sub:'Client\'s responsibility — Lead Partner confirms.',detail:'Contact the client to confirm.',blocker:true},
       ]},
       {name:'Xero',qs:[
         {id:'xero1',text:'All expenses submitted and reconciled before final invoice?',sub:'All team expenses in before final invoice goes out.',detail:'Expenses submitted by 3rd. LP and Filip review 3rd–6th.',blocker:true},
         {id:'xero2',text:'Final invoice issued and payment received?',sub:'Payment overdue 45+ days triggers Finance escalation.',detail:'Filip issues final invoice after expenses cleared.',blocker:true},
       ]},
-      {name:'Torr Portal',qs:[{id:'torr1',text:'Project materials archived in Torr workspace?',sub:'All outputs and correspondence archived.',detail:'Ensure all materials are in correct folders.',blocker:false}]},
+      {name:'Torr Portal',qs:[{id:'torr1',text:'Project materials archived in Torr workspace?',sub:'All outputs and correspondence archived.',detail:'Ensure all materials are in correct folders.',blocker:true}]},
       {name:'Team',qs:[{id:'tm1',text:'Trimstone system access removed for all rolling-off consultants?',sub:'James removes Torr, M365, Xero. Exceptions must be recorded.',detail:'James removes access. Exceptions must be recorded.',blocker:true}]}
     ]
   },
@@ -629,7 +637,7 @@ const OWNER_STAGES = {
     roles:[{label:'Lead Partner',color:'#FAEEDA',tc:'#412402',desc:'CRM update, review scheduling'}],
     groups:[
       {name:'Zoho CRM',qs:[
-        {id:'crm1',text:'Deal stage updated to On Hold with specific reason recorded?',sub:'Be specific about what caused the pause.',detail:'Record the exact reason.',blocker:true},
+        {id:'crm1',text:'Deal stage updated to On Hold — specific reason recorded in CRM?',sub:'Auto-confirmed — triggered by Zoho workflow. Ensure reason is recorded.',detail:'Stage is updated automatically. Make sure to add the reason for hold in the CRM notes.',blocker:true,autoYes:true},
         {id:'crm2',text:'Next Review Date set aligned to 4-weekly portfolio review?',sub:'All on-hold deals reviewed on the same fixed day.',detail:'If not re-activated within the window, move to Closed Lost.',blocker:true},
       ]},
       {name:'Client',qs:[{id:'cl1',text:'Restart trigger defined — what would cause this deal to re-activate?',sub:'Must be specific and measurable.',detail:'Record in CRM. E.g. "Client confirms new budget October 2026".',blocker:true}]}
@@ -797,8 +805,14 @@ async function loadDashboard() {
     renderSidebar()
 
     document.getElementById('loading').style.display = 'none'
+    // Show correct view — ensure DOM is visible before rendering grid
+    document.getElementById('owner-view').style.display = mainView === 'owner' ? 'block' : 'none'
+    document.getElementById('grid-view').style.display  = mainView === 'grid'  ? 'block' : 'none'
     if (mainView === 'owner') renderOwner()
-    else renderPartners()
+    else {
+      if (!gridSelProj && projects.length) gridSelProj = projects[0].id
+      requestAnimationFrame(() => renderGrid())
+    }
 
   } catch(err) {
     document.getElementById('loading').innerHTML =
@@ -811,6 +825,10 @@ function buildAnswers(pid, stageKey, tickMap) {
   const sd = OWNER_STAGES[stageKey]
   if (!sd) return answers
   sd.groups.flatMap(g => g.qs).forEach(q => {
+    if (q.autoYes) {
+      answers[q.id] = 'yes'  // Auto-confirmed by Zoho workflow
+      return
+    }
     const t = tickMap[`${pid}__${stageKey}__${q.id}`]
     if (t) answers[q.id] = t.na ? 'na' : t.done ? 'yes' : 'no'
   })
@@ -951,6 +969,9 @@ function isEffectiveBlocker(p, q) {
 }
 
 function critLabel(p, q) {
+  if (q.autoYes) {
+    return `<span class="qcrit" style="background:#EAF3DE;color:#3B6D11">Auto ✓</span>`
+  }
   if (!q.conditional) {
     return q.blocker
       ? `<span class="qcrit" style="background:#FCEBEB;color:#A32D2D">Critical</span>`
@@ -976,6 +997,12 @@ function condQ(qid) {
 // ══════════════════════════════════════════════
 function setMainView(v) {
   mainView = v
+  // Sync selected project between views
+  if (v === 'owner' && gridSelProj && !ownerSelId) ownerSelId = gridSelProj
+  if (v === 'grid'  && ownerSelId  && !gridSelProj) gridSelProj = ownerSelId
+  if (v === 'owner' && gridSelProj) ownerSelId = gridSelProj
+  if (v === 'grid'  && ownerSelId)  gridSelProj = ownerSelId
+
   document.getElementById('owner-view').style.display = v==='owner' ? 'block' : 'none'
   document.getElementById('partners-view').style.display = 'none'
   document.getElementById('grid-view').style.display = v==='grid' ? 'block' : 'none'
@@ -1230,7 +1257,30 @@ function renderOwner() {
       else { tCls='u'; tIcon='?' }
 
       let actionBlock = ''
-      if (isOpen && isCur) {
+      if (isOpen && isCur && !q.autoYes) {
+        // SharePoint link for this action
+        const al = ACTION_LINKS[q.id]
+        const _al = al || (q.id === 'cl2' && req === 'yes' && p.stage === 'contracting' ? KYC_LINK : null)
+        const ownerSpBtn = _al
+          ? '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">' +
+            '<button onclick="window.open(\'' + _al.url + '\',\'_blank\')" ' +
+            'style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;' +
+            'font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid #B5D4F4;' +
+            'background:#E6F1FB;color:#0C447C;cursor:pointer;font-family:\'DM Sans\',sans-serif;font-weight:500">' +
+            _al.icon + ' Open ' + _al.label + ' in SharePoint →</button></div>'
+          : ''
+
+        // Zoho CRM link — only for crm items
+        const zohoId = p.id.replace('zcrm_', '')
+        const zohoBtn = q.id.startsWith('crm')
+          ? '<div style="margin-top:6px">' +
+            '<button onclick="window.open(\'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + zohoId + '\',\'_blank\')" ' +
+            'style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;' +
+            'font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid var(--gray-200);' +
+            'background:var(--gray-50);color:var(--gray-600);cursor:pointer;font-family:\'DM Sans\',sans-serif;font-weight:500">' +
+            '🔗 Open deal in Zoho CRM →</button></div>'
+          : ''
+
         if (q.conditional) {
           if (req === undefined) {
             actionBlock = `<div class="cond-block">
@@ -1239,22 +1289,23 @@ function renderOwner() {
                 <button class="cond-btn req" onclick="setReq('${reqKey}','yes')">✓ Yes — required${q.blocker?' (becomes Critical)':''}</button>
                 <button class="cond-btn skip" onclick="setReq('${reqKey}','na')">— N/A — not needed</button>
               </div>
-            </div>`
+            </div>` + zohoBtn
           } else if (req === 'yes') {
-            actionBlock = `<div class="qbtns" style="margin-top:6px">
+            actionBlock = `<div class="qbtns" style="margin-top:6px;flex-wrap:nowrap">
               <button class="qb y" onclick="oSetA('${q.id}','yes')">✓ Yes — done</button>
               <button class="qb n" onclick="oSetA('${q.id}','no')">✗ No — not yet</button>
-              <button class="qb na" onclick="setReq('${reqKey}','na')">— Mark N/A instead</button>
-            </div>`
+              <button class="qb na" onclick="setReq('${reqKey}','na')">— N/A</button>
+            </div>` + (ans === 'yes' ? ownerSpBtn : '') + zohoBtn
           } else {
-            actionBlock = `<div style="font-size:10px;color:var(--gray-400);margin-top:6px">Marked as not required. <button class="qb na" style="font-size:10px;padding:2px 8px" onclick="setReq('${reqKey}',undefined)">Change</button></div>`
+            actionBlock = `<div style="font-size:10px;color:var(--gray-400);margin-top:6px">Marked as not required. <button class="qb na" style="font-size:10px;padding:2px 8px" onclick="setReq('${reqKey}',undefined)">Change</button></div>` + zohoBtn
           }
         } else {
-          actionBlock = `<div class="qbtns">
+          const naBtn = !q.blocker ? `<button class="qb na" onclick="oSetA('${q.id}','na')">— N/A</button>` : ''
+          actionBlock = `<div class="qbtns" style="flex-wrap:nowrap">
             <button class="qb y" onclick="oSetA('${q.id}','yes')">✓ Yes — done</button>
             <button class="qb n" onclick="oSetA('${q.id}','no')">✗ No — not yet</button>
-            <button class="qb na" onclick="oSetA('${q.id}','na')">— N/A</button>
-          </div>`
+            ${naBtn}
+          </div>` + (ans === 'yes' ? ownerSpBtn : '') + zohoBtn
         }
       }
 
@@ -1339,7 +1390,7 @@ function openChecklist(pid, stageKey, role) {
 }
 
 // Owner actions
-function selProj(id) { ownerSelId=id; ownerStage=null; ownerOpenQ=null; ownerCollapsed.clear(); renderSidebar(); renderOwner() }
+function selProj(id) { ownerSelId=id; gridSelProj=id; ownerStage=null; ownerOpenQ=null; ownerCollapsed.clear(); renderSidebar(); renderOwner() }
 function oSetStage(id) { ownerStage=id; ownerOpenQ=null; ownerCollapsed.clear(); renderOwner() }
 function oToggleQ(k) { ownerOpenQ = ownerOpenQ===k ? null : k; renderOwner() }
 function oToggleGrp(id) { ownerCollapsed.has(id) ? ownerCollapsed.delete(id) : ownerCollapsed.add(id); renderOwner() }
@@ -1349,6 +1400,9 @@ async function oSetA(qid, val) {
   if (!p) return
   p.answers[qid] = val
   p.status = recalcStatus(p)
+  // Keep grid in sync
+  const cacheKey = p.id + '__' + p.stage + '__' + qid
+  allTicksCache[cacheKey] = { done: val==='yes', na: val==='na' }
   ownerOpenQ = null
   renderOwner()
   await writeAnswer(p, qid, val)
@@ -1626,40 +1680,75 @@ async function addProject() {
 // ══════════════════════════════════════════════
 // GRID VIEW
 // ══════════════════════════════════════════════
-const GRID_ROWS = [
-  {group:'Zoho CRM', icon:'🗄', items:[
-    {id:'crm1', label:'Stage updated in CRM',        applicable:['discussions','scoping','pricing','contracting','executing','closing','hold'], blocker:true},
-    {id:'crm2', label:'Next step & dates set',        applicable:['discussions','scoping','hold','contracting','executing'],                    blocker:true},
-    {id:'crm3', label:'Account priority set to High', applicable:['discussions'],                                                               blocker:true},
-    {id:'crm4', label:'Co-owners & costs agreed',     applicable:['scoping'],                                                                  blocker:true},
-  ]},
-  {group:'Torr Portal', icon:'📋', items:[
-    {id:'torr1', label:'Workspace created & team set up',  applicable:['scoping','pricing','contracting','executing','closing'],  blocker:true},
-    {id:'torr2', label:'Timesheets enabled & running',     applicable:['executing'],                                              blocker:true},
-    {id:'torr3', label:'Materials archived',               applicable:['closing'],                                               blocker:false},
-  ]},
-  {group:'Client', icon:'🏢', items:[
-    {id:'cl1',  label:'Proposal prepared',              applicable:['scoping','pricing'],           blocker:true},
-    {id:'cl2',  label:'Pricing Sheet v4 MD sign-off',   applicable:['pricing'],                     blocker:true},
-    {id:'cl3',  label:'Client SoW is signed',           applicable:['contracting'],                 blocker:true},
-    {id:'cl4',  label:'KYC / confidential reqs',        applicable:['contracting'],                 blocker:true,  conditional:true},
-    {id:'cl5',  label:'Delivery confirmed in writing',  applicable:['closing'],                     blocker:true},
-    {id:'cl6',  label:'Client access removed',          applicable:['closing'],                     blocker:false},
-  ]},
-  {group:'Team', icon:'👥', items:[
-    {id:'tm1', label:'MSA contracts signed',                   applicable:['contracting'],          blocker:true},
-    {id:'tm2', label:'NDAs signed',                            applicable:['contracting'],          blocker:false, conditional:true},
-    {id:'tm3', label:'Team onboarded (M365, Torr, WeWork)',    applicable:['contracting'],          blocker:true,  conditional:true},
-    {id:'tm4', label:'All team on Torr Team tab',              applicable:['contracting'],          blocker:true},
-    {id:'tm5', label:'Kickoff meetings run',                   applicable:['executing'],            blocker:true},
-    {id:'tm6', label:'Team trained (Torr, Xero, WeWork)',      applicable:['contracting','executing'], blocker:false},
-    {id:'tm7', label:'System access removed on close',         applicable:['closing'],              blocker:true},
-  ]},
-  {group:'Xero', icon:'🧾', items:[
-    {id:'xero1', label:'Project set up in Xero',     applicable:['executing','closing'],  blocker:true},
-    {id:'xero2', label:'Final invoice issued',        applicable:['closing'],             blocker:true},
-  ]},
-]
+// GRID_ROWS built from OWNER_STAGES so grid and My project are always in sync
+function buildGridRows() {
+  const STAGE_IDS = ['discussions','scoping','pricing','contracting','executing','closing','hold']
+  const ALL_STAGES = STAGE_IDS
+
+  // Zoho CRM — exactly 2 rows
+  const zohoItems = [
+    {
+      id: 'crm1',
+      label: 'CRM updated: stage, start date & end date',
+      applicable: ALL_STAGES,
+      blocker: true,
+      autoYes: true,
+      autoYesExcept: ['contracting','executing']
+    },
+    {
+      id: 'crm2',
+      label: 'Account priority set to High',
+      applicable: ['discussions'],
+      blocker: true,
+      autoYes: false
+    },
+  ]
+
+  // All other groups — built dynamically from OWNER_STAGES, skipping crm1/crm2/crm3
+  const skipIds = new Set(['crm1','crm2','crm3'])
+  const groupOrder = []
+  const groupMap = {}
+
+  STAGE_IDS.forEach(stageId => {
+    const sd = OWNER_STAGES[stageId]
+    if (!sd) return
+    sd.groups.forEach(g => {
+      if (g.name === 'Zoho CRM') return // handled manually above
+      if (!groupMap[g.name]) {
+        groupMap[g.name] = { icon: GI[g.name]||'📋', items: {} }
+        groupOrder.push(g.name)
+      }
+      g.qs.forEach(q => {
+        const label = q.text.replace(/\?\s*$/, '')
+        const key = q.id + '__' + label
+        if (!groupMap[g.name].items[key]) {
+          groupMap[g.name].items[key] = {
+            id: q.id, label,
+            applicable: [],
+            blocker: q.blocker,
+            conditional: q.conditional || false,
+            autoYes: q.autoYes || false,
+            autoYesExcept: q.autoYesExcept || null,
+          }
+        }
+        if (!groupMap[g.name].items[key].applicable.includes(stageId)) {
+          groupMap[g.name].items[key].applicable.push(stageId)
+        }
+      })
+    })
+  })
+
+  const otherGroups = groupOrder
+    .filter((v,i,a) => a.indexOf(v)===i)
+    .map(name => ({ group: name, icon: groupMap[name].icon, items: Object.values(groupMap[name].items) }))
+
+  return [
+    { group: 'Zoho CRM', icon: '🗄', items: zohoItems },
+    ...otherGroups
+  ]
+}
+const GRID_ROWS = buildGridRows()
+
 
 let gridSelProj = null
 let gridOpenCell = null // {itemId, stageId}
@@ -1673,6 +1762,16 @@ function renderGrid() {
 
   if (!gridSelProj) gridSelProj = projects[0].id
   const p = projects.find(x => x.id === gridSelProj) || projects[0]
+
+  // Always update topbar badge with current project + Zoho link
+  const _badge = document.getElementById('topbar-badge')
+  if (_badge && p) {
+    const st = stFor(p.stage)
+    const zohoId = p.id.replace('zcrm_', '')
+    const zohoUrl = 'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + zohoId
+    _badge.innerHTML = '<span style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" onclick="window.open(\'' + zohoUrl + '\',\'_blank\')" title="Open in Zoho CRM">' + p.name + ' <span style="font-size:12px">🔗</span></span>'
+    _badge.style.cssText = 'background:' + st.bg + ';color:' + st.tc + ';padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;cursor:pointer'
+  }
 
   // Project pills — removed from top, now in sidebar grouped by stage
   const pills = ''
@@ -1747,9 +1846,17 @@ function renderGrid() {
         const stageAns = getStageAnswer(p, item.id, st.id)
         const stageCond = getStageCondAns(p, item.id, st.id)
 
+        // Auto-yes: green tick unless this stage is in autoYesExcept
+        const isAutoYes = item.autoYes && !(item.autoYesExcept && item.autoYesExcept.includes(st.id))
+
         // Determine tick state
         let tickCls, tickIcon
-        if (item.conditional) {
+        if (isAutoYes && !isCur) {
+          tickCls = 'done'; tickIcon = '✓'
+        } else if (isAutoYes && isCur) {
+          // For contracting/executing crm1 — show auto if not in except list
+          tickCls = 'done'; tickIcon = '✓'
+        } else if (item.conditional) {
           if (stageCond === 'na') { tickCls='na'; tickIcon='—' }
           else if (stageCond === 'yes') {
             if (stageAns==='yes') { tickCls='done'; tickIcon='✓' }
@@ -1823,36 +1930,53 @@ function buildCellPopup(item, st, p, ans, condAns, condKey) {
         </div>
       </div>`
     } else if (condAns === 'yes') {
+      // KYC link after Yes
+      const kycLink = (item.id === 'cl2' && ans === 'yes')
+        ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">
+            <button onclick="event.stopPropagation();window.open('${KYC_LINK.url}','_blank')"
+              style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+                     font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid #B5D4F4;
+                     background:#E6F1FB;color:#0C447C;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">
+              ${KYC_LINK.icon} Open ${KYC_LINK.label} in SharePoint →
+            </button></div>`
+        : ''
       inner += `<div class="cell-popup-btns">
         <button class="cpb y" onclick="gridSetAnswer('${item.id}','yes',event)">✓ Yes — done</button>
         <button class="cpb n" onclick="gridSetAnswer('${item.id}','no',event)">✗ Not yet</button>
-        <button class="cpb na" onclick="gridSetCond('${condKey}','na',event)">— Mark N/A</button>
+        <button class="cpb na" onclick="gridSetCond('${condKey}','na',event)" style="font-size:10px;padding:4px 8px">undo</button>
       </div>
-      ${ans === 'yes' ? spBtn : ''}`
+      ${ans === 'yes' ? (spBtn || kycLink) : ''}`
     } else {
       inner += `<div style="font-size:11px;color:var(--gray-400);margin-bottom:8px">Marked as not required.</div>
         <button class="cpb na" onclick="gridSetCond('${condKey}',undefined,event)">Change</button>`
     }
   } else {
+    // Only show N/A for optional (non-blocker) items
+    const naBtn = !item.blocker
+      ? `<button class="cpb na" onclick="gridSetAnswer('${item.id}','na',event)">— N/A</button>`
+      : ''
     inner += `<div class="cell-popup-btns">
       <button class="cpb y" onclick="gridSetAnswer('${item.id}','yes',event)">✓ Yes — done</button>
       <button class="cpb n" onclick="gridSetAnswer('${item.id}','no',event)">✗ Not yet</button>
-      <button class="cpb na" onclick="gridSetAnswer('${item.id}','na',event)">— N/A</button>
+      ${naBtn}
     </div>
     ${ans === 'yes' ? spBtn : ''}`
   }
 
-  // Zoho CRM link — always shown at bottom of every popup
-  const zohoUrl = 'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + p.id.replace('zcrm_', '')
-  inner += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">
-    <button onclick="event.stopPropagation();window.open('${zohoUrl}','_blank')"
-      style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
-             font-size:11px;padding:5px 12px;border-radius:6px;
-             border:1px solid var(--gray-200);background:var(--gray-50);color:var(--gray-600);
-             cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">
-      🔗 Open deal in Zoho CRM →
-    </button>
-  </div>`
+  // Zoho CRM link — only for CRM group items
+  const isCrmItem = item.id.startsWith('crm')
+  if (isCrmItem) {
+    const zohoUrl = 'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + p.id.replace('zcrm_', '')
+    inner += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">
+      <button onclick="event.stopPropagation();window.open('${zohoUrl}','_blank')"
+        style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+               font-size:11px;padding:5px 12px;border-radius:6px;
+               border:1px solid var(--gray-200);background:var(--gray-50);color:var(--gray-600);
+               cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">
+        🔗 Open deal in Zoho CRM →
+      </button>
+    </div>`
+  }
 
   return `<div class="cell-popup" onclick="event.stopPropagation()">${inner}</div>`
 }
@@ -1904,7 +2028,8 @@ async function gridSetAnswer(qid, val, event) {
   const cacheKey = p.id + '__' + stageId + '__' + qid
   allTicksCache[cacheKey] = { done: val==='yes', na: val==='na' }
   // Keep popup open if Yes was clicked and there's a SharePoint link — so link shows immediately
-  if (!(val === 'yes' && ACTION_LINKS[qid])) {
+  const shouldKeepOpen = val === 'yes' && (ACTION_LINKS[qid] || (qid === 'cl2' && stageId === 'contracting'))
+  if (!shouldKeepOpen) {
     gridOpenCell = null
   }
   renderGrid()
@@ -1927,7 +2052,8 @@ function gridSetCond(key, val, event) {
   if (!p.condAnswers) p.condAnswers = {}
   if (val === undefined) delete p.condAnswers[key]
   else p.condAnswers[key] = val
-  gridOpenCell = null
+  // Keep popup open when marking as required (val='yes') so user can then tick Yes/No
+  if (val !== 'yes') gridOpenCell = null
   renderGrid()
 }
 
