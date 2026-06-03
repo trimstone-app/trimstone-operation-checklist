@@ -1158,7 +1158,8 @@ function selProjBoth(id) {
     const badge = document.getElementById('topbar-badge')
     if (badge) {
       const st = stFor(p.stage)
-      badge.textContent = p.name
+      const zohoUrl = 'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + p.id.replace('zcrm_', '').replace('zcrm_', '')
+      badge.innerHTML = '<span style="cursor:pointer" onclick="window.open(\'' + zohoUrl + '\',\'_blank\')" title="Open in Zoho CRM">' + p.name + ' 🔗</span>'
       badge.style.cssText = 'background:' + st.bg + ';color:' + st.tc
     }
   }
@@ -1799,6 +1800,19 @@ function buildCellPopup(item, st, p, ans, condAns, condKey) {
   let inner = `<div class="cell-popup-title">${item.label}</div>
     <div class="cell-popup-stage" style="color:${st.color}">${st.short}${st.id===p.stage?' · current stage':''}</div>`
 
+  const al = ACTION_LINKS[item.id]
+  const spBtn = al
+    ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">
+        <button onclick="event.stopPropagation();window.open('${al.url}','_blank')"
+          style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+                 font-size:11px;padding:6px 12px;border-radius:6px;
+                 border:1px solid #B5D4F4;background:#E6F1FB;color:#0C447C;
+                 cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">
+          ${al.icon} Open ${al.label} in SharePoint →
+        </button>
+       </div>`
+    : ''
+
   if (item.conditional && st.id === p.stage) {
     if (!condAns || condAns === undefined) {
       inner += `<div class="cond-confirm">
@@ -1813,7 +1827,8 @@ function buildCellPopup(item, st, p, ans, condAns, condKey) {
         <button class="cpb y" onclick="gridSetAnswer('${item.id}','yes',event)">✓ Yes — done</button>
         <button class="cpb n" onclick="gridSetAnswer('${item.id}','no',event)">✗ Not yet</button>
         <button class="cpb na" onclick="gridSetCond('${condKey}','na',event)">— Mark N/A</button>
-      </div>`
+      </div>
+      ${ans === 'yes' ? spBtn : ''}`
     } else {
       inner += `<div style="font-size:11px;color:var(--gray-400);margin-bottom:8px">Marked as not required.</div>
         <button class="cpb na" onclick="gridSetCond('${condKey}',undefined,event)">Change</button>`
@@ -1823,8 +1838,21 @@ function buildCellPopup(item, st, p, ans, condAns, condKey) {
       <button class="cpb y" onclick="gridSetAnswer('${item.id}','yes',event)">✓ Yes — done</button>
       <button class="cpb n" onclick="gridSetAnswer('${item.id}','no',event)">✗ Not yet</button>
       <button class="cpb na" onclick="gridSetAnswer('${item.id}','na',event)">— N/A</button>
-    </div>`
+    </div>
+    ${ans === 'yes' ? spBtn : ''}`
   }
+
+  // Zoho CRM link — always shown at bottom of every popup
+  const zohoUrl = 'https://crm.zoho.eu/crm/org20109486492/tab/Potentials/' + p.id.replace('zcrm_', '')
+  inner += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)">
+    <button onclick="event.stopPropagation();window.open('${zohoUrl}','_blank')"
+      style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+             font-size:11px;padding:5px 12px;border-radius:6px;
+             border:1px solid var(--gray-200);background:var(--gray-50);color:var(--gray-600);
+             cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">
+      🔗 Open deal in Zoho CRM →
+    </button>
+  </div>`
 
   return `<div class="cell-popup" onclick="event.stopPropagation()">${inner}</div>`
 }
@@ -1875,7 +1903,10 @@ async function gridSetAnswer(qid, val, event) {
   // Update cache
   const cacheKey = p.id + '__' + stageId + '__' + qid
   allTicksCache[cacheKey] = { done: val==='yes', na: val==='na' }
-  gridOpenCell = null
+  // Keep popup open if Yes was clicked and there's a SharePoint link — so link shows immediately
+  if (!(val === 'yes' && ACTION_LINKS[qid])) {
+    gridOpenCell = null
+  }
   renderGrid()
   // Write to Supabase with correct stage
   const isDone = val === 'yes'
