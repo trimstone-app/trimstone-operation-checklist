@@ -281,7 +281,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 
 .sidebar-stage-label{user-select:none}
 .sidebar-stage-label:hover{background:rgba(255,255,255,.04)}
-.proj-item{padding:4px 16px 4px 24px;font-size:11px;border-radius:0;transition:background .1s}
+.proj-item{padding:3px 14px 3px 22px;font-size:11px;border-radius:0;transition:background .1s;cursor:pointer}
 .proj-item.active{color:var(--gold-light);font-weight:500;background:rgba(201,168,76,.1)}
 .proj-item:hover{background:rgba(255,255,255,.06)}
 
@@ -334,6 +334,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
         <button class="vt-btn" id="vbtn-owner" onclick="setMainView('owner')">My project</button>
         <button class="vt-btn active" id="vbtn-grid" onclick="setMainView('grid')">Grid view</button>
       </div>
+      <div id="user-badge" style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-400);padding:0 6px"></div>
       <button class="btn" onclick="openAdd()">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         Add project
@@ -354,7 +355,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--gray-8
 
     <!-- Owner view -->
     <div id="owner-view" style="display:none">
-      <div class="owner-proj-pills" id="owner-pills"></div>
+      <div id="owner-pills" style="display:none"></div>
       <div class="stage-tabs-row" id="stage-tabs"></div>
       <div class="owner-panel" id="owner-panel"></div>
     </div>
@@ -447,13 +448,14 @@ const DEMO_MODE = SUPABASE_URL.includes('YOUR-PROJECT')
 // STAGE DEFINITIONS
 // ══════════════════════════════════════════════
 const STAGES = [
-  {id:'discussions', short:'Discussing',  color:'#378ADD',bg:'#E6F1FB',tc:'#0C447C'},
+  {id:'discussions', short:'In Disc.',    color:'#378ADD',bg:'#E6F1FB',tc:'#0C447C'},
   {id:'scoping',     short:'Scoping',     color:'#7F77DD',bg:'#EEEDFE',tc:'#3C3489'},
   {id:'pricing',     short:'Pricing',     color:'#1D9E75',bg:'#E1F5EE',tc:'#085041'},
   {id:'contracting', short:'Contracting', color:'#EF9F27',bg:'#FAEEDA',tc:'#633806'},
   {id:'executing',   short:'Executing',   color:'#639922',bg:'#EAF3DE',tc:'#27500A'},
   {id:'closing',     short:'Closing',     color:'#2d6a4f',bg:'#d1fae5',tc:'#04342C'},
   {id:'hold',        short:'On Hold',     color:'#BA7517',bg:'#FAEEDA',tc:'#412402'},
+  {id:'lost',        short:'Closed Lost', color:'#888780',bg:'#F1EFE8',tc:'#2C2C2A'},
 ]
 // Map Zoho stage names → dashboard stage IDs
 const ZOHO_STAGE_MAP = {
@@ -471,12 +473,25 @@ const ZOHO_STAGE_MAP = {
   'closing down won':         'closing',
   'on hold':                  'hold',
   'closed lost':              'lost',
+  'pricing':                  'pricing',
+  'scoping':                  'scoping',
+  'executing (project live)': 'executing',
+  'closing down_won':         'closing',
+  'closing down (won)':       'closing',
 }
 
 function normaliseStage(raw) {
   if (!raw) return 'discussions'
   const lower = raw.toLowerCase().trim()
   return ZOHO_STAGE_MAP[lower] || lower
+}
+
+const ACTION_LINKS = {
+  'cl3': { label: 'SOWs folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgBgVQE-vq1nTonnbSe9F-n4ATNqUdA5jTC0g-wf8iyAvMk?e=vKhh6y', icon: '📄' },
+  'tm1': { label: 'MSAs folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgDZTtNUMtNgSLcu_Tp5NakNATb2qwvDcQP-zADEQepUI-k?e=yFmYHK', icon: '📝' },
+  'cl4': { label: 'KYC folder', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgCpQWfWBBBzSYc1gmDVkS9zAU_p3eUKayMmto0MYfgidPE?e=l06yHU', icon: '🔒' },
+  'cl2': { label: 'Pricing Sheets', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgAmOz6OPDZ8QJVgZUEAhCmwAb1kBpWvstZHYH8k7dkJhYU?e=mY2ctu', icon: '💰' },
+  'torr2': { label: 'Time Sheets', url: 'https://trimstone.sharepoint.com/:f:/s/10122-04Torr/IgA92S4E821YRb1At_4mD6eKAQKc6YEy8ZudC6aRssCTosA?e=PqBRW2', icon: '⏱' },
 }
 
 const stFor = id => STAGES.find(s=>s.id===id) || STAGES[0]
@@ -665,8 +680,35 @@ async function sbInsert(table, row) {
   return { data: await r.json(), error: null }
 }
 const P = new URLSearchParams(location.search)
-const currentUser = P.get('user') || 'dashboard-user'
-const currentRole = P.get('role') || 'lead-partner'
+// ── ROLE SYSTEM ──────────────────────────────────────────────────────────────
+// admin URL: dashboard.html?role=admin  → MD/Miguel — save to localStorage
+// owner URL: dashboard.html?user=William.Conner → owner sees own projects
+// direct:    dashboard.html → reads localStorage for saved role
+// ─────────────────────────────────────────────────────────────────────────────
+const ADMIN_USERS = ['Miguel Ortiz', 'William Conner'] // MD + Miguel see all
+
+function initUserRole() {
+  const urlRole = P.get('role')
+  const urlUser = P.get('user')
+
+  if (urlRole === 'admin') {
+    localStorage.setItem('ts_role', 'admin')
+    localStorage.setItem('ts_user', urlUser || 'admin')
+  } else if (urlUser) {
+    localStorage.setItem('ts_role', 'owner')
+    localStorage.setItem('ts_user', urlUser)
+  }
+}
+initUserRole()
+
+const savedRole = localStorage.getItem('ts_role') || 'owner'
+const savedUser = localStorage.getItem('ts_user') || P.get('user') || ''
+const isAdmin   = savedRole === 'admin' || ADMIN_USERS.some(u => savedUser.toLowerCase().includes(u.split(' ')[0].toLowerCase()) && u !== savedUser) === false && ADMIN_USERS.some(u => u.toLowerCase() === savedUser.toLowerCase())
+
+const currentUser = savedUser || 'dashboard-user'
+const currentRole = P.get('role') || savedRole || 'lead-partner'
+const ownerFirstName = currentUser !== 'dashboard-user'
+  ? currentUser.split(/[.\s]/)[0].toLowerCase() : null
 
 let projects = []
 let allTicksCache = {} // pid__stage__action → {done, na}
@@ -728,8 +770,8 @@ async function loadDashboard() {
         movedAt:    r.updated_at,
         answers,
         condAnswers:{},
-        progress:   progMap[`${r.id}__${r.current_stage}`] || {done_count:0,total_count:0,pct_complete:0},
-        status:     calcStatus(r.id, r.current_stage, tickMap),
+        progress:   progMap[`${r.id}__${normaliseStage(r.current_stage||'')}`] || {done_count:0,total_count:0,pct_complete:0},
+        status:     calcStatus(r.id, normaliseStage(r.current_stage||''), tickMap),
         alerts:     buildAlerts(r, tickMap),
       }
     })
@@ -739,7 +781,14 @@ async function loadDashboard() {
       const found = projects.find(p => p.id === P.get('project'))
       if (found) ownerSelId = found.id
     }
-    if (!ownerSelId && projects.length) ownerSelId = projects[0].id
+    if (!ownerSelId) {
+    // Default to first project owned by current user, or first project
+    const myFirst = ownerFirstName
+      ? projects.find(p => p.lp && p.lp.toLowerCase().includes(ownerFirstName))
+      : null
+    ownerSelId = myFirst?.id || projects[0]?.id
+    if (ownerSelId) gridSelProj = ownerSelId
+  }
     if (P.get('stage'))  ownerStage = P.get('stage')
     if (P.get('view'))   setMainView(P.get('view'))
     if (P.get('filter')) pFilter = P.get('filter')
@@ -779,11 +828,12 @@ function calcStatus(pid, stageKey, tickMap) {
 
 function buildAlerts(r, tickMap) {
   const alerts = []
-  const sd = OWNER_STAGES[r.current_stage]
+  const normStage = normaliseStage(r.current_stage || '')
+  const sd = OWNER_STAGES[normStage]
   if (!sd) return alerts
   const blockers = sd.groups.flatMap(g=>g.qs).filter(q =>
     q.blocker && !q.conditional &&
-    tickMap[`${r.id}__${r.current_stage}__${q.id}`]?.done !== true
+    tickMap[`${r.id}__${normStage}__${q.id}`]?.done !== true
   )
   if (blockers.length > 0) {
     alerts.push({
@@ -831,7 +881,8 @@ async function writeAnswer(p, qid, val) {
 // SUPABASE — REAL-TIME
 // ══════════════════════════════════════════════
 function subscribeToTicks() {
-  // Poll every 15 seconds for updates (real-time websocket replaced with polling)
+  // Poll every 60 seconds — silently update data without re-rendering
+  // Only re-render if user hasn't interacted in the last 5 seconds
   setInterval(async () => {
     try {
       const tix = await sbSelect('ticks', 'project_id,stage_key,action_id,is_done,is_na')
@@ -842,12 +893,26 @@ function subscribeToTicks() {
           p.answers[t.action_id] = t.is_na ? 'na' : t.is_done ? 'yes' : 'no'
           p.status = recalcStatus(p)
         }
+        // Also update allTicksCache
+        allTicksCache[t.project_id + '__' + t.stage_key + '__' + t.action_id] = {done: t.is_done, na: t.is_na}
       })
-      if (mainView === 'owner') renderOwner()
-      else renderPartners()
-    } catch(e) { /* silent fail on poll */ }
-  }, 15000)
+      // Only re-render if user hasn't clicked in last 5 seconds
+      const idleSince = Date.now() - lastInteraction
+      if (idleSince > 5000) {
+        if (mainView === 'owner') renderOwner()
+        else renderGrid()
+      }
+    } catch(e) { /* silent fail */ }
+  }, 60000)
 }
+
+// Global helpers (defined once, not per-render)
+const isInternal = p => p.client && p.client.toLowerCase().includes('trimstone')
+
+// Track last user interaction to avoid render conflicts
+let lastInteraction = Date.now()
+document.addEventListener('click', () => { lastInteraction = Date.now() })
+document.addEventListener('keydown', () => { lastInteraction = Date.now() })
 
 function recalcStatus(p) {
   const sd = OWNER_STAGES[p.stage]
@@ -929,19 +994,38 @@ function setMainView(v) {
 // SIDEBAR
 // ══════════════════════════════════════════════
 // Track which stage groups are expanded in sidebar
-const sidebarExpanded = new Set(['contracting','executing','pricing']) // key stages open by default
+const sidebarExpanded = new Set() // all collapsed by default — click to expand
 
 function renderSidebar() {
   const STAGE_ORDER = ['discussions','scoping','pricing','contracting','executing','closing','hold']
   const STAGE_LABELS = {
-    discussions:'In Discussions', scoping:'Scoping', pricing:'Pricing',
-    contracting:'Contracting',    executing:'Executing', closing:'Closing', hold:'On Hold'
+    discussions:'In Discussions',
+    scoping:'Prospecting & Scoping',
+    pricing:'Pricing & Proposing',
+    contracting:'Contracting',
+    executing:'Executing (Project Live)',
+    closing:'Closing Down (Won)',
+    hold:'On Hold'
   }
 
-  // Group by stage
+  // Split into Trimstone internal vs client projects
+
+  // Filter by owner if not admin
+  // ownerFirstName computed from global currentUser
+  const visibleProjects = (isAdmin || !ownerFirstName)
+    ? projects
+    : projects.filter(p =>
+        !p.lp || p.lp.toLowerCase().includes(ownerFirstName) ||
+        p.id === gridSelProj || p.id === ownerSelId
+      )
+
+  const clientProjects   = visibleProjects.filter(p => !isInternal(p) && p.stage !== 'lost')
+  const internalProjects = projects.filter(p => isInternal(p) && p.stage !== 'lost')
+
+  // Group client projects by stage
   const grouped = {}
   STAGE_ORDER.forEach(s => grouped[s] = [])
-  projects.forEach(p => {
+  clientProjects.forEach(p => {
     const s = p.stage || 'discussions'
     if (grouped[s]) grouped[s].push(p)
     else grouped['discussions'].push(p)
@@ -949,45 +1033,110 @@ function renderSidebar() {
 
   // Auto-expand stage of currently selected project
   const selProj = projects.find(p => p.id === (gridSelProj || ownerSelId))
-  if (selProj) sidebarExpanded.add(selProj.stage)
+  // Auto-expand handled by selProjBoth — not here
 
   let html = ''
+
+  // ── Client deals grouped by stage ──
   STAGE_ORDER.forEach(stageId => {
     const list = grouped[stageId]
     if (!list.length) return
-    const st    = stFor(stageId)
-    const open  = sidebarExpanded.has(stageId)
-    const label = STAGE_LABELS[stageId]
-
+    const st   = stFor(stageId)
+    const open = sidebarExpanded.has(stageId)
+    // Count how many in this stage have blockers outstanding
+    const blockedBadge = ''
     html += `<div class="sidebar-stage-group">
-      <div class="sidebar-stage-label" onclick="toggleSidebarStage('${stageId}')" style="cursor:pointer">
+      <div class="sidebar-stage-label" onclick="toggleSidebarStage('${stageId}',event)" style="cursor:pointer">
         <div style="width:7px;height:7px;border-radius:50%;background:${st.color};flex-shrink:0"></div>
-        <span>${label}</span>
+        <span style="flex:1">${STAGE_LABELS[stageId]}</span>
+        ${blockedBadge}
         <span class="sidebar-stage-count">${list.length}</span>
-        <span style="margin-left:4px;font-size:9px;opacity:.5;transition:transform .2s;display:inline-block;transform:rotate(${open?'0':'180'}deg)">▲</span>
+        <span style="font-size:9px;opacity:.4;display:inline-block;transform:rotate(${open?'0':'180'}deg)">▲</span>
       </div>`
-
     if (open) {
       html += list.map(p => {
         const isActive = p.id === gridSelProj || p.id === ownerSelId
-        return `<div class="proj-item ${isActive?'active':''}" onclick="selProjBoth('${p.id}')" title="${p.name}">
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${p.name}</span>
+        return `<div class="proj-item ${isActive?'active':''}" data-pid="${p.id}" onclick="selProjBoth('${p.id}')" title="${p.name}">
+          <div style="display:flex;align-items:center;gap:4px;min-width:0">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px;line-height:1.4">${p.name}</span>
+            ${p.lp ? '<span style="font-size:10px;color:rgba(255,255,255,.35);flex-shrink:0;white-space:nowrap">' + p.lp + '</span>' : ''}
+          </div>
         </div>`
       }).join('')
     }
-
     html += `</div>`
   })
 
+  // ── Closed Lost ──
+  const lostProjects = projects.filter(p => p.stage === 'lost')
+  if (lostProjects.length) {
+    const open = sidebarExpanded.has('lost')
+    html += `<div class="sidebar-stage-group">
+      <div class="sidebar-stage-label" onclick="toggleSidebarStage('lost',event)" style="cursor:pointer;opacity:.6">
+        <div style="width:7px;height:7px;border-radius:50%;background:#888780;flex-shrink:0"></div>
+        <span style="flex:1">Closed Lost</span>
+        <span class="sidebar-stage-count">${lostProjects.length}</span>
+        <span style="font-size:9px;opacity:.4;display:inline-block;transform:rotate(${open?'0':'180'}deg)">▲</span>
+      </div>`
+    if (open) {
+      html += lostProjects.map(p => {
+        const isActive = p.id === gridSelProj || p.id === ownerSelId
+        return `<div class="proj-item ${isActive?'active':''}" data-pid="${p.id}" onclick="selProjBoth('${p.id}')" title="${p.name}" style="opacity:.5">
+          <div style="display:flex;align-items:center;gap:4px;min-width:0">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px;line-height:1.4;text-decoration:line-through">${p.name}</span>
+            ${p.lp ? '<span style="font-size:10px;color:rgba(255,255,255,.25);flex-shrink:0;white-space:nowrap">' + p.lp + '</span>' : ''}
+          </div>
+        </div>`
+      }).join('')
+    }
+    html += `</div>`
+  }
+
+  // ── Trimstone internal ──
+  if (internalProjects.length) {
+    const open = sidebarExpanded.has('internal')
+    html += `<div class="sidebar-stage-group" style="margin-top:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:8px">
+      <div class="sidebar-stage-label" onclick="toggleSidebarStage('internal',event)" style="cursor:pointer">
+        <div style="width:7px;height:7px;border-radius:50%;background:#888780;flex-shrink:0"></div>
+        <span>Trimstone internal</span>
+        <span class="sidebar-stage-count">${internalProjects.length}</span>
+        <span style="margin-left:4px;font-size:9px;opacity:.5;display:inline-block;transform:rotate(${open?'0':'180'}deg)">▲</span>
+      </div>`
+    if (open) {
+      html += internalProjects.map(p => {
+        const isActive = p.id === gridSelProj || p.id === ownerSelId
+        return `<div class="proj-item ${isActive?'active':''}" data-pid="${p.id}" onclick="selProjBoth('${p.id}')" title="${p.name}">
+          <div style="display:flex;align-items:center;gap:4px;min-width:0">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px;line-height:1.4">${p.name}</span>
+            ${p.lp ? '<span style="font-size:10px;color:rgba(255,255,255,.35);flex-shrink:0;white-space:nowrap">' + p.lp + '</span>' : ''}
+          </div>
+        </div>`
+      }).join('')
+    }
+    html += `</div>`
+  }
+
   document.getElementById('sidebar-projects').innerHTML = html
+  // Update user badge
+  const badge = document.getElementById('user-badge')
+  if (badge) {
+    if (isAdmin) {
+      badge.innerHTML = '<span style="background:var(--purple-lt);color:var(--purple-txt);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500">All projects</span>'
+    } else if (currentUser !== 'dashboard-user') {
+      const name = currentUser.replace('.', ' ')
+      badge.innerHTML = '<span style="background:var(--gray-50);color:var(--gray-400);padding:2px 8px;border-radius:10px;font-size:10px">' + name + '</span>'
+    }
+  }
 }
 
-function toggleSidebarStage(stageId) {
+function toggleSidebarStage(stageId, event) {
+  if (event) event.stopPropagation()
   if (sidebarExpanded.has(stageId)) sidebarExpanded.delete(stageId)
   else sidebarExpanded.add(stageId)
-  renderSidebar()
+  renderSidebar() // only re-render sidebar, don't change main view
 }
 
+let _renderTimer = null
 function selProjBoth(id) {
   ownerSelId  = id
   gridSelProj = id
@@ -995,11 +1144,35 @@ function selProjBoth(id) {
   ownerStage  = null
   ownerOpenQ  = null
   ownerCollapsed.clear()
+
+  // Instant visual feedback — highlight active item in sidebar
+  document.querySelectorAll('.proj-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-pid') === id)
+  })
+
+  // Update topbar badge instantly
   const p = projects.find(x => x.id === id)
-  if (p) sidebarExpanded.add(p.stage)
-  renderSidebar()
-  if (mainView === 'grid') renderGrid()
-  else renderOwner()
+  if (p) {
+    const stKey = isInternal(p) ? 'internal' : p.stage
+    sidebarExpanded.add(stKey)
+    const badge = document.getElementById('topbar-badge')
+    if (badge) {
+      const st = stFor(p.stage)
+      badge.textContent = p.name
+      badge.style.cssText = 'background:' + st.bg + ';color:' + st.tc
+    }
+  }
+
+  // Debounce full re-render so rapid clicks don't stack
+  clearTimeout(_renderTimer)
+  _renderTimer = setTimeout(() => {
+    renderSidebar()
+    // Use requestAnimationFrame to let browser paint sidebar first
+    requestAnimationFrame(() => {
+      if (mainView === 'grid') renderGrid()
+      else renderOwner()
+    })
+  }, 60)
 }
 
 // ══════════════════════════════════════════════
@@ -1388,7 +1561,14 @@ function loadDemoData() {
     const found = projects.find(p => p.id === P.get('project'))
     if (found) ownerSelId = found.id
   }
-  if (!ownerSelId && projects.length) ownerSelId = projects[0].id
+  if (!ownerSelId) {
+    // Default to first project owned by current user, or first project
+    const myFirst = ownerFirstName
+      ? projects.find(p => p.lp && p.lp.toLowerCase().includes(ownerFirstName))
+      : null
+    ownerSelId = myFirst?.id || projects[0]?.id
+    if (ownerSelId) gridSelProj = ownerSelId
+  }
   if (P.get('stage'))  ownerStage = P.get('stage')
   if (P.get('view'))   setMainView(P.get('view'))
   if (P.get('filter')) pFilter = P.get('filter')
@@ -1483,6 +1663,8 @@ const GRID_ROWS = [
 let gridSelProj = null
 let gridOpenCell = null // {itemId, stageId}
 
+let _gridCache = {pid: null, html: null}
+
 function renderGrid() {
   const el = document.getElementById('grid-container')
   if (!el) return
@@ -1501,7 +1683,13 @@ function renderGrid() {
     <div class="gl-item"><div class="gl-dot" style="background:var(--gray-50);border:1px solid var(--gray-200);color:var(--gray-300)">—</div> N/A</div>
     <div class="gl-item"><div class="gl-dot" style="background:var(--amber-lt);color:var(--amber-txt)">?</div> If needed</div>
     <div class="gl-item"><div class="gl-dot" style="background:transparent;border:1.5px dashed var(--gray-200);color:var(--gray-300)">?</div> Unanswered</div>
-    <span style="margin-left:auto;font-size:11px;color:var(--gray-400)">Click any cell to update · <strong>${p.name}</strong> · ${p.client}</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--gray-400);display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+      <span>Click any cell to update</span>
+      <span style="opacity:.4">·</span>
+      <strong style="color:var(--gray-800)">${p.name}</strong>
+      ${p.client ? `<span style="opacity:.4">·</span><span style="color:var(--gray-600);font-weight:500">${p.client}</span>` : ''}
+      ${p.lp ? `<span style="opacity:.4">·</span><span style="color:var(--gray-400)">${p.lp}</span>` : ''}
+    </span>
   </div>`
 
   // Build table
@@ -1604,6 +1792,7 @@ function renderGrid() {
 
   html += '</tbody></table></div>'
   el.innerHTML = html
+  _gridCache = {pid: p.id}
 }
 
 function buildCellPopup(item, st, p, ans, condAns, condKey) {
